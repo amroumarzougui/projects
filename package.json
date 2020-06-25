@@ -8,6 +8,9 @@
   "dependencies": {
     "@ag-grid-community/react": "^23.2.0",
     "@ag-grid-enterprise/all-modules": "^23.2.0",
+    "@devexpress/dx-react-chart": "^2.6.4",
+    "@devexpress/dx-react-chart-bootstrap4": "^2.6.4",
+    "@devexpress/dx-react-core": "^2.6.4",
     "@fortawesome/fontawesome-svg-core": "^1.2.4",
     "@fortawesome/free-solid-svg-icons": "^5.3.1",
     "@fortawesome/react-fontawesome": "^0.1.2",
@@ -51,6 +54,7 @@
     "react-select": "^3.0.8",
     "react-simple-pie-chart": "^0.5.0",
     "react-super-responsive-table": "^5.1.1",
+    "react-swipeable-views": "^0.13.9",
     "react-to-print": "^2.5.1",
     "react-x-editable": "0.0.10-beta",
     "reactstrap": "^6.4.0",

@@ -29,9 +29,6 @@ import ActionModal from "./ActionModal";
 import { SelectUser } from "../../redux/actions/DevisClient";
 const roundTo = require("round-to");
 
-// import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
-// import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-
 var curr = new Date();
 curr.setDate(curr.getDate());
 var date = curr.toISOString().substr(0, 10);
@@ -86,15 +83,10 @@ class FieldArraysFormClass extends Component {
   componentDidMount() {
     this.props.SelectClient();
     this.props.GetNumFacDevis();
-
-    this.props.numfac.numfac.map((num) =>
-      this.setState({ numfacc: parseInt(num.valeur, 10) + 1 })
-    );
   }
 
   submitHandler = (
     tab,
-    artligs,
     totalqte,
     sumremisearticle,
     totalhtbrut,
@@ -106,7 +98,6 @@ class FieldArraysFormClass extends Component {
   ) => {
     this.setState({
       tab: tab,
-      artligs: artligs,
       totalqte: totalqte,
       sumremisearticle: sumremisearticle,
       totalhtbrut: totalhtbrut,
@@ -116,34 +107,23 @@ class FieldArraysFormClass extends Component {
       netapayer: netapayer,
       btnEnabled: btnEnabled,
     });
-    // tab.map((t) => {
-    //   this.setState({
-    //     codart: t.codearticle,
-    //     desart: t.des,
-    //     quantite: t.qte,
-    //     priuni: t.puht,
-    //     remise: t.remisea,
-    //     tautva: t.tva,
-    //     fodart: t.faudec,
-    //   });
-    // });
   };
 
-  annuler(numfac) {
-    if (window.confirm("Voulez vous annuler ?")) {
-      fetch(`http://192.168.1.100:81/api/LigBCDV/` + numfac, {
-        method: "DELETE",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((result) => {
-          console.log(result);
-        });
-    }
-  }
+  // annuler(numfac) {
+  //   if (window.confirm("Voulez vous annuler ?")) {
+  //     fetch(`http://192.168.1.100:81/api/LigBCDV/` + numfac, {
+  //       method: "DELETE",
+  //       header: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //       .then((res) => res.json())
+  //       .then((result) => {
+  //         console.log(result);
+  //       });
+  //   }
+  // }
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -181,32 +161,6 @@ class FieldArraysFormClass extends Component {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
         }
       );
-
-    //////////////////////////// ligbcdvcli submit ////////////////////
-    // fetch(
-    //   `http://192.168.1.100:81/api/LigBCDV?numfac=${event.target.numfac.value}&typfac=DV&numlig=2&codart=${this.state.codart}&desart=${this.state.desart}&quantite=${this.state.quantite}&priuni=${this.state.priuni}&remise=${this.state.remise}&tautva=${this.state.tautva}&fodart=${this.state.fodart}&datfac=${event.target.datfac.value}`,
-    //   {
-    //     method: "POST",
-    //     header: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // )
-    //   .then((res) => res.json())
-    //   .then(
-    //     (result) => {
-    //       this.setState({ snackbaropen: true, snackbarmsg: result });
-    //       console.log(result);
-    //     },
-    //     (error) => {
-    //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-    //     }
-    //   );
-
-    // this.props.SelectArticle();
-    // this.props.onHide();
-    // this.props.GetNumFacDevis();
   };
 
   snackbarClose = () => {
@@ -219,35 +173,90 @@ class FieldArraysFormClass extends Component {
       .then((data) => this.setState({ rechs: data }));
   };
 
+  enregistrer = (event) => {
+    event.preventDefault();
+
+    /////////////// post ligarticle ////////////////////////////////
+    this.state.tab.map((k, index) => {
+      for (var i = 0; i < this.state.tab.length; i++) {
+        fetch(
+          `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=20200023&typfac=DV&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${event.target.datfac.value}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
+          {
+            method: "POST",
+            header: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then(
+            (result) => {
+              // this.setState({ snackbaropen: true, snackbarmsg: result });
+
+              console.log(result);
+              // window.alert(result);
+            },
+            (error) => {
+              this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+            }
+          );
+      }
+    });
+
+    //////////// post BCDV /////////////////////////////
+    fetch(
+      `http://192.168.1.100:81/api/BCDVCLIs?numfac=20200023&typfac=DV&taurem=${event.target.remise.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${event.target.datfac.value}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}`,
+      {
+        method: "POST",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          this.setState({ snackbaropen: true, snackbarmsg: result });
+
+          console.log(result);
+          // this.props.onHide();
+          this.props.SelectUser();
+          //// window.alert(result);
+        },
+        (error) => {
+          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        }
+      );
+
+    ////////////////////// les calculs ///////////////////
+    fetch(`http://192.168.1.100:81/api/LigBCDV?FAC=20200023&typfacc=DV`, {
+      method: "POST",
+      header: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          this.setState({ snackbaropen: true, snackbarmsg: result });
+
+          console.log(result);
+          //// window.alert(result);
+        },
+        (error) => {
+          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        }
+      );
+  };
+
   render() {
-    const { dvnumfac, dvraisoc, rem, clientmail } = this.state;
-
-    let addModalClose1 = () => this.setState({ addModalShow1: false });
-
-    // console.log(this.state.tab, this.state.totalqte);
-
-    // console.log(
-    //   "numfac =",
-    //   this.props.numfac.numfac.map((numf) => numf.valeur)
-    // );
-
-    // this.props.numfac.numfac.map((n) => {
-    //   this.setState({ nu: parseInt(n.Column1, 10) + 1 });
-    // });
-
-    const nnn = this.props.numfac.numfac.map((n) => parseInt(n.valeur, 10) + 1);
-
     let ligModalClose = () => this.setState({ ligModalShow: false });
-    let actionModalClose = () => this.setState({ openActionModal: false });
 
     return (
       <div>
-        <ActionModal
-          show={this.state.openActionModal}
-          onHide={actionModalClose}
-          clientmail={clientmail}
-        />
-
         <Snackbar
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
           open={this.state.snackbaropen}
@@ -265,7 +274,7 @@ class FieldArraysFormClass extends Component {
           ]}
         ></Snackbar>
 
-        <form onSubmit={this.submitHandlerr}>
+        <form onSubmit={this.enregistrer}>
           <Card>
             <Card.Body>
               <Row style={{ marginBottom: "-20px", marginTop: "-20px" }}>
@@ -284,36 +293,16 @@ class FieldArraysFormClass extends Component {
                     </FormGroup>
                   ))}
                 </Col>
-                <Col sm={5}></Col>
-
-                <Col sm={4}>
-                  <FormGroup>
-                    {this.state.showButtonModalPassager ? (
-                      <Tooltip title="Ajouter les détails du client passager">
-                        <Button
-                          style={{
-                            backgroundColor: "#3f51b5",
-                            color: "white",
-                            fontWeight: "bold",
-                            width: "100%",
-                            marginTop: "20px",
-                            height: "40px",
-                          }}
-                          onClick={() =>
-                            this.setState({
-                              addModalShow1: true,
-                              dvnumfac: this.props.numfac.numfac.map(
-                                (numf) => parseInt(numf.valeur, 10) + 1
-                              ),
-                              dvraisoc: this.state.raisonsocial,
-                            })
-                          }
-                        >
-                          Détails Client Passager
-                        </Button>
-                      </Tooltip>
-                    ) : null}
-                  </FormGroup>
+                <Col sm={5}>
+                  <TextField
+                    id="standard-basic"
+                    label="Date"
+                    margin="normal"
+                    type="date"
+                    fullWidth
+                    name="datfac"
+                    defaultValue={this.state.defaultdate}
+                  />
                 </Col>
               </Row>
 
@@ -345,10 +334,9 @@ class FieldArraysFormClass extends Component {
                     </Typography>
                   </FormGroup>
                 </Col>
-
-                <Col sm={4}>
-                  <FormGroup>
-                    {this.state.gilad ? (
+                {this.state.gilad ? (
+                  <Col sm={3}>
+                    <FormGroup>
                       <Autocomplete
                         id="include-input-in-list"
                         includeInputInList
@@ -386,13 +374,18 @@ class FieldArraysFormClass extends Component {
                             {...params}
                             label="Code client"
                             margin="normal"
-                            name="codcli"
+                            //variant="outlined"
                             fullWidth
                             onChange={this.clientHandlerChange}
+                            name="codcli"
                           />
                         )}
                       />
-                    ) : (
+                    </FormGroup>
+                  </Col>
+                ) : (
+                  <Col sm={5}>
+                    <FormGroup>
                       <Autocomplete
                         id="include-input-in-list"
                         includeInputInList
@@ -430,71 +423,63 @@ class FieldArraysFormClass extends Component {
                             {...params}
                             label="Raison sociale"
                             margin="normal"
-                            name="raisoc"
+                            //variant="outlined"
                             fullWidth
+                            onChange={this.clientHandlerChange}
+                            name="raissoc"
                           />
                         )}
                       />
-                    )}
-                  </FormGroup>
-                </Col>
-                <Col sm={4}>
-                  {this.state.gilad ? (
+                    </FormGroup>
+                  </Col>
+                )}
+                {this.state.gilad ? (
+                  <Col sm={5}>
                     <FormGroup>
                       <TextField
                         id="standard-basic"
                         label="Raison sociale"
                         margin="normal"
+                        //variant="outlined"
                         value={this.state.raisonsocial}
                         fullWidth
-                        name="raisoc"
+                        name="raissoc"
                         disabled
                       />
                     </FormGroup>
-                  ) : (
+                  </Col>
+                ) : (
+                  <Col sm={3}>
                     <FormGroup>
                       <TextField
                         id="standard-basic"
                         label="Code client"
                         margin="normal"
+                        //variant="outlined"
                         value={this.state.codeclient}
                         fullWidth
                         name="codcli"
                         disabled
                       />
                     </FormGroup>
-                  )}
-                </Col>
+                  </Col>
+                )}
               </Row>
 
               <Row>
-                <Col sm={4}>
+                <Col sm={3}>
                   <TextField
                     id="standard-basic"
-                    label="Date"
-                    margin="normal"
-                    name="dated"
-                    //variant="outlined"
-                    type="date"
-                    fullWidth
-                    name="datfac"
-                    defaultValue={this.state.defaultdate}
-                  />
-                </Col>
-
-                <Col sm={2}>
-                  <TextField
-                    id="standard-basic"
-                    label="Cat Fiscale"
+                    label="Categorie Fiscale"
                     margin="normal"
                     //variant="outlined"
                     fullWidth
-                    name="catfisc"
+                    name="categoriefiscale"
                     value={this.state.categoriefiscale}
                   />
                 </Col>
 
-                <Col sm={2}>
+                <Col sm={3}>
                   <TextField
                     id="standard-basic"
                     label="Remise %"
@@ -507,35 +492,26 @@ class FieldArraysFormClass extends Component {
                 </Col>
 
                 <Col sm={2}>
-                  <FormGroup style={{ marginTop: "20px" }}>
+                  <FormGroup style={{ marginTop: "40px" }}>
                     {this.state.showTimbre ? (
-                      <Alert
-                        style={{
-                          width: "100%",
-                          textAlign: "center",
-                          fontSize: "12px",
-                        }}
-                        variant={"success"}
-                      >
-                        <b style={{ marginTop: "-10px" }}></b>Timbre✔
-                      </Alert>
+                      //     <Alert style={{ width: "100%", textAlign: "center", fontSize: "12px" }} variant={"success"}>
+                      //         <b style={{ marginTop: "-10px" }}></b>Timbre✔
+                      // </Alert>
+                      <p style={{ color: "grey" }}>Timbre: ✔</p>
                     ) : null}
                   </FormGroup>
                 </Col>
 
                 <Col sm={2}>
-                  <FormGroup style={{ marginTop: "20px" }}>
+                  <FormGroup style={{ marginTop: "40px" }}>
                     {this.state.showForfitaire === 1 ? (
-                      <Alert
-                        style={{
-                          width: "100%",
-                          textAlign: "center",
-                          fontSize: "12px",
-                        }}
-                        variant={"success"}
-                      >
-                        <b style={{ marginTop: "-10px" }}></b>Forfitaire
-                      </Alert>
+                      //             <Alert style={{
+                      //                 width: "100%", textAlign: "center",
+                      //                 fontSize: "12px"
+                      //             }} variant={"success"}>
+                      //                 <b style={{ marginTop: "-10px" }}></b>Forfitaire
+                      //  </Alert>
+                      <p style={{ color: "grey" }}>Forfitaire: ✔</p>
                     ) : null}
                   </FormGroup>
                 </Col>
@@ -618,41 +594,53 @@ class FieldArraysFormClass extends Component {
               <Accordion.Collapse eventKey="0">
                 <Card.Body>
                   {/* <div className="lig-table"> */}
-                  <div className="tab28">
-                    <table stripped>
-                      <thead style={{ textAlign: "center", fontSize: "12px" }}>
+                  <div className="tabd28">
+                    <table style={{ marginTop: "10px" }}>
+                      <thead style={{ fontSize: "12px" }}>
                         <tr>
-                          <th>Article</th>
-                          <th>Désignation</th>
+                          <th>Code</th>
+                          <th style={{ width: "37%" }}>Désignation</th>
                           <th>Quantité</th>
-                          <th>Unité</th>
                           <th>PU HT</th>
-                          <th>Fodec</th>
                           <th>Remise</th>
                           <th>TVA</th>
+                          <th>PUTTCNet</th>
                           <th>TotalHT</th>
-                          <th>PUNet</th>
                         </tr>
                       </thead>
                       <tbody style={{ textAlign: "center" }}>
-                        {this.state.artligs.map((t, i) => (
+                        {this.state.tab.map((t, i) => (
                           <tr key={i}>
-                            <td>{t.codart}</td>
-                            <td style={{ fontSize: "12px" }}>{t.desart}</td>
-                            <td>{t.quantite}</td>
-                            {/* <td>{t.unite}</td> */}
-                            <td>{t.priuni}</td>
                             <td>
-                              {t.fodart === "A" ? (
-                                <span>✔</span>
-                              ) : (
-                                <span>Ø</span>
-                              )}
+                              <span>{t.codearticle}</span>
                             </td>
-                            <td>{t.remise}</td>
-                            <td>{t.tautva}</td>
-                            <td>{t.totalht}</td>
-                            <td>{t.puttcnet}</td>
+                            <td style={{ fontSize: "12px", width: "37%" }}>
+                              <span> {t.des} </span>
+                            </td>
+                            <td>
+                              {" "}
+                              <span> {t.qte}</span>
+                            </td>
+                            <td>
+                              {" "}
+                              <span> {Number(t.puht).toFixed(2)}</span>
+                            </td>
+                            <td>
+                              {" "}
+                              <span> {Number(t.remisea).toFixed(2)}</span>
+                            </td>
+                            <td>
+                              {" "}
+                              <span> {Number(t.tva).toFixed(2)}</span>
+                            </td>
+                            <td>
+                              {" "}
+                              <span> {Number(t.puttcnet).toFixed(3)}</span>
+                            </td>
+                            <td>
+                              {" "}
+                              <span> {Number(t.totalht).toFixed(2)}</span>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -776,7 +764,7 @@ class FieldArraysFormClass extends Component {
                     Total HT Net
                   </p>
                   <p style={{ color: "black" }}>
-                    {roundTo(this.state.totalhtnet, 3)}
+                    {Number(this.state.totalhtnet).toFixed(3)}
                   </p>
                 </Col>
 
@@ -839,22 +827,8 @@ class FieldArraysFormClass extends Component {
 
           <Row>
             <Col sm={5}></Col>
-            <Col sm={3}>
-              <Button
-                variant="contained"
-                color="success"
-                style={{ marginTop: "20px", width: "100%" }}
-                onClick={() => {
-                  this.annuler(nnn);
-                  this.props.hide();
-                }}
-              >
-                Annuler
-              </Button>
-            </Col>
+            <Col sm={3}></Col>
             <Col sm={4}>
-              {/* {this.state.btnEnable && this.state.btnEnabled ? ( */}
-              {/* {this.state.tab === [] ? ( */}
               {this.state.totalqte === 0 ? (
                 <Button
                   variant="contained"
@@ -866,17 +840,13 @@ class FieldArraysFormClass extends Component {
               ) : (
                 <Button
                   variant="contained"
-                  color="secondary"
+                  style={{
+                    marginTop: "20px",
+                    width: "100%",
+                    color: "white",
+                    backgroundColor: "#020F64",
+                  }}
                   type="submit"
-                  style={{ marginTop: "20px", width: "100%" }}
-                  // type="submit"
-                  // onClick={(e) => {
-                  //   e.preventDefault();
-                  //   this.setState({
-                  //     openActionModal: true,
-                  //     clientmail: this.state.cemail,
-                  //   });
-                  // }}
                 >
                   Enregistrer tous
                 </Button>
@@ -888,17 +858,10 @@ class FieldArraysFormClass extends Component {
           submitHandler={this.submitHandler}
           show={this.state.ligModalShow}
           onHide={ligModalClose}
-          rem={rem}
           numfaccc={this.props.numfac.numfac.map(
             (nu) => parseInt(nu.valeur, 10) + 1
           )}
           dateee={this.state.defaultdate}
-        />
-        <AddClientPassagerModal
-          show={this.state.addModalShow1}
-          onHide={addModalClose1}
-          dvnumfac={dvnumfac}
-          dvraisoc={dvraisoc}
         />
       </div>
     );

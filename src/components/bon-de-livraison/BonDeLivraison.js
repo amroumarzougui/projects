@@ -52,7 +52,7 @@ class BonDeLivraison extends Component {
   render() {
     let addModalClose1 = () => this.setState({ addModalShow: false });
     let getModalClose = () => this.setState({ getBLByIdModalShow: false });
-    let exit;
+    // let exit;
     const {
       blid,
       datebl,

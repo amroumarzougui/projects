@@ -81,6 +81,7 @@ class Login extends Component {
               "token",
               `abcd${this.state.username}1234ghqsd`
             );
+          localStorage.setItem("username", `${this.state.username}`);
           // setUserSession(result.data.Codrep, result.data);
           this.setState({ loggedIn: true });
         },

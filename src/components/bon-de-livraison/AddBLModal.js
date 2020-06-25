@@ -28,7 +28,6 @@ import { SelectClient } from "../../redux/actions/GetClients";
 import { GetNumFacDevis } from "../../redux/actions/GetNumfacDevis";
 import { SelectArticle } from "../../redux/actions/GetArticles";
 import { Input, Label, Table } from "reactstrap";
-import Center from "react-center";
 
 import Tooltip from "@material-ui/core/Tooltip";
 
@@ -300,9 +299,10 @@ class AddBLModal extends Component {
                             label="№ BL"
                             margin="normal"
                             //variant="outlined"
-                            value={t.valeur}
+                            value={parseInt(t.numfac) + 1}
                             fullWidth
                             name="codbl"
+                            disabled
                           />
                         ))}
                       </FormGroup>
@@ -321,12 +321,6 @@ class AddBLModal extends Component {
                       />
                     </Col>
                   </Row>
-
-                  {/* <Row style={{ marginBottom: "-15px" }}>
-                                        <Col sm={4}>
-                                            <Label><b>Chercher client par:</b></Label>
-                                        </Col>
-                                    </Row> */}
 
                   <Row style={{ marginBottom: "-20px" }}>
                     <Col sm={4}>
@@ -885,8 +879,8 @@ class AddBLModal extends Component {
           show={this.state.ligModalShow}
           onHide={ligModalClose}
           rem={rem}
-          numfaccc={this.props.codbls.codbls.map((nu) =>
-            parseInt(nu.valeur, 10)
+          numfaccc={this.props.codbls.codbls.map(
+            (nu) => parseInt(nu.numfac, 10) + 1
           )}
           datfac={this.state.defaultdate}
         />

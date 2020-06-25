@@ -30,6 +30,9 @@ import GetSumQLigDVReducer from "./reducers/GetSumQLigDV";
 import GetDBReducer from "./reducers/GetDBFolders";
 import GetCodBlReducer from "./reducers/GetBLcod.";
 import GetNomenclatureReducer from "./reducers/GetNomenclature";
+import GetCodBCReducer from "./reducers/Getcodbc";
+import GettopclientReducer from "./reducers/Top5";
+import GetTopFrsReducer from "./reducers/Top5Frs";
 
 const middleware = [thunkMiddlewar];
 const composeEnhancers =
@@ -66,6 +69,9 @@ const myStore = createStore(
     dbs: GetDBReducer,
     codbls: GetCodBlReducer,
     nomenclatures: GetNomenclatureReducer,
+    numfacbcs: GetCodBCReducer,
+    tops: GettopclientReducer,
+    topfrss: GetTopFrsReducer,
   }),
   enhancer
 );

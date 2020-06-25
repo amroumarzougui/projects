@@ -57,13 +57,19 @@ class LigModal extends Component {
       snackbarmsg: ",",
       numlig: 0,
       artligs: [],
+      rechs: [],
     };
   }
 
   componentDidMount() {
     this.props.SelectArticle();
-    this.GetSameLig();
   }
+
+  articleHandlerChange = (event) => {
+    fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
+      .then((response) => response.json())
+      .then((data) => this.setState({ rechs: data }));
+  };
 
   snackbarClose = (event) => {
     this.setState({ snackbaropen: false });
@@ -87,6 +93,85 @@ class LigModal extends Component {
         3
       ),
       totalht: toti,
+    });
+  };
+
+  submitHandler = (event) => {
+    event.preventDefault();
+
+    const newtab = this.state.tab.concat({
+      codearticle: this.state.codearticle,
+      des: this.state.des,
+      qte: this.state.qte,
+      unite: this.state.unite,
+      puht: this.state.puht,
+      faudec: this.state.faudec,
+      remisea: this.state.remisea,
+      tva: this.state.tva,
+      puttcnet: this.state.puttcnet,
+      totalht: this.state.totalht,
+    });
+    const SumQte = newtab && newtab.reduce((a, v) => a + parseInt(v.qte), 0);
+    const SumRemiseArticle =
+      newtab &&
+      newtab.reduce(
+        (a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100,
+        0
+      );
+    const SumHtBrut =
+      newtab && newtab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
+    const SumTva =
+      newtab &&
+      newtab.reduce(
+        (a, v) =>
+          a +
+          parseInt(v.qte) * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100),
+        0
+      );
+    const SumHtNet =
+      newtab &&
+      newtab.reduce(
+        (a, v) => a + v.totalht * ((100 - this.props.rem) / 100),
+        0
+      );
+    const SumRemiseGlobale =
+      newtab &&
+      newtab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
+    const SumNetAPayer =
+      newtab &&
+      newtab.reduce(
+        (a, v) =>
+          a +
+          (v.totalht * ((100 - this.props.rem) / 100) +
+            v.qte * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100)),
+        0
+      );
+
+    this.setState({
+      tab: newtab,
+
+      totalqte: SumQte,
+      sumremisearticle: SumRemiseArticle,
+      totalhtbrut: SumHtBrut,
+      totaltva: SumTva,
+      totalhtnet: SumHtNet,
+      remiseglobal: SumRemiseGlobale,
+      netapayer: SumNetAPayer,
+      snackbaropen: true,
+      btnEnabled: true,
+    });
+
+    this.setState({
+      codearticle: "",
+      qte: "",
+      totalht: 0,
+      des: "",
+      unite: "",
+      puht: "",
+      remisea: 0,
+      tva: 0,
+      puttcnet: 0,
+      faudec: "N",
     });
   };
 
@@ -145,62 +230,6 @@ class LigModal extends Component {
     });
   };
 
-  GetSameLig = () => {
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV?type=DV&num=${this.props.numfaccc}`
-    )
-      .then((response) => response.json())
-      .then((data) =>
-        this.setState({
-          artligs: data,
-          totalqte: data && data.reduce((a, v) => a + parseInt(v.quantite), 0),
-          sumremisearticle:
-            data &&
-            data.reduce(
-              (a, v) => a + (parseInt(v.quantite) * v.priuni * v.remise) / 100,
-              0
-            ),
-          totalhtbrut:
-            data &&
-            data.reduce((a, v) => a + parseInt(v.quantite) * v.priuni, 0),
-          totaltva:
-            data &&
-            data.reduce(
-              (a, v) =>
-                a +
-                parseInt(v.quantite) *
-                  v.priuni *
-                  ((100 - v.remise) / 100) *
-                  (v.tautva / 100),
-              0
-            ),
-          totalhtnet:
-            data &&
-            data.reduce(
-              (a, v) => a + v.totalht * ((100 - this.props.rem) / 100),
-              0
-            ),
-          remiseglobal:
-            data &&
-            data.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0),
-          netapayer:
-            data &&
-            data.reduce(
-              (a, v) =>
-                a +
-                (v.totalht * ((100 - this.props.rem) / 100) +
-                  v.quantite *
-                    v.priuni *
-                    ((100 - v.remise) / 100) *
-                    (v.tautva / 100)),
-              0
-            ),
-          //  snackbaropen: true,
-          btnEnabled: true,
-        })
-      );
-  };
-
   onCellChange = (event) => {
     this.setState({ codearticle: event.target.value });
   };
@@ -210,74 +239,87 @@ class LigModal extends Component {
   };
 
   deleteRow = (index) => {
-    if (window.confirm("Voulez vous supprimer cette ligne d'article ?")) {
-      fetch(
-        `http://192.168.1.100:81/api/LigBCDV/` +
-          this.props.numfaccc +
-          `?numl=${index}`,
-        {
-          method: "DELETE",
-          header: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          this.setState({ snackbarfail: true, snackbarmsg: result });
-          this.GetSameLig();
-          console.log(result);
-        });
-    }
+    var tab = [...this.state.tab];
+    tab.splice(index, 1);
+    const SumQte = tab && tab.reduce((a, v) => a + parseInt(v.qte), 0);
+    const SumRemiseArticle =
+      tab &&
+      tab.reduce((a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100, 0);
+    const SumHtBrut =
+      tab && tab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
+    const SumTva =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          parseInt(v.qte) * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100),
+        0
+      );
+    const SumHtNet =
+      tab &&
+      tab.reduce((a, v) => a + v.totalht * ((100 - this.props.rem) / 100), 0);
+    const SumRemiseGlobale =
+      tab && tab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
+    const SumNetAPayer =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          (v.totalht * ((100 - this.props.rem) / 100) +
+            parseInt(v.qte) *
+              v.puht *
+              ((100 - v.remisea) / 100) *
+              (v.tva / 100)),
+        0
+      );
 
     this.setState({
-      numlig: parseInt(this.state.numlig) - 1,
+      tab,
+      totalqte: SumQte,
+      sumremisearticle: SumRemiseArticle,
+      totalhtbrut: SumHtBrut,
+      totaltva: SumTva,
+      totalhtnet: SumHtNet,
+      remiseglobal: SumRemiseGlobale,
+      netapayer: SumNetAPayer,
+      snackbarfail: true,
     });
   };
 
   render() {
     let editModalClose = () => this.setState({ editModalShow: false });
 
-    console.log(`totalht=${this.state.totalht} ++25`);
-
-    console.log(this.state.puht);
-
     return (
       <div className="container">
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
           open={this.state.snackbaropen}
           autoHideDuration={2000}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
           onClose={this.snackbarClose}
-          message={<span id="message-id"> {this.state.snackbarmsg} </span>}
-          action={[
-            <IconButton
-              key="close"
-              color="inherit"
-              onClick={this.snackbarClose}
-            >
-              x
-            </IconButton>,
-          ]}
-        ></Snackbar>
+        >
+          <Alert
+            style={{ height: "50px" }}
+            onClose={this.snackbarClose}
+            severity="success"
+          >
+            Article ajouté
+          </Alert>
+        </Snackbar>
 
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
           open={this.state.snackbarfail}
           autoHideDuration={2000}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
           onClose={this.snackbarFailClose}
-          message={<span id="message-id"> {this.state.snackbarmsg} </span>}
-          action={[
-            <IconButton
-              key="close"
-              color="inherit"
-              onClick={this.snackbarFailClose}
-            >
-              x
-            </IconButton>,
-          ]}
-        ></Snackbar>
+        >
+          <Alert
+            style={{ height: "50px" }}
+            onClose={this.snackbarFailClose}
+            severity="error"
+          >
+            Article supprimé
+          </Alert>
+        </Snackbar>
 
         <Modal
           {...this.props}
@@ -295,11 +337,10 @@ class LigModal extends Component {
               <Col>
                 <Card>
                   <Card.Body>
-                    <form onSubmit={this.submitHandlers}>
-                      <Row form>
-                        <Col sm={4}>
+                    <form onSubmit={this.submitHandler}>
+                      <Row form style={{ marginBottom: "-20px" }}>
+                        <Col sm={8}>
                           <FormGroup>
-                            <Label>Chercher article par :</Label>
                             <Typography component="div">
                               <Grid
                                 component="label"
@@ -307,6 +348,10 @@ class LigModal extends Component {
                                 alignItems="center"
                                 spacing={1}
                               >
+                                <Grid>
+                                  <b>Chercher article par :</b>
+                                </Grid>
+                                &nbsp;&nbsp;
                                 <Grid item>Désignation</Grid>
                                 <Grid item>
                                   <Switch
@@ -324,14 +369,27 @@ class LigModal extends Component {
                           </FormGroup>
                         </Col>
 
-                        <Col sm={4}>
+                        <Col sm={3}>
+                          <FormGroup
+                            style={{ marginTop: "10px", marginLeft: "10px" }}
+                          >
+                            {this.state.faudec === "A" ? (
+                              <p style={{ color: "grey" }}>Fodec: ✔</p>
+                            ) : null}
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row form>
+                        <Col sm={5}>
                           <FormGroup>
                             {this.state.gilad ? (
                               <Autocomplete
                                 id="include-input-in-list"
                                 includeInputInList
                                 className="ajouter-client-input"
-                                options={this.props.articles.articles}
+                                //   options={this.props.articles.articles}
+                                options={this.state.rechs}
                                 getOptionLabel={(option) => option.codart}
                                 onChange={(event, getOptionLabel) => {
                                   getOptionLabel
@@ -361,6 +419,7 @@ class LigModal extends Component {
                                     label="Code article"
                                     margin="normal"
                                     fullWidth
+                                    onChange={this.articleHandlerChange}
                                   />
                                 )}
                               />
@@ -369,7 +428,8 @@ class LigModal extends Component {
                                 id="include-input-in-list"
                                 includeInputInList
                                 className="ajouter-client-input"
-                                options={this.props.articles.articles}
+                                //   options={this.props.articles.articles}
+                                options={this.state.rechs}
                                 getOptionLabel={(option) => option.desart}
                                 onChange={(event, getOptionLabel) => {
                                   getOptionLabel
@@ -399,6 +459,7 @@ class LigModal extends Component {
                                     label="Désignation article"
                                     margin="normal"
                                     fullWidth
+                                    onChange={this.articleHandlerChange}
                                   />
                                 )}
                               />
@@ -414,7 +475,7 @@ class LigModal extends Component {
                           />
                         </FormGroup>
 
-                        <Col sm={4}>
+                        <Col sm={5}>
                           {this.state.gilad ? (
                             <FormGroup>
                               <TextField
@@ -439,9 +500,8 @@ class LigModal extends Component {
                             </FormGroup>
                           )}
                         </Col>
-                      </Row>
-                      <Row form>
-                        <Col sm={3}>
+
+                        <Col sm={2}>
                           <FormGroup>
                             {this.state.des === "" ? (
                               <TextField
@@ -452,7 +512,7 @@ class LigModal extends Component {
                                 InputLabelProps={{
                                   shrink: true,
                                 }}
-                                style={{ marginTop: "0px" }}
+                                style={{ marginTop: "16px" }}
                                 margin="normal"
                                 fullWidth
                                 required
@@ -465,7 +525,7 @@ class LigModal extends Component {
                                 InputLabelProps={{
                                   shrink: true,
                                 }}
-                                style={{ marginTop: "0px" }}
+                                style={{ marginTop: "16px" }}
                                 value={this.state.qte}
                                 onChange={this.qteHandler}
                                 margin="normal"
@@ -475,8 +535,10 @@ class LigModal extends Component {
                             )}
                           </FormGroup>
                         </Col>
+                      </Row>
 
-                        <Col sm={3}>
+                      <Row form>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -488,33 +550,32 @@ class LigModal extends Component {
                           </FormGroup>
                         </Col>
 
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
                               label="PU HT"
-                              // value="100.0"
                               value={this.state.puht}
-                              fullWidth
-                              name="puhtt"
-                            />
-                          </FormGroup>
-                        </Col>
-
-                        <Col sm={3}>
-                          <FormGroup>
-                            <TextField
-                              id="standard-basic"
-                              label="Remise %"
-                              value={this.state.remisea}
                               fullWidth
                               disabled
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
-                      <Row form>
-                        <Col sm={3}>
+
+                        <Col sm={2}>
+                          <FormGroup>
+                            <TextField
+                              id="standard-basic"
+                              label="Remise %"
+                              defaultValue={this.state.remisea}
+                              fullWidth
+                              name="remiseea"
+                              // disabled
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -525,59 +586,31 @@ class LigModal extends Component {
                             />
                           </FormGroup>
                         </Col>
-                        <Col sm={3}>
-                          <FormGroup>
-                            <TextField
-                              id="standard-basic"
-                              label="Total HT"
-                              value={this.state.totalht}
-                              name="toti"
-                              fullWidth
-                              disabled
-                            />
-                          </FormGroup>
-                        </Col>
-
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
                               label="PU TTC Net"
-                              value={this.state.puttcnet}
+                              value={roundTo(this.state.puttcnet, 3)}
                               fullWidth
                               disabled
                             />
                           </FormGroup>
                         </Col>
 
-                        <Col sm={3}>
-                          <FormGroup
-                            style={{ marginTop: "10px", marginLeft: "10px" }}
-                          >
-                            <Label> Fodec </Label>
-                            {this.state.faudec === "A" ? (
-                              <Checkbox
-                                defaultChecked
-                                value="secondary"
-                                color="primary"
-                                inputProps={{
-                                  "aria-label": "secondary checkbox",
-                                }}
-                              />
-                            ) : (
-                              <Label>
-                                <Checkbox
-                                  disabled
-                                  value="disabled"
-                                  inputProps={{
-                                    "aria-label": "disabled checkbox",
-                                  }}
-                                />
-                              </Label>
-                            )}
+                        <Col sm={2}>
+                          <FormGroup>
+                            <TextField
+                              id="standard-basic"
+                              label="Total HT"
+                              value={roundTo(this.state.totalht, 3)}
+                              fullWidth
+                              disabled
+                            />
                           </FormGroup>
                         </Col>
                       </Row>
+
                       {this.state.des === "" ? (
                         <Center>
                           <Button
@@ -609,51 +642,61 @@ class LigModal extends Component {
                 <Card style={{ marginTop: "10px" }}>
                   <Card.Body>
                     {/* <div className="lig-table"> */}
-                    <div className="tab28">
+                    <div className="tabd28">
                       <table style={{ marginTop: "10px" }}>
-                        <thead
-                          style={{ textAlign: "center", fontSize: "12px" }}
-                        >
+                        <thead style={{ fontSize: "12px" }}>
                           <tr>
-                            <th>Article</th>
-                            <th>Désignation</th>
+                            <th>Code</th>
+                            <th style={{ width: "37%" }}>Désignation</th>
                             <th>Quantité</th>
-                            <th>Unité</th>
                             <th>PU HT</th>
-                            <th>Fodec</th>
                             <th>Remise</th>
                             <th>TVA</th>
+                            <th>PUTTCNet</th>
                             <th>TotalHT</th>
-                            <th>PUNet</th>
                             <th></th>
                           </tr>
                         </thead>
                         <tbody style={{ textAlign: "center" }}>
-                          {this.state.artligs.map((t, i) => (
+                          {this.state.tab.map((t, i) => (
                             <tr key={i}>
-                              <td>{t.codart}</td>
-                              <td style={{ fontSize: "12px" }}>{t.desart}</td>
-                              <td>{t.quantite}</td>
-                              <td>{t.unite}</td>
-                              <td>{t.priuni}</td>
                               <td>
-                                {t.fodart === "A" ? (
-                                  <span>✔</span>
-                                ) : (
-                                  <span>Ø</span>
-                                )}
+                                <span>{t.codearticle}</span>
                               </td>
-                              <td>{t.remise}</td>
-                              <td>{t.tautva}</td>
-                              <td>{t.totalht}</td>
-                              <td>{t.puttcnet}</td>
+                              <td style={{ fontSize: "12px", width: "37%" }}>
+                                <span> {t.des} </span>
+                              </td>
+                              <td>
+                                {" "}
+                                <span> {t.qte}</span>
+                              </td>
+                              <td>
+                                {" "}
+                                <span> {Number(t.puht).toFixed(2)}</span>
+                              </td>
+                              <td>
+                                {" "}
+                                <span> {Number(t.remisea).toFixed(2)}</span>
+                              </td>
+                              <td>
+                                {" "}
+                                <span> {Number(t.tva).toFixed(2)}</span>
+                              </td>
+                              <td>
+                                {" "}
+                                <span> {Number(t.puttcnet).toFixed(3)}</span>
+                              </td>
+                              <td>
+                                {" "}
+                                <span> {Number(t.totalht).toFixed(2)}</span>
+                              </td>
 
                               <td>
                                 <Tooltip title="Supprimer cet article">
                                   <Fab size="small">
                                     <DeleteIcon
                                       style={{}}
-                                      onClick={() => this.deleteRow(t.numlig)}
+                                      onClick={() => this.deleteRow(i)}
                                     />
                                   </Fab>
                                 </Tooltip>
@@ -662,12 +705,6 @@ class LigModal extends Component {
                           ))}
                         </tbody>
                       </table>
-
-                      <EditArticleModal
-                        show={this.state.editModalShow}
-                        onHide={editModalClose}
-                        qtte={this.state.qtte}
-                      />
                     </div>
                   </Card.Body>
                 </Card>

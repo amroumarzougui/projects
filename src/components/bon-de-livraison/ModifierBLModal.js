@@ -25,6 +25,7 @@ import ReactDataGrid from "react-data-grid";
 import Editable from "react-x-editable";
 import EditRowModal from "./EditRowModal";
 import { SelectBL } from "../../redux/actions/GetBL";
+import { Redirect } from "react-router-dom";
 
 class ModifierBLModal extends Component {
   constructor(props) {
@@ -62,6 +63,7 @@ class ModifierBLModal extends Component {
       openEditModal: false,
       changeButton: false,
       idel: 0,
+      reload: false,
     };
   }
 
@@ -508,6 +510,8 @@ class ModifierBLModal extends Component {
       numfacccc,
       prixunix,
     } = this.state;
+
+    if (this.state.reload) return <Redirect to="/bon-de-livraison" />;
     // data =
 
     return (
@@ -617,6 +621,7 @@ class ModifierBLModal extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
+
                       <Row form>
                         <Col sm={5}>
                           <FormGroup>
@@ -1034,6 +1039,7 @@ class ModifierBLModal extends Component {
                   this.props.onHide01();
                   window.alert("Modification enregistrés");
                   this.props.SelectBL();
+                  this.setState({ reload: true });
                 }}
               >
                 Enregistrer

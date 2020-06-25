@@ -20,6 +20,7 @@ import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import "./ss.scss";
+import { SelectUser } from "../../redux/actions/DevisClient";
 
 const roundTo = require("round-to");
 
@@ -62,56 +63,85 @@ class ModifierLigDevis extends Component {
       defaultdate: date,
       shown: true,
       openEditModal: false,
+      rechs: [],
+      changeButton: false,
     };
   }
   componentDidMount() {
     this.props.SelectArticle();
-    this.GetSameLig();
-    this.getMaxNumlig();
+    this.sameTable();
   }
 
-  getMaxNumlig = () => {
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV?typppe=DV&numfacc=${this.props.numfacc}`
-    )
+  articleHandlerChange = (event) => {
+    fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
       .then((response) => response.json())
-      .then((data) =>
-        this.setState({
-          numligs: data,
-        })
-      );
-    //  this.setState({ numlig: this.state.numligs.map((t) => t.Column1 + 1) });
+      .then((data) => this.setState({ rechs: data }));
   };
 
-  submitHandlers = (event) => {
-    event.preventDefault();
+  modifiermodification = (event) => {
+    // event.preventDefault();
 
-    ////////////////// max numlig//////////////////
-
-    //////////////////////////// ligbcdvcli submit ////////////////////
-
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV?numfac=${this.props.numfacc}&typfac=DV&numlig=${event.target.numligg.value}&codart=${this.state.codearticle}&desart=${this.state.des}&quantite=${this.state.qte}&priuni=${this.state.puht}&remise=${this.state.remisea}&tautva=${this.state.tva}&fodart=${this.state.faudec}&datfac=${this.state.defaultdate}&unite=${this.state.unite}&totalht=${this.state.totalht}&puttcnet=${this.state.puttcnet}`,
-      {
-        method: "POST",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          this.setState({ snackbaropen: true, snackbarmsg: result });
-          console.log(result);
-          this.GetSameLig();
-          this.getMaxNumlig();
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
+    const newtab = this.state.tab.concat({
+      codart: this.state.codearticle,
+      desart: this.state.des,
+      quantite: this.state.qte,
+      unite: this.state.unite,
+      priuni: this.state.puht,
+      remise: this.state.remisea,
+      tautva: this.state.tva,
+      montht: this.state.puttcnet,
+      PUTTCNET: this.state.totalht,
+    });
+    const SumQte = newtab && newtab.reduce((a, v) => a + parseInt(v.qte), 0);
+    const SumRemiseArticle =
+      newtab &&
+      newtab.reduce(
+        (a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100,
+        0
       );
+    const SumHtBrut =
+      newtab && newtab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
+    const SumTva =
+      newtab &&
+      newtab.reduce(
+        (a, v) =>
+          a +
+          parseInt(v.qte) * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100),
+        0
+      );
+    const SumHtNet =
+      newtab &&
+      newtab.reduce(
+        (a, v) => a + v.totalht * ((100 - this.props.rem) / 100),
+        0
+      );
+    const SumRemiseGlobale =
+      newtab &&
+      newtab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
+    const SumNetAPayer =
+      newtab &&
+      newtab.reduce(
+        (a, v) =>
+          a +
+          (v.totalht * ((100 - this.props.rem) / 100) +
+            v.qte * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100)),
+        0
+      );
+
+    this.setState({
+      tab: newtab,
+
+      totalqte: SumQte,
+      sumremisearticle: SumRemiseArticle,
+      totalhtbrut: SumHtBrut,
+      totaltva: SumTva,
+      totalhtnet: SumHtNet,
+      remiseglobal: SumRemiseGlobale,
+      netapayer: SumNetAPayer,
+      snackbaropen: true,
+      btnEnabled: true,
+      changeButton: false,
+    });
 
     this.setState({
       codearticle: "",
@@ -124,62 +154,95 @@ class ModifierLigDevis extends Component {
       tva: 0,
       puttcnet: 0,
       faudec: "N",
-      numlig: parseInt(this.state.numlig) + 10,
     });
   };
 
-  GetSameLig = () => {
+  submitHandler = (event) => {
+    event.preventDefault();
+
+    const newtab = this.state.tab.concat({
+      codart: this.state.codearticle,
+      desart: this.state.des,
+      quantite: this.state.qte,
+      unite: this.state.unite,
+      priuni: this.state.puht,
+      remise: event.target.remiseea.value,
+      tautva: this.state.tva,
+      montht: this.state.puttcnet,
+      PUTTCNET: this.state.totalht,
+    });
+    const SumQte = newtab && newtab.reduce((a, v) => a + parseInt(v.qte), 0);
+    const SumRemiseArticle =
+      newtab &&
+      newtab.reduce(
+        (a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100,
+        0
+      );
+    const SumHtBrut =
+      newtab && newtab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
+    const SumTva =
+      newtab &&
+      newtab.reduce(
+        (a, v) =>
+          a +
+          parseInt(v.qte) * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100),
+        0
+      );
+    const SumHtNet =
+      newtab &&
+      newtab.reduce(
+        (a, v) => a + v.totalht * ((100 - this.props.rem) / 100),
+        0
+      );
+    const SumRemiseGlobale =
+      newtab &&
+      newtab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
+    const SumNetAPayer =
+      newtab &&
+      newtab.reduce(
+        (a, v) =>
+          a +
+          (v.totalht * ((100 - this.props.rem) / 100) +
+            v.qte * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100)),
+        0
+      );
+
+    this.setState({
+      tab: newtab,
+
+      totalqte: SumQte,
+      sumremisearticle: SumRemiseArticle,
+      totalhtbrut: SumHtBrut,
+      totaltva: SumTva,
+      totalhtnet: SumHtNet,
+      remiseglobal: SumRemiseGlobale,
+      netapayer: SumNetAPayer,
+      snackbaropen: true,
+      btnEnabled: true,
+    });
+
+    this.setState({
+      codearticle: "",
+      qte: "",
+      totalht: 0,
+      des: "",
+      unite: "",
+      puht: "",
+      remisea: 0,
+      tva: 0,
+      puttcnet: 0,
+      faudec: "N",
+    });
+  };
+
+  sameTable = () => {
     fetch(
-      `http://192.168.1.100:81/api/LigBCDV?type=DV&num=${this.props.numfacc}`
+      `http://192.168.1.100:81/api/LigBCDV?type=DV&numfac=${this.props.numfacc}`
     )
       .then((response) => response.json())
       .then((data) =>
         this.setState({
-          artligs: data,
-          totalqte: data && data.reduce((a, v) => a + parseInt(v.quantite), 0),
-          sumremisearticle:
-            data &&
-            data.reduce(
-              (a, v) => a + (parseInt(v.quantite) * v.priuni * v.remise) / 100,
-              0
-            ),
-          totalhtbrut:
-            data &&
-            data.reduce((a, v) => a + parseInt(v.quantite) * v.priuni, 0),
-          totaltva:
-            data &&
-            data.reduce(
-              (a, v) =>
-                a +
-                parseInt(v.quantite) *
-                  v.priuni *
-                  ((100 - v.remise) / 100) *
-                  (v.tautva / 100),
-              0
-            ),
-          totalhtnet:
-            data &&
-            data.reduce(
-              (a, v) => a + v.totalht * ((100 - this.props.rem) / 100),
-              0
-            ),
-          remiseglobal:
-            data &&
-            data.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0),
-          netapayer:
-            data &&
-            data.reduce(
-              (a, v) =>
-                a +
-                (v.totalht * ((100 - this.props.rem) / 100) +
-                  v.quantite *
-                    v.priuni *
-                    ((100 - v.remise) / 100) *
-                    (v.tautva / 100)),
-              0
-            ),
-          //  snackbaropen: true,
-          btnEnabled: true,
+          tab: data,
         })
       );
   };
@@ -211,40 +274,183 @@ class ModifierLigDevis extends Component {
   };
 
   deleteRow = (index) => {
-    if (window.confirm("Voulez vous supprimer cette ligne d'article ?")) {
-      fetch(
-        `http://192.168.1.100:81/api/LigBCDV/` +
-          this.props.numfacc +
-          `?numl=${index}`,
-        {
-          method: "DELETE",
-          header: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          this.setState({ snackbarfail: true, snackbarmsg: result });
-          this.GetSameLig();
-          console.log(result);
-        });
-    }
+    var tab = [...this.state.tab];
+    tab.splice(index, 1);
+    const SumQte = tab && tab.reduce((a, v) => a + parseInt(v.qte), 0);
+    const SumRemiseArticle =
+      tab &&
+      tab.reduce((a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100, 0);
+    const SumHtBrut =
+      tab && tab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
+    const SumTva =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          parseInt(v.qte) * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100),
+        0
+      );
+    const SumHtNet =
+      tab &&
+      tab.reduce((a, v) => a + v.totalht * ((100 - this.props.rem) / 100), 0);
+    const SumRemiseGlobale =
+      tab && tab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
+    const SumNetAPayer =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          (v.totalht * ((100 - this.props.rem) / 100) +
+            parseInt(v.qte) *
+              v.puht *
+              ((100 - v.remisea) / 100) *
+              (v.tva / 100)),
+        0
+      );
 
-    // this.setState({
-    //   numlig: parseInt(this.state.numlig) - 1,
-    // });
+    this.setState({
+      tab,
+      totalqte: SumQte,
+      sumremisearticle: SumRemiseArticle,
+      totalhtbrut: SumHtBrut,
+      totaltva: SumTva,
+      totalhtnet: SumHtNet,
+      remiseglobal: SumRemiseGlobale,
+      netapayer: SumNetAPayer,
+      snackbarfail: true,
+    });
+  };
+
+  ///////////// delete for modification without snackbaropende ///////////
+  deleteRowMod = (index) => {
+    var tab = [...this.state.tab];
+    tab.splice(index, 1);
+    const SumQte = tab && tab.reduce((a, v) => a + parseInt(v.qte), 0);
+    const SumRemiseArticle =
+      tab &&
+      tab.reduce((a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100, 0);
+    const SumHtBrut =
+      tab && tab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
+    const SumTva =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          parseInt(v.qte) * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100),
+        0
+      );
+    const SumHtNet =
+      tab &&
+      tab.reduce((a, v) => a + v.totalht * ((100 - this.props.rem) / 100), 0);
+    const SumRemiseGlobale =
+      tab && tab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
+    const SumNetAPayer =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          (v.totalht * ((100 - this.props.rem) / 100) +
+            parseInt(v.qte) *
+              v.puht *
+              ((100 - v.remisea) / 100) *
+              (v.tva / 100)),
+        0
+      );
+
+    this.setState({
+      tab,
+      totalqte: SumQte,
+      sumremisearticle: SumRemiseArticle,
+      totalhtbrut: SumHtBrut,
+      totaltva: SumTva,
+      totalhtnet: SumHtNet,
+      remiseglobal: SumRemiseGlobale,
+      netapayer: SumNetAPayer,
+      btnEnabled: true,
+    });
+  };
+
+  enregistrer = () => {
+    ////////// first part delete ///////////////////
+    fetch(
+      `http://192.168.1.100:81/api/LigBCDV/${this.props.numfacc}?typfacc=DV`,
+      {
+        method: "DELETE",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        // this.setState({ enrsnackbaropen: true, snackbarmsg: result });
+      });
+
+    ///////////// second part add new table to database //////////////
+
+    this.state.tab.map((k, index) => {
+      for (var i = 0; i < this.state.tab.length; i++) {
+        fetch(
+          `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=${
+            this.props.numfacc
+          }&typfac=DV&numlig=${index + 10}&codart=${k.codart}&quantite=${
+            k.quantite
+          }&fodart=0&desart=${k.desart}&datfac=${this.props.datfac}&priuni=${
+            k.priuni
+          }&remise=${k.remise}&unite${k.unite}&codtva=3&tautva=${k.tautva}`,
+          {
+            method: "POST",
+            header: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then(
+            (result) => {
+              //   this.setState({ enrsnackbaropen: true, snackbarmsg: result });
+
+              console.log(result);
+              // window.alert(result);
+            },
+            (error) => {
+              this.setState({
+                enrsnackbaropen: true,
+                snackbarmsg: "failed",
+              });
+            }
+          );
+      }
+    });
+
+    //////////////////// third party /////////////////
+
+    fetch(
+      `http://192.168.1.100:81/api/LigBCDV?FAC=${this.props.numfacc}&typfacc=DV`,
+      {
+        method: "POST",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          console.log(result);
+        },
+        (error) => {
+          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        }
+      );
   };
 
   render() {
     let EditModalClose = () => this.setState({ openEditModal: false });
-
-    //  this.state.numligs.map((num) => this.setState({ numlig: num.Column1 + 1 }));
-
-    this.GetSameLig();
-    // console.log("numlig=", this.state.numlig);
-
     const {
       quantt,
       remiss,
@@ -258,33 +464,46 @@ class ModifierLigDevis extends Component {
     return (
       <div className="container">
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
           open={this.state.snackbaropen}
           autoHideDuration={2000}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
           onClose={this.snackbarClose}
-          message={<span id="message-id"> {this.state.snackbarmsg} </span>}
-          action={[
-            <IconButton
-              key="close"
-              color="inherit"
-              onClick={this.snackbarClose}
-            >
-              x
-            </IconButton>,
-          ]}
-        ></Snackbar>
+        >
+          <Alert
+            style={{ height: "50px" }}
+            onClose={this.snackbarClose}
+            severity="success"
+          >
+            Article ajouté
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={this.state.snackbarfail}
+          autoHideDuration={2000}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          onClose={this.snackbarFailClose}
+        >
+          <Alert
+            style={{ height: "50px" }}
+            onClose={this.snackbarFailClose}
+            severity="error"
+          >
+            Article supprimé
+          </Alert>
+        </Snackbar>
 
         <Snackbar
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          open={this.state.snackbarfail}
+          open={this.state.enrsnackbaropen}
           autoHideDuration={2000}
-          onClose={this.snackbarFailClose}
+          onClose={this.enrsnackbarClose}
           message={<span id="message-id"> {this.state.snackbarmsg} </span>}
           action={[
             <IconButton
               key="close"
               color="inherit"
-              onClick={this.snackbarFailClose}
+              onClick={this.enrsnackbarClose}
             >
               x
             </IconButton>,
@@ -293,7 +512,7 @@ class ModifierLigDevis extends Component {
 
         <Modal
           {...this.props}
-          size="xl"
+          size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           centered
         >
@@ -308,11 +527,10 @@ class ModifierLigDevis extends Component {
           <Modal.Body>
             <Card>
               <Card.Body>
-                <form onSubmit={this.submitHandlers}>
-                  <Row form>
-                    <Col sm={4}>
+                <form onSubmit={this.submitHandler}>
+                  <Row form style={{ marginBottom: "-20px" }}>
+                    <Col sm={8}>
                       <FormGroup>
-                        <Label>Chercher article par :</Label>
                         <Typography component="div">
                           <Grid
                             component="label"
@@ -320,6 +538,10 @@ class ModifierLigDevis extends Component {
                             alignItems="center"
                             spacing={1}
                           >
+                            <Grid>
+                              <b>Chercher article par :</b>
+                            </Grid>
+                            &nbsp;&nbsp;
                             <Grid item>Désignation</Grid>
                             <Grid item>
                               <Switch
@@ -337,14 +559,35 @@ class ModifierLigDevis extends Component {
                       </FormGroup>
                     </Col>
 
-                    <Col sm={4}>
+                    <Col sm={3}>
+                      <FormGroup
+                        style={{ marginTop: "10px", marginLeft: "10px" }}
+                      >
+                        {this.state.faudec === "A" ? (
+                          <p style={{ color: "grey" }}>Fodec: ✔</p>
+                        ) : null}
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row form>
+                    <Col sm={5}>
                       <FormGroup>
-                        {this.state.gilad ? (
+                        {this.state.changeButton ? (
+                          <TextField
+                            id="standard-basic"
+                            label="Code Article"
+                            value={this.state.codearticle}
+                            disabled
+                            margin="normal"
+                            fullWidth
+                          />
+                        ) : this.state.gilad ? (
                           <Autocomplete
                             id="include-input-in-list"
                             includeInputInList
                             className="ajouter-client-input"
-                            options={this.props.articles.articles}
+                            //   options={this.props.articles.articles}
+                            options={this.state.rechs}
                             getOptionLabel={(option) => option.codart}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
@@ -374,6 +617,7 @@ class ModifierLigDevis extends Component {
                                 label="Code article"
                                 margin="normal"
                                 fullWidth
+                                onChange={this.articleHandlerChange}
                               />
                             )}
                           />
@@ -382,7 +626,8 @@ class ModifierLigDevis extends Component {
                             id="include-input-in-list"
                             includeInputInList
                             className="ajouter-client-input"
-                            options={this.props.articles.articles}
+                            //   options={this.props.articles.articles}
+                            options={this.state.rechs}
                             getOptionLabel={(option) => option.desart}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
@@ -412,6 +657,7 @@ class ModifierLigDevis extends Component {
                                 label="Désignation article"
                                 margin="normal"
                                 fullWidth
+                                onChange={this.articleHandlerChange}
                               />
                             )}
                           />
@@ -427,8 +673,17 @@ class ModifierLigDevis extends Component {
                       />
                     </FormGroup>
 
-                    <Col sm={4}>
-                      {this.state.gilad ? (
+                    <Col sm={5}>
+                      {this.state.changeButton ? (
+                        <TextField
+                          id="standard-basic"
+                          label="Désignation"
+                          value={this.state.des}
+                          disabled
+                          margin="normal"
+                          fullWidth
+                        />
+                      ) : this.state.gilad ? (
                         <FormGroup>
                           <TextField
                             id="standard-basic"
@@ -452,9 +707,8 @@ class ModifierLigDevis extends Component {
                         </FormGroup>
                       )}
                     </Col>
-                  </Row>
-                  <Row form>
-                    <Col sm={3}>
+
+                    <Col sm={2}>
                       <FormGroup>
                         {this.state.des === "" ? (
                           <TextField
@@ -465,7 +719,7 @@ class ModifierLigDevis extends Component {
                             InputLabelProps={{
                               shrink: true,
                             }}
-                            style={{ marginTop: "0px" }}
+                            style={{ marginTop: "16px" }}
                             margin="normal"
                             fullWidth
                             required
@@ -478,7 +732,7 @@ class ModifierLigDevis extends Component {
                             InputLabelProps={{
                               shrink: true,
                             }}
-                            style={{ marginTop: "0px" }}
+                            style={{ marginTop: "16px" }}
                             value={this.state.qte}
                             onChange={this.qteHandler}
                             margin="normal"
@@ -488,8 +742,9 @@ class ModifierLigDevis extends Component {
                         )}
                       </FormGroup>
                     </Col>
-
-                    <Col sm={3}>
+                  </Row>
+                  <Row form>
+                    <Col sm={2}>
                       <FormGroup>
                         <TextField
                           id="standard-basic"
@@ -515,7 +770,7 @@ class ModifierLigDevis extends Component {
                       </FormGroup>
                     </Col>
 
-                    <Col sm={3}>
+                    <Col sm={2}>
                       <FormGroup>
                         <TextField
                           id="standard-basic"
@@ -527,7 +782,7 @@ class ModifierLigDevis extends Component {
                       </FormGroup>
                     </Col>
 
-                    <Col sm={3}>
+                    <Col sm={2}>
                       <FormGroup>
                         <TextField
                           id="standard-basic"
@@ -535,12 +790,11 @@ class ModifierLigDevis extends Component {
                           value={this.state.remisea}
                           fullWidth
                           disabled
+                          name="remiseea"
                         />
                       </FormGroup>
                     </Col>
-                  </Row>
-                  <Row form>
-                    <Col sm={3}>
+                    <Col sm={2}>
                       <FormGroup>
                         <TextField
                           id="standard-basic"
@@ -551,7 +805,7 @@ class ModifierLigDevis extends Component {
                         />
                       </FormGroup>
                     </Col>
-                    <Col sm={3}>
+                    <Col sm={2}>
                       <FormGroup>
                         <TextField
                           id="standard-basic"
@@ -564,7 +818,7 @@ class ModifierLigDevis extends Component {
                       </FormGroup>
                     </Col>
 
-                    <Col sm={3}>
+                    <Col sm={2}>
                       <FormGroup>
                         <TextField
                           id="standard-basic"
@@ -573,34 +827,6 @@ class ModifierLigDevis extends Component {
                           fullWidth
                           disabled
                         />
-                      </FormGroup>
-                    </Col>
-
-                    <Col sm={3}>
-                      <FormGroup
-                        style={{ marginTop: "10px", marginLeft: "10px" }}
-                      >
-                        <Label> Fodec </Label>
-                        {this.state.faudec === "A" ? (
-                          <Checkbox
-                            defaultChecked
-                            value="secondary"
-                            color="primary"
-                            inputProps={{
-                              "aria-label": "secondary checkbox",
-                            }}
-                          />
-                        ) : (
-                          <Label>
-                            <Checkbox
-                              disabled
-                              value="disabled"
-                              inputProps={{
-                                "aria-label": "disabled checkbox",
-                              }}
-                            />
-                          </Label>
-                        )}
                       </FormGroup>
                     </Col>
                   </Row>
@@ -635,20 +861,17 @@ class ModifierLigDevis extends Component {
             <Card style={{ marginTop: "10px" }}>
               <Card.Body>
                 {/* <div className="lig-table"> */}
-                <div className="tab28">
+                <div className="tabd28">
                   <table style={{ marginTop: "10px" }}>
-                    <thead style={{ textAlign: "center", fontSize: "12px" }}>
+                    <thead style={{ fontSize: "12px", textAlign: "center" }}>
                       <tr>
-                        <th>Article</th>
-                        <th>Désignation</th>
+                        <th>Code</th>
+                        <th style={{ width: "40%" }}>Désignation</th>
                         <th>Quantité</th>
-                        <th>Unité</th>
-                        <th>PU HT</th>
-                        <th>Fodec</th>
+                        <th>PUHT</th>
                         <th>Remise</th>
                         <th>TVA</th>
                         <th>TotalHT</th>
-                        <th>PUNet</th>
                         <th></th>
                         <th></th>
                       </tr>
@@ -657,53 +880,63 @@ class ModifierLigDevis extends Component {
                       style={{
                         overflowY: "auto",
                         display: "block",
-                        maxHeight: "12em",
-                        textAlign: "center",
+                        maxHeight: "10em",
                       }}
                     >
-                      {this.state.artligs.map((t, i) => (
+                      {this.state.tab.map((t, i) => (
                         <tr key={i}>
-                          <td>{t.codart}</td>
-                          <td style={{ fontSize: "12px" }}>{t.desart}</td>
-                          <td>{t.quantite}</td>
-                          <td>{t.unite}</td>
-                          <td>{t.priuni}</td>
                           <td>
-                            {t.fodart === "A" ? <span>✔</span> : <span>Ø</span>}
+                            <span>{t.codart}</span>
                           </td>
-                          <td>{t.remise}</td>
-                          <td>{t.tautva}</td>
-                          <td>{t.totalht}</td>
-                          <td>{t.puttcnet}</td>
+                          <td style={{ fontSize: "12px", width: "40%" }}>
+                            {t.desart}
+                          </td>
+                          <td>
+                            <span>{t.quantite}</span>
+                          </td>
+                          <td>
+                            <span>{Number(t.priuni).toFixed(3)}</span>
+                          </td>
 
                           <td>
-                            <Tooltip title="Supprimer cet article">
+                            <span>{Number(t.remise).toFixed(2)}</span>
+                          </td>
+                          <td>
+                            <span>{Number(t.tautva).toFixed(2)}</span>
+                          </td>
+
+                          <td>
+                            <span>{Number(t.montht).toFixed(3)}</span>
+                          </td>
+                          <td>
+                            <Tooltip title="Modifier cet article">
                               <Fab size="small">
-                                <DeleteIcon
+                                <EditIcon
                                   style={{}}
-                                  onClick={() => this.deleteRow(t.numlig)}
+                                  onClick={() => {
+                                    this.setState({
+                                      codearticle: t.codart,
+                                      des: t.desart,
+                                      unite: t.unite,
+                                      puht: t.priuni,
+                                      remisea: t.remise,
+                                      tva: t.tautva,
+                                      faudec: t.typfodec,
+                                      qte: t.quantite,
+                                      changeButton: true,
+                                    });
+                                    this.deleteRowMod(i);
+                                  }}
                                 />
                               </Fab>
                             </Tooltip>
                           </td>
                           <td>
-                            <Tooltip title="editer cet article">
+                            <Tooltip title="Supprimer cet article">
                               <Fab size="small">
-                                <EditIcon
+                                <DeleteIcon
                                   style={{}}
-                                  onClick={() =>
-                                    this.setState({
-                                      openEditModal: true,
-                                      quantt: t.quantite,
-                                      remiss: t.remise,
-                                      artid: t.codart,
-                                      totalhtt: t.totalht,
-                                      puttcnett: t.puttcnet,
-                                      numfacccc: t.numfac,
-                                      numligg: t.numlig,
-                                      prixunix: t.priuni,
-                                    })
-                                  }
+                                  onClick={() => this.deleteRow(i)}
                                 />
                               </Fab>
                             </Tooltip>
@@ -712,20 +945,6 @@ class ModifierLigDevis extends Component {
                       ))}
                     </tbody>
                   </table>
-
-                  <EditArticleModal
-                    show={this.state.openEditModal}
-                    onHide={EditModalClose}
-                    quantt={quantt}
-                    remiss={remiss}
-                    artid={artid}
-                    totalhtt={totalhtt}
-                    puttcnett={puttcnett}
-                    numfacccc={numfacccc}
-                    numligg={numligg}
-                    prixunix={prixunix}
-                    onHide01={this.props.onHide}
-                  />
                 </div>
               </Card.Body>
             </Card>
@@ -744,20 +963,11 @@ class ModifierLigDevis extends Component {
                   width: "30%",
                 }}
                 onClick={() => {
-                  // this.setState({ shown: true });
-                  this.props.submitHandler(
-                    this.state.shown,
-                    this.state.artligs
-                    // this.state.totalqte,
-                    // this.state.sumremisearticle,
-                    // this.state.totalhtbrut,
-                    // this.state.totaltva,
-                    // this.state.totalhtnet,
-                    // this.state.remiseglobal,
-                    // this.state.netapayer,
-                    // this.state.btnEnabled
-                  );
+                  this.enregistrer();
                   this.props.onHide();
+                  this.props.onHide01();
+                  window.alert("Modification enregistré");
+                  this.props.SelectUser();
                 }}
               >
                 Enregistrer
@@ -773,6 +983,7 @@ class ModifierLigDevis extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectArticle: () => dispatch(SelectArticle()),
+    SelectUser: () => dispatch(SelectUser()),
   };
 }
 

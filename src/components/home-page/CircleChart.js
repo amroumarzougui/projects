@@ -1,85 +1,92 @@
-import React, { Component } from 'react';
-import { Bar, Line, Pie } from 'react-chartjs-2';
-import { PieChart } from 'react-simple-pie-chart';
-import Chart from 'react-apexcharts'
+import { Component } from "react";
+import { Bar, Line, Pie } from "react-chartjs-2";
+import * as React from "react";
 
+import Axios from "axios";
+
+const DATE_OPTIONS = {
+  month: "short",
+  day: "numeric",
+};
 
 class CircleChart extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
+  constructor(props) {
+    super(props);
 
-            series: [76, 67, 61, 90],
-            options: {
-                chart: {
-                    height: 390,
-                    type: 'radialBar',
-                },
-                plotOptions: {
-                    radialBar: {
-                        offsetY: 0,
-                        startAngle: 0,
-                        endAngle: 270,
-                        hollow: {
-                            margin: 5,
-                            size: '30%',
-                            background: 'transparent',
-                            image: undefined,
-                        },
-                        dataLabels: {
-                            name: {
-                                show: false,
-                            },
-                            value: {
-                                show: false,
-                            }
-                        }
-                    }
-                },
-                colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
-                labels: ['Vimeo', 'Messenger', 'Facebook', 'LinkedIn'],
-                legend: {
-                    show: true,
-                    floating: true,
-                    fontSize: '12px',
-                    position: 'left',
-                    offsetX: -25,
-                    offsetY: -30,
-                    labels: {
-                        useSeriesColors: true,
-                    },
-                    markers: {
-                        size: 0
-                    },
-                    formatter: function (seriesName, opts) {
-                        return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex]
-                    },
-                    itemMargin: {
-                        vertical: 3
-                    }
-                },
-                responsive: [{
-                    breakpoint: 480,
-                    options: {
-                        legend: {
-                            show: false
-                        }
-                    }
-                }]
-            },
+    this.state = {
+      data: {},
+    };
+  }
 
+  componentDidMount() {
+    Axios.get(`http://192.168.1.100:81/api/BLBRs?typtyp=BL`).then((res) => {
+      console.log(res);
 
-        }
-    }
-    render() {
-        return (
-            <div>
-                <Chart options={this.state.options} series={this.state.series} type="radialBar" height={"250px"} />
+      const ipl = res.data;
 
+      let playername = [];
 
-            </div>
+      let runscore = [];
+
+      ipl.forEach((record) => {
+        playername.push(
+          new Date(record.datfac).toLocaleDateString("fr", DATE_OPTIONS)
         );
-    }
+
+        runscore.push(record.sommemntbn);
+      });
+
+      this.setState({
+        Data: {
+          labels: playername,
+
+          datasets: [
+            {
+              label: "Montant BL / jour",
+
+              data: runscore,
+
+              backgroundColor: [
+                "#08052b",
+
+                "#3cb371",
+
+                "#0000FF",
+
+                "#9966FF",
+
+                "#4C4CFF",
+
+                "#00FFFF",
+
+                "#f990a7",
+
+                "#aad2ed",
+
+                "#FF00FF",
+
+                "Red",
+              ],
+            },
+          ],
+        },
+      });
+    });
+  }
+  render() {
+    return (
+      <div>
+        <div>
+          <Pie
+            data={this.state.Data}
+            options={{ maintainAspectRatio: false }}
+            width={"300px"}
+            height={"200px"}
+          />
+        </div>
+      </div>
+    );
+  }
 }
 
 export default CircleChart;

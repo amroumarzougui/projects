@@ -112,7 +112,7 @@ class Facture extends Component {
             <table>
               <thead>
                 <tr>
-                  <th>№ BL</th>
+                  <th>№ Facture</th>
                   <th>Date</th>
 
                   <th style={{ width: "55%" }}>Client</th>
@@ -193,7 +193,7 @@ class Facture extends Component {
             <table>
               <thead>
                 <tr>
-                  <th>№ BL</th>
+                  <th>№ Facture</th>
                   <th>Date</th>
 
                   <th style={{ width: "55%" }}>Client</th>

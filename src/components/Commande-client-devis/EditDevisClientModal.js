@@ -116,35 +116,34 @@ class EditDevisClientModal extends Component {
   };
 
   supprimer = () => {
-    if (window.confirm("Voulez vous supprimer ce devis ?")) {
-      fetch(`http://192.168.1.100:81/api/BCDVCLIs/` + this.props.devisid, {
-        method: "DELETE",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((result) => {
-          console.log(result);
-          this.setState({ snackbaropensup: true, snackbarmsg: result });
-        });
-
-      fetch(`http://192.168.1.100:81/api/LigBCDV/` + this.props.devisid, {
-        method: "DELETE",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((result) => {
-          console.log(result);
-          this.setState({ snackbaropensup: true, snackbarmsg: result });
-        });
-    }
-    this.props.onHide();
-    this.props.SelectUser();
+    // if (window.confirm("Voulez vous supprimer ce devis ?")) {
+    //   fetch(`http://192.168.1.100:81/api/BCDVCLIs/` + this.props.devisid, {
+    //     method: "DELETE",
+    //     header: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //   })
+    //     .then((res) => res.json())
+    //     .then((result) => {
+    //       console.log(result);
+    //       this.setState({ snackbaropensup: true, snackbarmsg: result });
+    //     });
+    //   fetch(`http://192.168.1.100:81/api/LigBCDV/` + this.props.devisid, {
+    //     method: "DELETE",
+    //     header: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //   })
+    //     .then((res) => res.json())
+    //     .then((result) => {
+    //       console.log(result);
+    //       this.setState({ snackbaropensup: true, snackbarmsg: result });
+    //     });
+    // }
+    // this.props.onHide();
+    // this.props.SelectUser();
   };
 
   openModifier = () => {
@@ -237,7 +236,7 @@ class EditDevisClientModal extends Component {
         </Snackbar>
         <Modal
           {...this.props}
-          size="xl"
+          size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           centered
         >
@@ -264,7 +263,11 @@ class EditDevisClientModal extends Component {
                       <Label>Date Devis</Label>
                     </Typography>
                     <Typography style={{ color: "grey" }}>
-                      {this.props.datedevis}
+                      {/* {this.props.datedevis} */}
+                      {new Date(this.props.datedevis).toLocaleDateString(
+                        "fr",
+                        DATE_OPTIONS
+                      )}
                     </Typography>
                   </Col>
 
@@ -292,23 +295,21 @@ class EditDevisClientModal extends Component {
             <Card style={{ marginTop: "10px" }}>
               <Card.Body>
                 {/* <div className="ligbc-table"> */}
-                <div className="tab28">
+                <div className="tabd28">
                   <table stripped>
-                    <thead style={{ textAlign: "center", fontSize: "12px" }}>
-                      <tr>
-                        <th>Article</th>
-                        <th>Désignation</th>
+                    <thead>
+                      <tr style={{ textAlign: "center", fontSize: "12px" }}>
+                        <th>Code</th>
+                        <th style={{ width: "37%" }}>Désignation</th>
                         <th>Quantité</th>
-                        <th>Unité</th>
+                        {/* <th>Unité</th> */}
                         <th>PUHT</th>
-                        <th>Fodec</th>
                         <th>Remise</th>
                         <th>TVA</th>
+                        <th>PUTTCNet</th>
                         <th>TotalHT</th>
-                        <th>PUNet</th>
                       </tr>
                     </thead>
-
                     <tbody
                       style={{
                         overflowY: "auto",
@@ -316,49 +317,39 @@ class EditDevisClientModal extends Component {
                         maxHeight: "10em",
                       }}
                     >
-                      {this.state.shown
-                        ? this.state.artligs.map((t, i) => (
-                            <tr key={i}>
-                              <td>{t.codart}</td>
-                              <td style={{ fontSize: "12px" }}>{t.desart}</td>
-                              <td>{t.quantite}</td>
-                              <td>{t.unite}</td>
-                              <td>{t.priuni}</td>
-                              <td>
-                                {t.fodart === "A" ? (
-                                  <span>✔</span>
-                                ) : (
-                                  <span>Ø</span>
-                                )}
-                              </td>
-                              <td>{t.remise}</td>
-                              <td>{t.tautva}</td>
-                              <td>{t.totalht}</td>
-                              <td>{t.puttcnet}</td>
-                            </tr>
-                          ))
-                        : this.props.ligs.ligs.map((lig) =>
-                            lig.numfac === this.props.devisid ? (
-                              <tr>
-                                <td>{lig.codart}</td>
-                                <td style={{ fontSize: "12px" }}>
-                                  {lig.desart}
-                                </td>
-                                <td>{lig.quantite}</td>
-                                <td>{lig.unite}</td>
-                                <td>{lig.priuni}</td>
-                                <td>
-                                  {lig.fodart ? <span>✔</span> : <span>Ø</span>}
-                                </td>
-                                <td>{lig.remise}</td>
-                                <td>{lig.tautva}</td>
-                                <td>{lig.totalht}</td>
-                                <td>{lig.puttcnet}</td>
-                              </tr>
-                            ) : (
-                              <tr></tr>
-                            )
-                          )}
+                      {this.props.tabtab.map((t, i) => (
+                        <tr key={i} style={{ textAlign: "center" }}>
+                          <td>
+                            <span>{t.codart}</span>
+                          </td>
+                          <td style={{ fontSize: "12px", width: "37%" }}>
+                            {t.desart}
+                          </td>
+                          <td>
+                            <span>{t.quantite}</span>
+                          </td>
+                          {/* <td>
+                            <span>{t.unite}</span>
+                          </td> */}
+                          <td>
+                            <span>{Number(t.priuni).toFixed(3)}</span>
+                          </td>
+
+                          <td>
+                            <span>{Number(t.remise).toFixed(2)}</span>
+                          </td>
+                          <td>
+                            <span>{Number(t.tautva).toFixed(2)}</span>
+                          </td>
+
+                          <td>
+                            <span>{Number(t.PUTTCNET).toFixed(3)}</span>
+                          </td>
+                          <td>
+                            <span>{Number(t.montht).toFixed(3)}</span>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
@@ -381,7 +372,9 @@ class EditDevisClientModal extends Component {
                     <p style={{ color: "grey", marginBottom: "-5px" }}>
                       Total HT Brut
                     </p>
-                    <p style={{ color: "black" }}>{this.props.totalhtbrut}</p>
+                    <p style={{ color: "black" }}>
+                      {Number(this.props.totalhtbrut).toFixed(3)}
+                    </p>
                   </Col>
 
                   <Col
@@ -397,7 +390,9 @@ class EditDevisClientModal extends Component {
                     <p style={{ color: "grey", marginBottom: "-5px" }}>
                       Remise Article
                     </p>
-                    <p style={{ color: "black" }}>{this.props.remiselignes}</p>
+                    <p style={{ color: "black" }}>
+                      {Number(this.props.remiselignes).toFixed(3)}
+                    </p>
                   </Col>
 
                   <Col
@@ -413,7 +408,9 @@ class EditDevisClientModal extends Component {
                     <p style={{ color: "grey", marginBottom: "-5px" }}>
                       Total TVA
                     </p>
-                    <p style={{ color: "black" }}>{this.props.totaltva}</p>
+                    <p style={{ color: "black" }}>
+                      {Number(this.props.totaltva).toFixed(3)}
+                    </p>
                   </Col>
 
                   <Col
@@ -432,92 +429,11 @@ class EditDevisClientModal extends Component {
                     {/* {this.state.sums.map((sum) => (
                       <p style={{ color: "black" }}>{sum.Column1}
                       </p> */}
-                    <p style={{ color: "black" }}> {this.props.sum} </p>
+                    <p style={{ color: "black" }}> {this.props.sumqt} </p>
                   </Col>
                 </Row>
 
-                <Row style={{ marginBottom: "10px" }}>
-                  <Col sm={3}>
-                    <Divider style={{ backgroundColor: "grey" }} />
-                  </Col>
-                  <Col sm={3}>
-                    <Divider style={{ backgroundColor: "grey" }} />
-                  </Col>
-                  <Col sm={3}>
-                    <Divider style={{ backgroundColor: "grey" }} />
-                  </Col>
-                  <Col sm={3}>
-                    <Divider style={{ backgroundColor: "grey" }} />
-                  </Col>
-                </Row>
-
-                <Row style={{ marginBottom: "-10px" }}>
-                  <Col
-                    sm={3}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      textAlign: "center",
-                    }}
-                  >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
-                      Droit de timbre
-                    </p>
-                    <p style={{ color: "black" }}>{this.props.droitdetimbre}</p>
-                  </Col>
-
-                  <Col
-                    sm={3}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      textAlign: "center",
-                    }}
-                  >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
-                      Total DC
-                    </p>
-                    <p style={{ color: "black" }}>{this.props.totaldc}</p>
-                  </Col>
-
-                  <Col
-                    sm={3}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      textAlign: "center",
-                    }}
-                  >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
-                      Total COS
-                    </p>
-                    <p style={{ color: "black" }}>{this.props.totalcos}</p>
-                  </Col>
-
-                  <Col
-                    sm={3}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      textAlign: "center",
-                    }}
-                  >
-                    {/* <p style={{ color: "grey", marginBottom: "-5px" }}>
-                      Avance Impot
-                    </p>
-                    <p style={{ color: "black" }}>{this.props.avanceimpot}</p> */}
-                  </Col>
-                </Row>
-
-                {/* ///////////////////3eme/////////////////////////////////// */}
+                {/* ///////////////////2eme/////////////////////////////////// */}
 
                 <Row style={{ marginBottom: "10px" }}>
                   <Col sm={3}>
@@ -548,7 +464,9 @@ class EditDevisClientModal extends Component {
                     <p style={{ color: "grey", marginBottom: "-5px" }}>
                       Total HT Net
                     </p>
-                    <p style={{ color: "black" }}>{this.props.totalhtnet}</p>
+                    <p style={{ color: "black" }}>
+                      {Number(this.props.totalhtnet).toFixed(3)}
+                    </p>
                   </Col>
 
                   <Col
@@ -564,7 +482,9 @@ class EditDevisClientModal extends Component {
                     <p style={{ color: "grey", marginBottom: "-5px" }}>
                       Remise Globale
                     </p>
-                    <p style={{ color: "black" }}>{this.props.remiseglobale}</p>
+                    <p style={{ color: "black" }}>
+                      {Number(this.props.remiseglobale).toFixed(3)}
+                    </p>
                   </Col>
 
                   <Col
@@ -580,7 +500,9 @@ class EditDevisClientModal extends Component {
                     <p style={{ color: "grey", marginBottom: "-5px" }}>
                       Total TTC
                     </p>
-                    <p style={{ color: "black" }}>{Sumttcc}</p>
+                    <p style={{ color: "black" }}>
+                      {Number(this.props.totalttc).toFixed(3)}
+                    </p>
                   </Col>
 
                   <Col
@@ -683,7 +605,8 @@ class EditDevisClientModal extends Component {
               show={this.state.openModifierModal}
               onHide={ModifierModalClose}
               numfacc={this.props.devisid}
-              submitHandler={this.submitHandler}
+              datfac={this.props.datedevis}
+              onHide01={this.props.onHide}
             />
           </Modal.Body>
           <Modal.Footer></Modal.Footer>

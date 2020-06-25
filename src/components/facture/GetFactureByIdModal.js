@@ -19,11 +19,12 @@ import { Divider, Fab } from "@material-ui/core";
 import ReactToPrint from "react-to-print";
 import HomeIcon from "@material-ui/icons/Home";
 import PhoneIcon from "@material-ui/icons/Phone";
+import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
 
 const roundTo = require("round-to");
 
 const actions = [
-  { icon: <EditIcon />, name: "Imprimer" },
+  { icon: <PictureAsPdfIcon />, name: "PDF" },
   // { icon: <EditIcon />, name: "Modifier" },
   // { icon: <CancelPresentationIcon />, name: "Annuler" },
   // { icon: <DeleteOutlineIcon />, name: "Supprimer" },

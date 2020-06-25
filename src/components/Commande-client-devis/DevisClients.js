@@ -11,6 +11,14 @@ import { Button } from "react-bootstrap";
 import { SelectDevisLig } from "../../redux/actions/GetDevisLig";
 import "./ss.scss";
 import { Redirect } from "react-router-dom";
+import { TextField, InputAdornment } from "@material-ui/core";
+import SearchIcon from "@material-ui/icons/Search";
+
+const DATE_OPTIONS = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+};
 
 class DevisClient extends Component {
   constructor(props) {
@@ -24,52 +32,24 @@ class DevisClient extends Component {
     this.state = {
       editModalShow: false,
       loggedIn,
-      testing: [
-        {
-          t0: 100,
-          des: 1,
-          qte: 2,
-          t3: 3,
-          puht: 4,
-          t5: 5,
-          t6: 6,
-          tva: 0,
-          t8: 8,
-          t9: 9,
-        },
-        {
-          t0: 200,
-          des: 11,
-          qte: 12,
-          t3: 13,
-          puht: 14,
-          t5: 15,
-          t6: 16,
-          tva: 0,
-          t8: 18,
-          t9: 19,
-        },
-      ],
-      sums: [],
+      rechs: [],
+      icon: false,
+      rechercheclicked: false,
+      tabtab: [],
     };
   }
 
   componentDidMount() {
     this.props.SelectUser();
-    this.props.SelectDevisLig();
   }
 
-  deleteDevis(devisid) {
-    if (window.confirm("are you sure?")) {
-      fetch(`http://192.168.1.100:81/api/BCDVCLIs/` + devisid, {
-        method: "DELETE",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      });
-    }
-  }
+  toggle = () => this.setState({ modal: !this.state.modal });
+
+  rechercheHandler = (event) => {
+    fetch(`http://192.168.1.100:81/api/BCDVCLIs/${event.target.value}?type=DV`)
+      .then((response) => response.json())
+      .then((data) => this.setState({ rechs: data, rechercheclicked: true }));
+  };
 
   editModalClose = () => this.setState({ editModalShow: false });
 
@@ -91,19 +71,12 @@ class DevisClient extends Component {
       droitdetimbre,
       avanceimpot,
       annuler,
+      sumqt,
     } = this.state;
-
-    var Totalqteee =
-      this.props.ligs.ligs &&
-      this.props.ligs.ligs.reduce((a, v) => a + parseInt(v.quantite), 0);
 
     if (this.state.loggedIn === false) {
       return <Redirect to="/" />;
     }
-
-    fetch(`http://192.168.1.100:81/api/LigBCDV?typpe=DV&numm=${devisid}`)
-      .then((response) => response.json())
-      .then((data) => this.setState({ sums: data }));
 
     return (
       <div>
@@ -115,7 +88,23 @@ class DevisClient extends Component {
           <Row>
             <Col sm="9">
               {/* Recherche */}
-              <ConnectedSearchBar />
+              {/* <ConnectedSearchBar /> */}
+              <div className="search-bar">
+                <TextField
+                  placeholder="Recherche..."
+                  id="input-with-icon-textfield"
+                  className="input-search"
+                  onChange={this.rechercheHandler}
+                  onClick={this.toggle}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon className="search-icon" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </div>
             </Col>
 
             <Col sm="3">
@@ -126,101 +115,188 @@ class DevisClient extends Component {
         </div>
 
         {/* <div className="bc-table"> */}
-        <div className="tabd">
-          <table stripped>
-            <thead>
-              <tr>
-                <th>№</th>
-                <th>Date</th>
-                <th>Code client</th>
-                <th style={{ width: "40%" }}>Raison Sociale</th>
-                <th>Montant TTC</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.props.devis.devis
-                .filter(
-                  (el) =>
-                    el.numfac
-                      .toString()
-                      .includes(this.props.SearchingResult.searching) ||
-                    el.raisoc.includes(this.props.SearchingResult.searching) ||
-                    el.codcli
-                      .toString()
-                      .includes(this.props.SearchingResult.searching)
-                )
-                .map((devi) => (
+        {this.state.rechercheclicked ? (
+          <div className="tabd">
+            <table striped>
+              <thead>
+                <tr>
+                  <th>№ BC</th>
+                  <th>Date</th>
+                  <th style={{ width: "55%" }}>Client</th>
+                  <th>Montant </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.rechs.map((test) => (
                   <tr
-                    key={devi.$id}
-                    onClick={() =>
+                    key={test.numfac}
+                    onClick={() => {
+                      fetch(
+                        `http://192.168.1.100:81/api/LigBCDV?type=DV&numfac=${test.numfac}`
+                      )
+                        .then((response) => response.json())
+                        .then((data) =>
+                          this.setState({
+                            tabtab: data,
+                            sumqt:
+                              data &&
+                              data.reduce(
+                                (a, v) => a + parseInt(v.quantite),
+                                0
+                              ),
+                          })
+                        );
                       this.setState({
                         editModalShow: true,
-                        devisid: devi.numfac,
-                        datedevis: devi.datfac,
-                        client: devi.codcli,
-                        raisonsociale: devi.raisoc,
-                        totalhtbrut: devi.smhtb,
-                        remiselignes: devi.smremart,
-                        remiseglobale: devi.smremglo,
-                        totalhtnet: devi.smhtn,
-                        totaldc: devi.smDC,
-                        totalcos: devi.smCOS,
-                        totalttc: devi.mntbon,
-                        totaltva: devi.smtva,
-                        droitdetimbre: devi.valtimbre,
-                        avanceimpot: devi.ForfaitCli,
-                        annuler: devi.annuler,
-                      })
-                    }
+                        devisid: test.numfac,
+                        datedevis: test.datfac,
+                        client: test.codcli,
+                        raisonsociale: test.raisoc,
+                        totalhtbrut: test.smhtb,
+                        remiselignes: test.smremart,
+                        remiseglobale: test.smremglo,
+                        totalhtnet: test.smhtn,
+                        totaldc: test.smDC,
+                        totalcos: test.smCOS,
+                        totalttc: test.mntbon,
+                        totaltva: test.smtva,
+                        droitdetimbre: test.timbre,
+                        avanceimpot: test.ForfaitCli,
+                        annuler: test.annuler,
+                        catfisc: test.catfisc,
+                      });
+                    }}
                   >
                     <td>
-                      <span>{devi.numfac}</span>
-                    </td>
-                    <td>
-                      {" "}
-                      <span> {devi.datfac}</span>
-                    </td>
-                    <td>
-                      {" "}
-                      <span>{devi.codcli}</span>
+                      <span>{test.numfac}</span>
                     </td>
 
-                    <td style={{ width: "40%" }}>
-                      {" "}
-                      <span>{devi.raisoc}</span>
-                    </td>
                     <td>
-                      {" "}
-                      <span>{Number(devi.mntbon).toFixed(3)}</span>
+                      <span>
+                        {new Date(test.datfac).toLocaleDateString(
+                          "fr",
+                          DATE_OPTIONS
+                        )}
+                      </span>
+                    </td>
+
+                    <td style={{ width: "55%" }}>
+                      <span>{test.codcli}</span> &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span>{test.raisoc}</span>
+                    </td>
+
+                    <td>
+                      <span>{Number(test.mntbon).toFixed(3)}</span>
                     </td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
-          <EditDevisClientModal
-            show={this.state.editModalShow}
-            onHide={this.editModalClose}
-            devisid={devisid}
-            datedevis={datedevis}
-            client={client}
-            raisonsociale={raisonsociale}
-            totalhtbrut={totalhtbrut}
-            remiselignes={remiselignes}
-            remiseglobale={remiseglobale}
-            totalhtnet={totalhtnet}
-            totaldc={totaldc}
-            totalcos={totalcos}
-            totalttc={totalttc}
-            totaltva={totaltva}
-            droitdetimbre={droitdetimbre}
-            avanceimpot={avanceimpot}
-            totalqteee={Totalqteee}
-            cod={devisid}
-            annuler={annuler}
-            sum={this.state.sums.map((su) => su.Column1)}
-          />
-        </div>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="tabd">
+            <table striped>
+              <thead>
+                <tr>
+                  <th>№ BC</th>
+                  <th>Date</th>
+                  <th style={{ width: "55%" }}>Client</th>
+                  <th>Montant </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.props.devis.devis.map((test) => (
+                  <tr
+                    key={test.numfac}
+                    onClick={() => {
+                      fetch(
+                        `http://192.168.1.100:81/api/LigBCDV?type=DV&numfac=${test.numfac}`
+                      )
+                        .then((response) => response.json())
+                        .then((data) =>
+                          this.setState({
+                            tabtab: data,
+                            sumqt:
+                              data &&
+                              data.reduce(
+                                (a, v) => a + parseInt(v.quantite),
+                                0
+                              ),
+                          })
+                        );
+                      this.setState({
+                        editModalShow: true,
+                        devisid: test.numfac,
+                        datedevis: test.datfac,
+                        client: test.codcli,
+                        raisonsociale: test.raisoc,
+                        totalhtbrut: test.smhtb,
+                        remiselignes: test.smremart,
+                        remiseglobale: test.smremglo,
+                        totalhtnet: test.smhtn,
+                        totaldc: test.smDC,
+                        totalcos: test.smCOS,
+                        totalttc: test.mntbon,
+                        totaltva: test.smtva,
+                        droitdetimbre: test.timbre,
+                        avanceimpot: test.ForfaitCli,
+                        annuler: test.annuler,
+                        catfisc: test.catfisc,
+                      });
+                    }}
+                  >
+                    <td>
+                      <span>{test.numfac}</span>
+                    </td>
+
+                    <td>
+                      <span>
+                        {new Date(test.datfac).toLocaleDateString(
+                          "fr",
+                          DATE_OPTIONS
+                        )}
+                      </span>
+                    </td>
+
+                    <td style={{ width: "55%" }}>
+                      <span>{test.codcli}</span> &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span>{test.raisoc}</span>
+                    </td>
+
+                    <td>
+                      <span>{Number(test.mntbon).toFixed(3)}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
         <br />
+
+        <EditDevisClientModal
+          show={this.state.editModalShow}
+          onHide={this.editModalClose}
+          devisid={devisid}
+          datedevis={datedevis}
+          client={client}
+          raisonsociale={raisonsociale}
+          totalhtbrut={totalhtbrut}
+          remiselignes={remiselignes}
+          remiseglobale={remiseglobale}
+          totalhtnet={totalhtnet}
+          totaldc={totaldc}
+          totalcos={totalcos}
+          totalttc={totalttc}
+          totaltva={totaltva}
+          droitdetimbre={droitdetimbre}
+          avanceimpot={avanceimpot}
+          cod={devisid}
+          annuler={annuler}
+          tabtab={this.state.tabtab}
+          sumqt={sumqt}
+        />
       </div>
     );
   }
@@ -229,16 +305,12 @@ class DevisClient extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectUser: () => dispatch(SelectUser()),
-    SelectClient: () => dispatch(SelectClient()),
-    SelectDevisLig: () => dispatch(SelectDevisLig()),
   };
 }
 
 function mapStateToProps(state) {
   return {
     devis: state.devis,
-    SearchingResult: state.SearchingReducer,
-    ligs: state.ligs,
   };
 }
 

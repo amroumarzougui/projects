@@ -475,6 +475,7 @@ class LigBLArticle extends Component {
                           )}
                         </Col>
                       </Row>
+
                       <Row form>
                         <Col sm={3}>
                           <FormGroup>
@@ -613,6 +614,7 @@ class LigBLArticle extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
+
                       {this.state.des === "" ? (
                         <Center>
                           <Button

@@ -373,8 +373,8 @@ class GetBLByIdModal extends Component {
                         <th>PUHT</th>
                         <th>Remise</th>
                         <th>TVA</th>
+                        <th>PUTTCNet</th>
                         <th>TotalHT</th>
-                        <th>PUNet</th>
                       </tr>
                     </thead>
                     <tbody
@@ -408,11 +408,12 @@ class GetBLByIdModal extends Component {
                           <td>
                             <span>{Number(t.tautva).toFixed(2)}</span>
                           </td>
-                          <td>
-                            <span>{Number(t.montht).toFixed(3)}</span>
-                          </td>
+
                           <td>
                             <span>{Number(t.PUTTCNET).toFixed(3)}</span>
+                          </td>
+                          <td>
+                            <span>{Number(t.montht).toFixed(3)}</span>
                           </td>
                         </tr>
                       ))}

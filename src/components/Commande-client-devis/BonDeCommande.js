@@ -10,6 +10,14 @@ import GetBCByIdModal from "./GetBCByIdModal";
 import { Redirect } from "react-router-dom";
 
 import EmailModal from "./EmailModal";
+import { TextField, InputAdornment } from "@material-ui/core";
+import SearchIcon from "@material-ui/icons/Search";
+
+const DATE_OPTIONS = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+};
 
 class BonDeCommande extends Component {
   constructor(props) {
@@ -24,12 +32,25 @@ class BonDeCommande extends Component {
       addModalShow: false,
       getBCByIdModalShow: false,
       loggedIn,
+      rechs: [],
+      icon: false,
+      rechercheclicked: false,
+      tabtab: [],
     };
   }
 
   componentDidMount() {
     this.props.SelectBC();
   }
+
+  toggle = () => this.setState({ modal: !this.state.modal });
+
+  rechercheHandler = (event) => {
+    fetch(`http://192.168.1.100:81/api/BCDVCLIs/${event.target.value}?type=BC`)
+      .then((response) => response.json())
+      .then((data) => this.setState({ rechs: data, rechercheclicked: true }));
+  };
+
   render() {
     let addModalClose1 = () => this.setState({ addModalShow: false });
     let getModalClose = () => this.setState({ getBCByIdModalShow: false });
@@ -50,6 +71,9 @@ class BonDeCommande extends Component {
       droitdetimbre,
       avanceimpot,
       rem,
+      annuler,
+      catfisc,
+      sumqt,
     } = this.state;
 
     if (this.state.loggedIn === false) {
@@ -66,7 +90,23 @@ class BonDeCommande extends Component {
           <Row>
             <Col sm="9">
               {/* Recherche */}
-              <ConnectedSearchBar />
+              {/* <ConnectedSearchBar /> */}
+              <div className="search-bar">
+                <TextField
+                  placeholder="Recherche..."
+                  id="input-with-icon-textfield"
+                  className="input-search"
+                  onChange={this.rechercheHandler}
+                  onClick={this.toggle}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon className="search-icon" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </div>
             </Col>
             <Col sm="3">
               {/* Add second part tests // Ligs */}
@@ -85,75 +125,163 @@ class BonDeCommande extends Component {
         <br />
 
         {/* <div className="bc-table"> */}
-        <div className="tab30">
-          <table striped>
-            <thead>
-              <tr>
-                <th>№</th>
-                <th>Date</th>
-                <th>Code client</th>
-                <th>Raison Sociale</th>
-                <th>Montant TotalTTC</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.props.bcs.bcs
-                .filter(
-                  (test) =>
-                    test.id
-                      .toString()
-                      .includes(this.props.SearchingResult.searching) ||
-                    test.title
-                      .toLowerCase()
-                      .includes(this.props.SearchingResult.searching)
-                )
-                .map((test) => (
+        {this.state.rechercheclicked ? (
+          <div className="tabd">
+            <table striped>
+              <thead>
+                <tr>
+                  <th>№ BC</th>
+                  <th>Date</th>
+                  <th style={{ width: "55%" }}>Client</th>
+                  <th>Montant </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.rechs.map((test) => (
                   <tr
-                    key={test.id}
+                    key={test.numfac}
                     onClick={() => {
+                      fetch(
+                        `http://192.168.1.100:81/api/LigBCDV?type=BC&numfac=${test.numfac}`
+                      )
+                        .then((response) => response.json())
+                        .then((data) =>
+                          this.setState({
+                            tabtab: data,
+                            sumqt:
+                              data &&
+                              data.reduce(
+                                (a, v) => a + parseInt(v.quantite),
+                                0
+                              ),
+                          })
+                        );
                       this.setState({
                         getBCByIdModalShow: true,
-                        bcid: test.id,
-                        datebc: test.title,
-                        client: test.id,
-                        raisonsociale: test.title,
-                        totalhtbrut: test.userId,
-                        remiselignes: test.id,
-                        remiseglobale: test.userId,
-                        totalhtnet: test.id,
-                        totaldc: test.id,
-                        totalcos: test.id,
-                        totalttc: test.userId,
-                        totaltva: test.userId,
-                        droitdetimbre: test.id,
-                        avanceimpot: test.userId,
-                        rem: test.id,
+                        bcid: test.numfac,
+                        datebc: test.datfac,
+                        client: test.codcli,
+                        raisonsociale: test.raisoc,
+                        totalhtbrut: test.smhtb,
+                        remiselignes: test.smremart,
+                        remiseglobale: test.smremglo,
+                        totalhtnet: test.smhtn,
+                        totaldc: test.smDC,
+                        totalcos: test.smCOS,
+                        totalttc: test.mntbon,
+                        totaltva: test.smtva,
+                        droitdetimbre: test.timbre,
+                        avanceimpot: test.ForfaitCli,
+                        annuler: test.annuler,
+                        catfisc: test.catfisc,
                       });
                     }}
                   >
                     <td>
-                      <span>{test.id}</span>
+                      <span>{test.numfac}</span>
                     </td>
 
                     <td>
-                      <span>{test.title}</span>
+                      <span>
+                        {new Date(test.datfac).toLocaleDateString(
+                          "fr",
+                          DATE_OPTIONS
+                        )}
+                      </span>
+                    </td>
+
+                    <td style={{ width: "55%" }}>
+                      <span>{test.codcli}</span> &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span>{test.raisoc}</span>
                     </td>
 
                     <td>
-                      <span>{test.userId}</span>
-                    </td>
-
-                    <td>
-                      <span>{test.title}</span>
-                    </td>
-                    <td>
-                      <span>{test.userId}</span>
+                      <span>{Number(test.mntbon).toFixed(3)}</span>
                     </td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
-        </div>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="tabd">
+            <table striped>
+              <thead>
+                <tr>
+                  <th>№ BC</th>
+                  <th>Date</th>
+                  <th style={{ width: "55%" }}>Client</th>
+                  <th>Montant </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.props.bcs.bcs.map((test) => (
+                  <tr
+                    key={test.numfac}
+                    onClick={() => {
+                      fetch(
+                        `http://192.168.1.100:81/api/LigBCDV?type=BC&numfac=${test.numfac}`
+                      )
+                        .then((response) => response.json())
+                        .then((data) =>
+                          this.setState({
+                            tabtab: data,
+                            sumqt:
+                              data &&
+                              data.reduce(
+                                (a, v) => a + parseInt(v.quantite),
+                                0
+                              ),
+                          })
+                        );
+                      this.setState({
+                        getBCByIdModalShow: true,
+                        bcid: test.numfac,
+                        datebc: test.datfac,
+                        client: test.codcli,
+                        raisonsociale: test.raisoc,
+                        totalhtbrut: test.smhtb,
+                        remiselignes: test.smremart,
+                        remiseglobale: test.smremglo,
+                        totalhtnet: test.smhtn,
+                        totaldc: test.smDC,
+                        totalcos: test.smCOS,
+                        totalttc: test.mntbon,
+                        totaltva: test.smtva,
+                        droitdetimbre: test.timbre,
+                        avanceimpot: test.ForfaitCli,
+                        annuler: test.annuler,
+                        catfisc: test.catfisc,
+                      });
+                    }}
+                  >
+                    <td>
+                      <span>{test.numfac}</span>
+                    </td>
+
+                    <td>
+                      <span>
+                        {new Date(test.datfac).toLocaleDateString(
+                          "fr",
+                          DATE_OPTIONS
+                        )}
+                      </span>
+                    </td>
+
+                    <td style={{ width: "55%" }}>
+                      <span>{test.codcli}</span> &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span>{test.raisoc}</span>
+                    </td>
+
+                    <td>
+                      <span>{Number(test.mntbon).toFixed(3)}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         <AddBCModal show={this.state.addModalShow} onHide={addModalClose1} />
 
@@ -175,6 +303,9 @@ class BonDeCommande extends Component {
           droitdetimbre={droitdetimbre}
           avanceimpot={avanceimpot}
           rem={rem}
+          tabtab={this.state.tabtab}
+          annuler={annuler}
+          sumqt={sumqt}
         />
       </div>
     );

@@ -8,8 +8,8 @@ ReactFC.fcRoot(FusionCharts, Charts, FusionTheme);
 
 const chartConfigs = {
   type: "column2d",
-  width: 400,
-  height: 400,
+  width: 300,
+  height: 250,
   dataFormat: "json",
   backgroundColor: "gray",
   dataSource: {
@@ -19,38 +19,58 @@ const chartConfigs = {
       xAxisName: "Country",
       yAxisName: "Reserves (MMbbl)",
       numberSuffix: "K",
-      theme: "fusion"
+      theme: "fusion",
     },
     data: [
-      {
-        label: "Venezuela",
-        value: "290"
-      },
-      {
-        label: "Saudi",
-        value: "260"
-      },
-      {
-        label: "Canada",
-        value: "180"
-      },
-      {
-        label: "Iran",
-        value: "140"
-      },
-      {
-        label: "Russia",
-        value: "115"
-      },
-      {
-        label: "UAE",
-        value: "100"
-      }
-    ]
-  }
+      // {
+      //   label: "Venezuela",
+      //   value: "290",
+      // },
+      // {
+      //   label: "Saudi",
+      //   value: "260",
+      // },
+      // {
+      //   label: "Canada",
+      //   value: "180",
+      // },
+      // {
+      //   label: "Iran",
+      //   value: "140",
+      // },
+      // {
+      //   label: "Russia",
+      //   value: "115",
+      // },
+      // {
+      //   label: "UAE",
+      //   value: "100",
+      // },
+    ],
+  },
 };
 
-class Chart extends Component {
+class Charting extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { data: [] };
+  }
+
+  componentDidMount() {
+    fetch(`http://192.168.1.100:81/api/BLBRs?typtyp=BL`)
+      .then((response) => response.json())
+      .then((data) =>
+        this.setState({
+          series: this.state.series.concat({
+            // name: data.map((t) => t.datfac),
+            data: data.map((t) => t.sommemntbn),
+          }),
+          xaxis: this.state.xaxis.concat({
+            categories: data.map((t) => t.datfac),
+          }),
+        })
+      );
+  }
   render() {
     return (
       <div className="graphe">
@@ -60,4 +80,4 @@ class Chart extends Component {
   }
 }
 
-export default Chart;
+export default Charting;

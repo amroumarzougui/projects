@@ -9,7 +9,7 @@ const DATE_OPTIONS = {
   day: "numeric",
 };
 
-class AchatChart extends Component {
+class BCChaert extends Component {
   constructor(props) {
     super(props);
 
@@ -17,9 +17,9 @@ class AchatChart extends Component {
       data: {},
     };
   }
-
+  //////////////// BC //////////////////////////////////////
   componentDidMount() {
-    Axios.get(`http://192.168.1.100:81/api/BLBRs?typtyp=BL`).then((res) => {
+    Axios.get(`http://192.168.1.100:81/api/BCDVCLIs?typpp=BC`).then((res) => {
       console.log(res);
 
       const ipl = res.data;
@@ -42,30 +42,29 @@ class AchatChart extends Component {
 
           datasets: [
             {
-              label: "Montant BL / jour",
+              label: "Montant Facture / jour",
 
               data: runscore,
 
               backgroundColor: [
-                "#17a2b8",
+                "#ffc107",
 
-                "#17a2b8",
+                "#ffc107",
 
-                "#17a2b8",
+                "#ffc107",
 
-                "#17a2b8",
+                "#ffc107",
 
-                "#17a2b8",
+                "#ffc107",
 
-                "#17a2b8",
+                "#ffc107",
 
-                "#17a2b8",
+                "#ffc107",
+                "#ffc107",
 
-                "#17a2b8",
+                "#ffc107",
 
-                "#17a2b8",
-
-                "#17a2b8",
+                "#ffc107",
               ],
             },
           ],
@@ -80,8 +79,8 @@ class AchatChart extends Component {
           <Bar
             data={this.state.Data}
             options={{ maintainAspectRatio: false }}
-            width={"300px"}
-            height={"200px"}
+            //   width={"800px"}
+            height={"180px"}
           />
         </div>
       </div>
@@ -89,4 +88,4 @@ class AchatChart extends Component {
   }
 }
 
-export default AchatChart;
+export default BCChaert;
