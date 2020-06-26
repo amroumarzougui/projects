@@ -6,14 +6,14 @@ import { SelectTopclient } from "../../redux/actions/Top5";
 import { SelectTopFrs } from "../../redux/actions/Top5Frs";
 import FTChart from "./FTChart";
 import AchatChart from "./AchatChart";
-import VenteAchat from "./VenteChart";
-import BCChaert from "./BCChart";
+import CircleChart from "./CircleChart";
+import TopArticle from "./TopArticle";
 
-class FullWidthTabs extends Component {
+class TabTwo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      change: true,
+      change: false,
     };
   }
 
@@ -24,34 +24,34 @@ class FullWidthTabs extends Component {
       <div>
         <div>
           <Button
-            onClick={() => this.setState({ change: true })}
-            variant="outline-primary"
+            onClick={() => this.setState({ change: false })}
+            variant="light"
           >
-            BC
+            Articles
           </Button>{" "}
           &nbsp;
           <Button
-            onClick={() => this.setState({ change: false })}
-            variant="outline-success"
+            onClick={() => this.setState({ change: true })}
+            variant="light"
           >
-            Devis
+            Clients
           </Button>
         </div>
         <div>
           {this.state.change ? (
             <div>
               <p className="p1" style={{ margin: "10px" }}>
-                Total Montant des BC par jour
+                Nombre de clients par région
               </p>
-              <BCChaert />
+              <CircleChart />
             </div>
           ) : (
             <div>
               <p className="p1" style={{ margin: "10px" }}>
-                Total Montant des Devis par jour
+                Les articles les vendus
               </p>
 
-              <VenteAchat />
+              <TopArticle />
             </div>
           )}
         </div>
@@ -74,4 +74,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FullWidthTabs);
+export default connect(mapStateToProps, mapDispatchToProps)(TabTwo);

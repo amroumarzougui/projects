@@ -9,7 +9,7 @@ const DATE_OPTIONS = {
   day: "numeric",
 };
 
-class BCChaert extends Component {
+class TopArticle extends Component {
   constructor(props) {
     super(props);
 
@@ -17,9 +17,9 @@ class BCChaert extends Component {
       data: {},
     };
   }
-  //////////////// BC //////////////////////////////////////
+
   componentDidMount() {
-    Axios.get(`http://192.168.1.100:81/api/BCDVCLIs?typpp=BC`).then((res) => {
+    Axios.get(`http://192.168.1.100:81/api/TopArticle`).then((res) => {
       console.log(res);
 
       const ipl = res.data;
@@ -29,11 +29,9 @@ class BCChaert extends Component {
       let runscore = [];
 
       ipl.forEach((record) => {
-        playername.push(
-          new Date(record.datfac).toLocaleDateString("fr", DATE_OPTIONS)
-        );
+        playername.push(record.codart);
 
-        runscore.push(record.sommemntbn);
+        runscore.push(record.num);
       });
 
       this.setState({
@@ -42,29 +40,20 @@ class BCChaert extends Component {
 
           datasets: [
             {
-              label: "Montant BC / jour",
+              label: "Clients / Région",
 
               data: runscore,
 
               backgroundColor: [
-                "#007bff",
+                "#20c997",
+
+                "#6610f2",
+
+                "#0000FF",
 
                 "#007bff",
 
-                "#007bff",
-
-                "#007bff",
-
-                "#007bff",
-
-                "#007bff",
-
-                "#007bff",
-                "#007bff",
-
-                "#007bff",
-
-                "#007bff",
+                "#ffc107",
               ],
             },
           ],
@@ -76,11 +65,11 @@ class BCChaert extends Component {
     return (
       <div>
         <div>
-          <Bar
+          <Pie
             data={this.state.Data}
             options={{ maintainAspectRatio: false }}
-            //   width={"800px"}
-            height={"180px"}
+            width={"300px"}
+            height={"200px"}
           />
         </div>
       </div>
@@ -88,4 +77,4 @@ class BCChaert extends Component {
   }
 }
 
-export default BCChaert;
+export default TopArticle;

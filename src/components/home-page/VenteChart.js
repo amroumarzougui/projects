@@ -42,7 +42,7 @@ class VenteAchat extends Component {
 
           datasets: [
             {
-              label: "Montant Facture / jour",
+              label: "Montant Devis / jour",
 
               data: runscore,
 

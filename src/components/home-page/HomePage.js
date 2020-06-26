@@ -27,6 +27,9 @@ import classnames from "classnames";
 import FullWidthTabs from "./Tab";
 import TabTop from "./TabTop";
 import TabBLFT from "./TabBLFT";
+import ChargeGraph from "./ChargeGraph";
+import { SelectSumCharge } from "../../redux/actions/SumCharge";
+import TabTwo from "./TabTwo";
 
 class HomePage extends Component {
   constructor(props) {
@@ -49,6 +52,7 @@ class HomePage extends Component {
   componentDidMount() {
     this.props.SelectTopclient();
     this.props.SelectClient();
+    this.props.SelectSumCharge();
   }
 
   toggle = (tab) => {
@@ -71,11 +75,29 @@ class HomePage extends Component {
             <Col sm={4} style={{ marginBottom: "15px" }}>
               <Card className="card111">
                 <Card.Body>
-                  <p className="p1">Total Charge des Fournisseurs par jour</p>
-                  <p className="p2">0</p>
-                  <Divider style={{ background: "#0f2535" }}></Divider>
-                  <p className="p3">0</p>
-                  <p className="p4">cette semaine</p>
+                  <Row>
+                    <Col sm={6}>
+                      <h6>
+                        <b>Total Charge</b>
+                      </h6>
+                    </Col>
+                    <Col sm={6}>
+                      {this.props.charges.charges.map((t) => (
+                        <p className="p2">{Number(t.somme).toFixed(3)}</p>
+                      ))}
+                    </Col>
+                  </Row>
+                  <Divider
+                    style={{
+                      background: "#0f2535",
+                      marginBottom: "5px",
+                      marginTop: "-10px",
+                    }}
+                  ></Divider>
+                  {/* <p className="p3">0</p>
+                  <p className="p4">cette semaine</p> */}
+                  <p className="p4">Total Charge des Fournisseurs par jour</p>
+                  <ChargeGraph />
                 </Card.Body>
               </Card>
             </Col>
@@ -83,9 +105,10 @@ class HomePage extends Component {
             <Col sm={4} style={{ marginBottom: "15px" }}>
               <Card className="card111">
                 <Card.Body>
-                  <p className="p1">Sources</p>
+                  {/* <p className="p1">Nombre de clients par région</p>
 
-                  {/* <CircleChart /> */}
+                  <CircleChart /> */}
+                  <TabTwo />
                 </Card.Body>
               </Card>
             </Col>
@@ -127,6 +150,7 @@ function mapDispatchToProps(dispatch) {
   return {
     SelectTopclient: () => dispatch(SelectTopclient()),
     SelectClient: () => dispatch(SelectClient()),
+    SelectSumCharge: () => dispatch(SelectSumCharge()),
   };
 }
 
@@ -134,6 +158,7 @@ function mapStateToProps(state) {
   return {
     tops: state.tops,
     clients: state.clients,
+    charges: state.charges,
   };
 }
 

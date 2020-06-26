@@ -33,6 +33,7 @@ import GetNomenclatureReducer from "./reducers/GetNomenclature";
 import GetCodBCReducer from "./reducers/Getcodbc";
 import GettopclientReducer from "./reducers/Top5";
 import GetTopFrsReducer from "./reducers/Top5Frs";
+import GetSumChargeReducer from "./reducers/SumCharge";
 
 const middleware = [thunkMiddlewar];
 const composeEnhancers =
@@ -72,6 +73,7 @@ const myStore = createStore(
     numfacbcs: GetCodBCReducer,
     tops: GettopclientReducer,
     topfrss: GetTopFrsReducer,
+    charges: GetSumChargeReducer,
   }),
   enhancer
 );

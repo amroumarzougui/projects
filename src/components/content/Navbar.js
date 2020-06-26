@@ -12,6 +12,8 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 
+const username = localStorage.getItem("username");
+
 export default (props) => {
   const [isOpen, setOpen] = useState(true);
   const toggle = () => setOpen(!isOpen);
@@ -31,6 +33,13 @@ export default (props) => {
       >
         <FontAwesomeIcon icon={faAlignLeft} />
       </Button>
+      &nbsp;&nbsp;&nbsp;
+      <span style={{ color: "black" }}>
+        <i class="fa fa-user-circle" aria-hidden="true">
+          {" "}
+          {username}
+        </i>
+      </span>
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>
         <Nav className="ml-auto" navbar>

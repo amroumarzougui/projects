@@ -19,7 +19,7 @@ class CircleChart extends Component {
   }
 
   componentDidMount() {
-    Axios.get(`http://192.168.1.100:81/api/BLBRs?typtyp=BL`).then((res) => {
+    Axios.get(`http://192.168.1.100:81/api/GraphCperR`).then((res) => {
       console.log(res);
 
       const ipl = res.data;
@@ -29,11 +29,9 @@ class CircleChart extends Component {
       let runscore = [];
 
       ipl.forEach((record) => {
-        playername.push(
-          new Date(record.datfac).toLocaleDateString("fr", DATE_OPTIONS)
-        );
+        playername.push(record.ville);
 
-        runscore.push(record.sommemntbn);
+        runscore.push(record.num);
       });
 
       this.setState({
@@ -42,30 +40,20 @@ class CircleChart extends Component {
 
           datasets: [
             {
-              label: "Montant BL / jour",
+              label: "Clients / Région",
 
               data: runscore,
 
               backgroundColor: [
-                "#08052b",
+                "#20c997",
 
-                "#3cb371",
+                "#6610f2",
 
                 "#0000FF",
 
-                "#9966FF",
+                "#007bff",
 
-                "#4C4CFF",
-
-                "#00FFFF",
-
-                "#f990a7",
-
-                "#aad2ed",
-
-                "#FF00FF",
-
-                "Red",
+                "#ffc107",
               ],
             },
           ],

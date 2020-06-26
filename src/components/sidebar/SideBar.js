@@ -49,6 +49,13 @@ const SideBar = (props) => (
               items={el.submenu}
             />
           ))}
+          <Link to={"/bon-entree"} className="title">
+            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
+              <i class="fa fa-retweet" aria-hidden="true"></i>
+
+              <span style={{ marginLeft: "15px" }}>Bon d'entrée</span>
+            </NavItem>
+          </Link>
           <Link to={"/devis"} className="title">
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i className="fas fa-tasks"></i>

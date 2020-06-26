@@ -9,7 +9,7 @@ const DATE_OPTIONS = {
   day: "numeric",
 };
 
-class BCChaert extends Component {
+class ChargeGraph extends Component {
   constructor(props) {
     super(props);
 
@@ -17,9 +17,9 @@ class BCChaert extends Component {
       data: {},
     };
   }
-  //////////////// BC //////////////////////////////////////
+
   componentDidMount() {
-    Axios.get(`http://192.168.1.100:81/api/BCDVCLIs?typpp=BC`).then((res) => {
+    Axios.get(`http://192.168.1.100:81/api/BEREs`).then((res) => {
       console.log(res);
 
       const ipl = res.data;
@@ -42,29 +42,30 @@ class BCChaert extends Component {
 
           datasets: [
             {
-              label: "Montant BC / jour",
+              label: "Montant / jour",
 
               data: runscore,
 
               backgroundColor: [
-                "#007bff",
+                "#6610f2",
 
-                "#007bff",
+                "#6610f2",
 
-                "#007bff",
+                "#6610f2",
 
-                "#007bff",
+                "#6610f2",
 
-                "#007bff",
+                "#6610f2",
 
-                "#007bff",
+                "#6610f2",
 
-                "#007bff",
-                "#007bff",
+                "#6610f2",
 
-                "#007bff",
+                "#6610f2",
 
-                "#007bff",
+                "#6610f2",
+
+                "#6610f2",
               ],
             },
           ],
@@ -76,11 +77,11 @@ class BCChaert extends Component {
     return (
       <div>
         <div>
-          <Bar
+          <Line
             data={this.state.Data}
             options={{ maintainAspectRatio: false }}
-            //   width={"800px"}
-            height={"180px"}
+            width={"300px"}
+            height={"200px"}
           />
         </div>
       </div>
@@ -88,4 +89,4 @@ class BCChaert extends Component {
   }
 }
 
-export default BCChaert;
+export default ChargeGraph;

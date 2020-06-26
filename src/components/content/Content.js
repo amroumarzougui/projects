@@ -17,6 +17,7 @@ import BonDeLivraison from "../bon-de-livraison/BonDeLivraison";
 import Facture from "../facture/Facture";
 import Login from "../../Login/Login";
 import Nomenclature from "../Nomenclatures/Nomenclature";
+import BonEntree from "../bon-entree/BonEntree";
 // import Logout from "./Logout";
 export default (props) => (
   <Container
@@ -48,6 +49,8 @@ export default (props) => (
         <Route exact path="/page-3" component={() => "page-3"} />
         <Route exact path="/page-4" component={() => "page-4"} /> */}
       <Route exact path="/devis" component={DevisClient} />
+      <Route exact path="/bon-entree" component={BonEntree} />
+
       {/* <Route
           exact
           path="/commande-client-et-devis"
