@@ -81,7 +81,21 @@ class LigBCArticlel extends Component {
     this.setState({
       qte: event.target.value,
       puttcnet: this.state.puht + this.state.puht * (this.state.tva / 100),
-      totalht: event.target.value * this.state.puht,
+      totalht:
+        event.target.value *
+        this.state.puht *
+        ((100 - this.state.remisea) / 100),
+    });
+  };
+
+  remiseHandler = (event) => {
+    // console.log(typeof parseInt(event.target.value));
+    // console.log(typeof this.state.totalqte);
+
+    this.setState({
+      remisea: event.target.value,
+      totalht:
+        this.state.qte * this.state.puht * ((100 - event.target.value) / 100),
     });
   };
 
@@ -95,7 +109,7 @@ class LigBCArticlel extends Component {
       unite: this.state.unite,
       puht: this.state.puht,
       faudec: this.state.faudec,
-      remisea: event.target.remisea.value,
+      remisea: this.state.remisea,
       tva: this.state.tva,
       puttcnet: this.state.puttcnet,
       totalht: this.state.totalht,
@@ -510,6 +524,7 @@ class LigBCArticlel extends Component {
                               fullWidth
                               name="remisea"
                               // disabled
+                              onChange={this.remiseHandler}
                             />
                           </FormGroup>
                         </Col>

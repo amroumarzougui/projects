@@ -192,20 +192,50 @@ class ModifierBCModal extends Component {
       .then((result) => {
         console.log(result);
         // this.setState({ enrsnackbaropen: true, snackbarmsg: result });
-      });
 
-    ///////////// second part add new table to database //////////////
+        ///////////// second part add new table to database //////////////
 
-    this.state.tab.map((k, index) => {
-      for (var i = 0; i < this.state.tab.length; i++) {
+        this.state.tab.map((k, index) => {
+          for (var i = 0; i < this.state.tab.length; i++) {
+            fetch(
+              `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=${
+                this.props.bcidd
+              }&typfac=BC&numlig=${index + 10}&codart=${k.codart}&quantite=${
+                k.quantite
+              }&fodart=0&desart=${k.desart}&datfac=${
+                this.props.datebl
+              }&priuni=${k.priuni}&remise=${k.remise}&unite${
+                k.unite
+              }&codtva=3&tautva=${k.tautva}`,
+              {
+                method: "POST",
+                header: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              }
+            )
+              .then((res) => res.json())
+              .then(
+                (result) => {
+                  //  this.setState({ enrsnackbaropen: true, snackbarmsg: result });
+
+                  console.log(result);
+                  // window.alert(result);
+                },
+                (error) => {
+                  this.setState({
+                    enrsnackbaropen: true,
+                    snackbarmsg: "failed",
+                  });
+                }
+              );
+          }
+        });
+        //////////////////// third party /////////////////
+
         fetch(
-          `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=${
-            this.props.bcidd
-          }&typfac=BC&numlig=${index + 10}&codart=${k.codart}&quantite=${
-            k.quantite
-          }&fodart=0&desart=${k.desart}&datfac=${this.props.datebl}&priuni=${
-            k.priuni
-          }&remise=${k.remise}&unite${k.unite}&codtva=3&tautva=${k.tautva}`,
+          `http://192.168.1.100:81/api/LigBCDV?FAC=${this.props.bcidd}&typfacc=BC`,
           {
             method: "POST",
             header: {
@@ -217,42 +247,13 @@ class ModifierBCModal extends Component {
           .then((res) => res.json())
           .then(
             (result) => {
-              this.setState({ enrsnackbaropen: true, snackbarmsg: result });
-
               console.log(result);
-              // window.alert(result);
             },
             (error) => {
-              this.setState({
-                enrsnackbaropen: true,
-                snackbarmsg: "failed",
-              });
+              this.setState({ snackbaropen: true, snackbarmsg: "failed" });
             }
           );
-      }
-    });
-
-    //////////////////// third party /////////////////
-
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV?FAC=${this.props.bcidd}&typfacc=BC`,
-      {
-        method: "POST",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
-      );
+      });
   };
 
   submitHandler = (event) => {
@@ -942,7 +943,8 @@ class ModifierBCModal extends Component {
                   // )
                   this.enregistrer();
                   this.props.onHide();
-                  this.props.SelectArticle();
+                  this.props.onHide01();
+                  window.alert("Modification enregistrés");
                 }}
               >
                 Enregistrer

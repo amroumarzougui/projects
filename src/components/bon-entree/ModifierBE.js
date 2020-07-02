@@ -1,17 +1,17 @@
 import React, { Component } from "react";
 import { Modal, Card } from "react-bootstrap";
 import "../styling/Styles.css";
-import "./bl.scss";
+import "./be.scss";
 import { Input, Label, FormGroup, Col, Row, Table } from "reactstrap";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
+
 import { SelectArticle } from "../../redux/actions/GetArticles";
 import { TextField, Fab, IconButton } from "@material-ui/core";
 import "../styling/Styling.scss";
 import Center from "react-center";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
-// import EditArticleModal from "./EditArticleModal";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -20,10 +20,14 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import MaterialTable from "material-table";
+import ReactDataGrid from "react-data-grid";
+import Editable from "react-x-editable";
+// import EditRowModal from "./EditRowModal";
+import { SelectBL } from "../../redux/actions/GetBL";
+import { Redirect } from "react-router-dom";
 
-const roundTo = require("round-to");
-
-class LigBLArticle extends Component {
+class ModifierBE extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -52,19 +56,39 @@ class LigBLArticle extends Component {
       btnEnabled: false,
       gilad: true,
       rechs: [],
+      snackbarmsg: "",
+      enrsnackbaropen: false,
+      fsnackbaropen: false,
 
-      snackbarmsg: ",",
+      openEditModal: false,
+      changeButton: false,
+      idel: 0,
+      reload: false,
     };
   }
 
   componentDidMount() {
     this.props.SelectArticle();
+    this.sameTable();
   }
 
   articleHandlerChange = (event) => {
     fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
       .then((response) => response.json())
       .then((data) => this.setState({ rechs: data }));
+  };
+
+  sameTable = () => {
+    fetch(
+      `http://192.168.1.100:81/Api/LigBEREs?type=BE&numfac=${this.props.blid}`
+    )
+      .then((response) => response.json())
+      .then((data) =>
+        this.setState({
+          tab: data,
+          //    sumqt: data && data.reduce((a, v) => a + parseInt(v.quantite), 0),
+        })
+      );
   };
 
   snackbarClose = (event) => {
@@ -75,62 +99,68 @@ class LigBLArticle extends Component {
     this.setState({ snackbarfail: false });
   };
 
-  qteHandler = (event) => {
-    console.log(typeof parseInt(event.target.value));
-    console.log(typeof this.state.totalqte);
+  enrsnackbarClose = (event) => {
+    this.setState({ enrsnackbaropen: false });
+  };
 
-    this.setState({
-      qte: event.target.value,
-      puttcnet: this.state.puht + this.state.puht * (this.state.tva / 100),
-      totalht: event.target.value * this.state.puht,
+  fsnackbarClose = (event) => {
+    this.setState({ fsnackbaropen: false });
+  };
+
+  /////// modiifier les modifications /////////////
+  modifiermodification = (event) => {
+    // event.preventDefault();
+
+    const newtab = this.state.tab.concat({
+      codart: this.state.codearticle,
+      desart: this.state.des,
+      quantite: this.state.qte,
+      unite: this.state.unite,
+      priuni: this.state.puht,
+      remise: this.state.remisea,
+      tautva: this.state.tva,
+      montht: this.state.puttcnet,
+      PUTTCNET: this.state.totalht,
     });
-  };
-
-  onCellChange = (event) => {
-    this.setState({ codearticle: event.target.value });
-  };
-
-  handleChange = (name) => (event) => {
-    this.setState({ [name]: event.target.checked });
-  };
-
-  deleteRow = (index) => {
-    var tab = [...this.state.tab];
-    tab.splice(index, 1);
-    const SumQte = tab && tab.reduce((a, v) => a + parseInt(v.qte), 0);
+    const SumQte = newtab && newtab.reduce((a, v) => a + parseInt(v.qte), 0);
     const SumRemiseArticle =
-      tab &&
-      tab.reduce((a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100, 0);
+      newtab &&
+      newtab.reduce(
+        (a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100,
+        0
+      );
     const SumHtBrut =
-      tab && tab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
+      newtab && newtab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
     const SumTva =
-      tab &&
-      tab.reduce(
+      newtab &&
+      newtab.reduce(
         (a, v) =>
           a +
           parseInt(v.qte) * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100),
         0
       );
     const SumHtNet =
-      tab &&
-      tab.reduce((a, v) => a + v.totalht * ((100 - this.props.rem) / 100), 0);
+      newtab &&
+      newtab.reduce(
+        (a, v) => a + v.totalht * ((100 - this.props.rem) / 100),
+        0
+      );
     const SumRemiseGlobale =
-      tab && tab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
+      newtab &&
+      newtab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
     const SumNetAPayer =
-      tab &&
-      tab.reduce(
+      newtab &&
+      newtab.reduce(
         (a, v) =>
           a +
           (v.totalht * ((100 - this.props.rem) / 100) +
-            parseInt(v.qte) *
-              v.puht *
-              ((100 - v.remisea) / 100) *
-              (v.tva / 100)),
+            v.qte * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100)),
         0
       );
 
     this.setState({
-      tab,
+      tab: newtab,
+
       totalqte: SumQte,
       sumremisearticle: SumRemiseArticle,
       totalhtbrut: SumHtBrut,
@@ -138,24 +168,40 @@ class LigBLArticle extends Component {
       totalhtnet: SumHtNet,
       remiseglobal: SumRemiseGlobale,
       netapayer: SumNetAPayer,
-      snackbarfail: true,
+      snackbaropen: true,
+      btnEnabled: true,
+      changeButton: false,
+    });
+
+    this.setState({
+      codearticle: "",
+      qte: "",
+      totalht: 0,
+      des: "",
+      unite: "",
+      puht: "",
+      remisea: 0,
+      tva: 0,
+      puttcnet: 0,
+      faudec: "N",
     });
   };
 
-  submitHandlers = (event) => {
+  /////// submit pour le bouton ajouter /////////////
+
+  submitHandler = (event) => {
     event.preventDefault();
 
     const newtab = this.state.tab.concat({
-      codearticle: this.state.codearticle,
-      des: this.state.des,
-      qte: this.state.qte,
+      codart: this.state.codearticle,
+      desart: this.state.des,
+      quantite: this.state.qte,
       unite: this.state.unite,
-      puht: this.state.puht,
-      faudec: this.state.faudec,
-      remisea: event.target.remiseea.value,
-      tva: this.state.tva,
-      puttcnet: this.state.puttcnet,
-      totalht: this.state.totalht,
+      priuni: this.state.puht,
+      remise: event.target.remiseea.value,
+      tautva: this.state.tva,
+      montht: this.state.puttcnet,
+      PUTTCNET: this.state.totalht,
     });
     const SumQte = newtab && newtab.reduce((a, v) => a + parseInt(v.qte), 0);
     const SumRemiseArticle =
@@ -221,6 +267,230 @@ class LigBLArticle extends Component {
     });
   };
 
+  onCellChange = (event) => {
+    this.setState({ codearticle: event.target.value });
+  };
+
+  handleChange = (name) => (event) => {
+    this.setState({ [name]: event.target.checked });
+  };
+
+  deleteRow = (index) => {
+    var tab = [...this.state.tab];
+    tab.splice(index, 1);
+    const SumQte = tab && tab.reduce((a, v) => a + parseInt(v.qte), 0);
+    const SumRemiseArticle =
+      tab &&
+      tab.reduce((a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100, 0);
+    const SumHtBrut =
+      tab && tab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
+    const SumTva =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          parseInt(v.qte) * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100),
+        0
+      );
+    const SumHtNet =
+      tab &&
+      tab.reduce((a, v) => a + v.totalht * ((100 - this.props.rem) / 100), 0);
+    const SumRemiseGlobale =
+      tab && tab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
+    const SumNetAPayer =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          (v.totalht * ((100 - this.props.rem) / 100) +
+            parseInt(v.qte) *
+              v.puht *
+              ((100 - v.remisea) / 100) *
+              (v.tva / 100)),
+        0
+      );
+
+    this.setState({
+      tab,
+      totalqte: SumQte,
+      sumremisearticle: SumRemiseArticle,
+      totalhtbrut: SumHtBrut,
+      totaltva: SumTva,
+      totalhtnet: SumHtNet,
+      remiseglobal: SumRemiseGlobale,
+      netapayer: SumNetAPayer,
+      snackbarfail: true,
+      btnEnabled: true,
+    });
+  };
+
+  ///////////// delete for modification without snackbaropende ///////////
+  deleteRowMod = (index) => {
+    var tab = [...this.state.tab];
+    tab.splice(index, 1);
+    const SumQte = tab && tab.reduce((a, v) => a + parseInt(v.qte), 0);
+    const SumRemiseArticle =
+      tab &&
+      tab.reduce((a, v) => a + (parseInt(v.qte) * v.puht * v.remisea) / 100, 0);
+    const SumHtBrut =
+      tab && tab.reduce((a, v) => a + parseInt(v.qte) * v.puht, 0);
+    const SumTva =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          parseInt(v.qte) * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100),
+        0
+      );
+    const SumHtNet =
+      tab &&
+      tab.reduce((a, v) => a + v.totalht * ((100 - this.props.rem) / 100), 0);
+    const SumRemiseGlobale =
+      tab && tab.reduce((a, v) => a + v.totalht * (this.props.rem / 100), 0);
+    const SumNetAPayer =
+      tab &&
+      tab.reduce(
+        (a, v) =>
+          a +
+          (v.totalht * ((100 - this.props.rem) / 100) +
+            parseInt(v.qte) *
+              v.puht *
+              ((100 - v.remisea) / 100) *
+              (v.tva / 100)),
+        0
+      );
+
+    this.setState({
+      tab,
+      totalqte: SumQte,
+      sumremisearticle: SumRemiseArticle,
+      totalhtbrut: SumHtBrut,
+      totaltva: SumTva,
+      totalhtnet: SumHtNet,
+      remiseglobal: SumRemiseGlobale,
+      netapayer: SumNetAPayer,
+      btnEnabled: true,
+    });
+  };
+
+  qteHandler = (event) => {
+    console.log(typeof parseInt(event.target.value));
+    console.log(typeof this.state.totalqte);
+
+    this.setState({
+      qte: event.target.value,
+      puttcnet: this.state.puht + this.state.puht * (this.state.tva / 100),
+      totalht: event.target.value * this.state.puht,
+    });
+  };
+
+  enregistrer = () => {
+    ////////// first part delete ///////////////////
+    fetch(
+      `http://192.168.1.100:81/api/LigBEREs/${this.props.blid}?typfacc=BE`,
+      {
+        method: "DELETE",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        // this.setState({ enrsnackbaropen: true, snackbarmsg: result });
+
+        ///////////// second part add new table to database //////////////
+
+        this.state.tab.map((k, index) => {
+          for (var i = 0; i < this.state.tab.length; i++) {
+            fetch(
+              `http://192.168.1.100:81/api/LigBEREs/{ID}?numfac=${
+                this.props.blid
+              }&typfac=BE&numlig=${index + 10}&codart=${k.codart}&quantite=${
+                k.quantite
+              }&fodart=0&desart=${k.desart}&datfac=${
+                this.props.datebl
+              }&priuni=${k.priuni}&remise=${k.remise}&unite${
+                k.unite
+              }&codtva=3&tautva=${k.tautva}`,
+              {
+                method: "POST",
+                header: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              }
+            )
+              .then((res) => res.json())
+              .then(
+                (result) => {
+                  //this.setState({ enrsnackbaropen: true, snackbarmsg: result });
+
+                  console.log(result);
+                  // window.alert(result);
+                },
+                (error) => {
+                  this.setState({
+                    enrsnackbaropen: true,
+                    snackbarmsg: "failed",
+                  });
+                }
+              );
+          }
+        });
+
+        //// third part calcul with vue/////////////
+        // fetch(
+        //   `http://192.168.1.100:81/api/LigBLBRs?FAC=${this.props.blid}&typfacc=BL`,
+        //   {
+        //     method: "POST",
+        //     header: {
+        //       Accept: "application/json",
+        //       "Content-Type": "application/json",
+        //     },
+        //   }
+        // )
+        //   .then((res) => res.json())
+        //   .then(
+        //     (result) => {
+        //       // this.setState({ snackbaropen: true, snackbarmsg: result });
+
+        //       console.log(result);
+        //       // window.alert(result);
+        //     },
+        //     (error) => {
+        //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        //     }
+        //   );
+
+        ///////////// 4th part tva total calcul ///////////////
+        //     fetch(
+        //       `http://192.168.1.100:81/api/LigBLBRs?FAC=${this.props.blid}&Typfacc=bl&CODDEPP=`,
+        //       {
+        //         method: "POST",
+        //         header: {
+        //           Accept: "application/json",
+        //           "Content-Type": "application/json",
+        //         },
+        //       }
+        //     )
+        //       .then((res) => res.json())
+        //       .then(
+        //         (result) => {
+        //           //  this.setState({ snackbaropen: true, snackbarmsg: result });
+
+        //           console.log(result);
+        //           // window.alert(result);
+        //         },
+        //         (error) => {
+        //           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        //         }
+        //       );
+      });
+  };
+
   render() {
     let editModalClose = () => this.setState({ editModalShow: false });
 
@@ -228,6 +498,21 @@ class LigBLArticle extends Component {
       this.state.totalqte,
       `remise article =${this.state.sumremisearticle}`
     );
+    let EditModalClose = () => this.setState({ openEditModal: false });
+
+    const {
+      quantt,
+      remiss,
+      artid,
+      totalhtt,
+      puttcnett,
+      numligg,
+      numfacccc,
+      prixunix,
+    } = this.state;
+
+    if (this.state.reload) return <Redirect to="/bon-de-livraison" />;
+    // data =
 
     return (
       <div className="container">
@@ -261,22 +546,22 @@ class LigBLArticle extends Component {
           </Alert>
         </Snackbar>
 
-        {/* <Snackbar
+        <Snackbar
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          open={this.state.snackbaropen}
+          open={this.state.enrsnackbaropen}
           autoHideDuration={2000}
-          onClose={this.snackbarClose}
+          onClose={this.enrsnackbarClose}
           message={<span id="message-id"> {this.state.snackbarmsg} </span>}
           action={[
             <IconButton
               key="close"
               color="inherit"
-              onClick={this.snackbarClose}
+              onClick={this.enrsnackbarClose}
             >
               x
             </IconButton>,
           ]}
-        ></Snackbar> */}
+        ></Snackbar>
 
         <Modal
           {...this.props}
@@ -294,11 +579,10 @@ class LigBLArticle extends Component {
               <Col>
                 <Card>
                   <Card.Body>
-                    <form onSubmit={this.submitHandlers}>
-                      <Row form>
-                        <Col sm={4}>
+                    <form onSubmit={this.submitHandler}>
+                      <Row form style={{ marginBottom: "-20px" }}>
+                        <Col sm={8}>
                           <FormGroup>
-                            <Label>Chercher article par :</Label>
                             <Typography component="div">
                               <Grid
                                 component="label"
@@ -306,6 +590,10 @@ class LigBLArticle extends Component {
                                 alignItems="center"
                                 spacing={1}
                               >
+                                <Grid>
+                                  <b>Chercher article par :</b>
+                                </Grid>
+                                &nbsp;&nbsp;
                                 <Grid item>Désignation</Grid>
                                 <Grid item>
                                   <Switch
@@ -323,14 +611,35 @@ class LigBLArticle extends Component {
                           </FormGroup>
                         </Col>
 
-                        <Col sm={4}>
+                        <Col sm={3}>
+                          <FormGroup
+                            style={{ marginTop: "10px", marginLeft: "10px" }}
+                          >
+                            {this.state.faudec === "A" ? (
+                              <p style={{ color: "grey" }}>Fodec: ✔</p>
+                            ) : null}
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row form>
+                        <Col sm={5}>
                           <FormGroup>
-                            {this.state.gilad ? (
+                            {this.state.changeButton ? (
+                              <TextField
+                                id="standard-basic"
+                                label="Code Article"
+                                value={this.state.codearticle}
+                                disabled
+                                margin="normal"
+                                fullWidth
+                              />
+                            ) : this.state.gilad ? (
                               <Autocomplete
                                 id="include-input-in-list"
                                 includeInputInList
                                 className="ajouter-client-input"
-                                // options={this.props.articles.articles}
+                                //   options={this.props.articles.articles}
                                 options={this.state.rechs}
                                 getOptionLabel={(option) => option.codart}
                                 onChange={(event, getOptionLabel) => {
@@ -370,7 +679,7 @@ class LigBLArticle extends Component {
                                 id="include-input-in-list"
                                 includeInputInList
                                 className="ajouter-client-input"
-                                // options={this.props.articles.articles}
+                                //   options={this.props.articles.articles}
                                 options={this.state.rechs}
                                 getOptionLabel={(option) => option.desart}
                                 onChange={(event, getOptionLabel) => {
@@ -417,8 +726,17 @@ class LigBLArticle extends Component {
                           />
                         </FormGroup>
 
-                        <Col sm={4}>
-                          {this.state.gilad ? (
+                        <Col sm={5}>
+                          {this.state.changeButton ? (
+                            <TextField
+                              id="standard-basic"
+                              label="Désignation"
+                              value={this.state.des}
+                              disabled
+                              margin="normal"
+                              fullWidth
+                            />
+                          ) : this.state.gilad ? (
                             <FormGroup>
                               <TextField
                                 id="standard-basic"
@@ -442,45 +760,27 @@ class LigBLArticle extends Component {
                             </FormGroup>
                           )}
                         </Col>
-                      </Row>
-
-                      <Row form>
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
-                            {this.state.des === "" ? (
-                              <TextField
-                                id="standard-basic"
-                                label="Quantité"
-                                type="number"
-                                disabled
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                                style={{ marginTop: "0px" }}
-                                margin="normal"
-                                fullWidth
-                                required
-                              />
-                            ) : (
-                              <TextField
-                                id="standard-basic"
-                                label="Quantité"
-                                type="number"
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                                style={{ marginTop: "0px" }}
-                                value={this.state.qte}
-                                onChange={this.qteHandler}
-                                margin="normal"
-                                fullWidth
-                                required
-                              />
-                            )}
+                            <TextField
+                              id="standard-basic"
+                              label="Quantité"
+                              type="number"
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                              style={{ marginTop: "16px" }}
+                              value={this.state.qte}
+                              onChange={this.qteHandler}
+                              margin="normal"
+                              fullWidth
+                              required
+                            />
                           </FormGroup>
                         </Col>
-
-                        <Col sm={3}>
+                      </Row>
+                      <Row form>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -488,11 +788,12 @@ class LigBLArticle extends Component {
                               value={this.state.unite}
                               fullWidth
                               disabled
+                              size="small"
                             />
                           </FormGroup>
                         </Col>
 
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -500,26 +801,26 @@ class LigBLArticle extends Component {
                               value={this.state.puht}
                               fullWidth
                               disabled
+                              size="small"
                             />
                           </FormGroup>
                         </Col>
 
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
                               label="Remise %"
+                              //   value={this.state.remisea}
                               defaultValue={this.state.remisea}
                               fullWidth
                               name="remiseea"
-                              // disabled
+                              size="small"
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
 
-                      <Row form>
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -527,63 +828,51 @@ class LigBLArticle extends Component {
                               value={this.state.tva}
                               fullWidth
                               disabled
+                              size="small"
                             />
                           </FormGroup>
                         </Col>
-                        <Col sm={3}>
-                          <FormGroup>
-                            <TextField
-                              id="standard-basic"
-                              label="PU TTC Net"
-                              value={roundTo(this.state.puttcnet, 3)}
-                              fullWidth
-                              disabled
-                            />
-                          </FormGroup>
-                        </Col>
-
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
                               label="Total HT"
-                              value={roundTo(this.state.totalht, 3)}
+                              value={this.state.totalht}
                               fullWidth
                               disabled
+                              size="small"
                             />
                           </FormGroup>
                         </Col>
 
-                        <Col sm={3}>
-                          <FormGroup
-                            style={{ marginTop: "10px", marginLeft: "10px" }}
-                          >
-                            <Label> Fodec </Label>
-                            {this.state.faudec === "A" ? (
-                              <Checkbox
-                                defaultChecked
-                                value="secondary"
-                                color="primary"
-                                inputProps={{
-                                  "aria-label": "secondary checkbox",
-                                }}
-                              />
-                            ) : (
-                              <Label>
-                                <Checkbox
-                                  disabled
-                                  value="disabled"
-                                  inputProps={{
-                                    "aria-label": "disabled checkbox",
-                                  }}
-                                />
-                              </Label>
-                            )}
+                        <Col sm={2}>
+                          <FormGroup>
+                            <TextField
+                              id="standard-basic"
+                              label="PU TTC Net"
+                              value={this.state.puttcnet}
+                              fullWidth
+                              disabled
+                              size="small"
+                            />
                           </FormGroup>
                         </Col>
                       </Row>
 
-                      {this.state.des === "" ? (
+                      {this.state.changeButton ? (
+                        <Center>
+                          <Button
+                            style={{ width: "320px" }}
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                              this.modifiermodification();
+                            }}
+                          >
+                            Enregistrer les modifications
+                          </Button>
+                        </Center>
+                      ) : this.state.des === "" ? (
                         <Center>
                           <Button
                             disabled
@@ -613,57 +902,81 @@ class LigBLArticle extends Component {
 
                 <Card style={{ marginTop: "10px" }}>
                   <Card.Body>
-                    <div className="tabbl2">
+                    <div className="tabbe2">
                       <table style={{ marginTop: "10px" }}>
                         <thead
                           style={{ textAlign: "center", fontSize: "12px" }}
                         >
                           <tr>
                             <th>Code</th>
-                            <th style={{ width: "37%" }}>Désignation</th>
+                            <th style={{ width: "46%" }}>Désignation</th>
                             <th>Quantité</th>
                             <th>PU HT</th>
                             <th>Remise</th>
                             <th>TVA</th>
-                            <th>PUTTCNet</th>
                             <th>TotalHT</th>
+                            {/* <th>PUNet</th> */}
+                            <th></th>
                             <th></th>
                           </tr>
                         </thead>
-                        <tbody style={{ textAlign: "center" }}>
+                        <tbody
+                          style={{
+                            overflowY: "auto",
+                            display: "block",
+                            maxHeight: "10em",
+                          }}
+                        >
                           {this.state.tab.map((t, i) => (
                             <tr key={i}>
                               <td>
-                                <span>{t.codearticle}</span>
+                                <span>{t.codart}</span>
                               </td>
-                              <td style={{ fontSize: "12px", width: "37%" }}>
-                                <span> {t.des} </span>
-                              </td>
-                              <td>
-                                {" "}
-                                <span> {t.qte}</span>
+                              <td style={{ fontSize: "12px", width: "46%" }}>
+                                {t.desart}
                               </td>
                               <td>
-                                {" "}
-                                <span> {Number(t.puht).toFixed(2)}</span>
+                                <span>{t.quantite}</span>
                               </td>
                               <td>
-                                {" "}
-                                <span> {Number(t.remisea).toFixed(2)}</span>
-                              </td>
-                              <td>
-                                {" "}
-                                <span> {Number(t.tva).toFixed(2)}</span>
-                              </td>
-                              <td>
-                                {" "}
-                                <span> {Number(t.puttcnet).toFixed(3)}</span>
-                              </td>
-                              <td>
-                                {" "}
-                                <span> {Number(t.totalht).toFixed(2)}</span>
+                                <span>{Number(t.priuni).toFixed(3)}</span>
                               </td>
 
+                              <td>
+                                <span>{Number(t.remise).toFixed(2)}</span>
+                              </td>
+                              <td>
+                                <span>{Number(t.tautva).toFixed(2)}</span>
+                              </td>
+                              <td>
+                                <span>{Number(t.montht).toFixed(3)}</span>
+                              </td>
+                              {/* <td>
+                                <span>{Number(t.PUTTCNET).toFixed(3)}</span>
+                              </td> */}
+                              <td>
+                                <Tooltip title="Supprimer cet article">
+                                  <Fab size="small">
+                                    <EditIcon
+                                      style={{}}
+                                      onClick={() => {
+                                        this.setState({
+                                          codearticle: t.codart,
+                                          des: t.desart,
+                                          unite: t.unite,
+                                          puht: t.priuni,
+                                          remisea: t.remise,
+                                          tva: t.tautva,
+                                          faudec: t.typfodec,
+                                          qte: t.quantite,
+                                          changeButton: true,
+                                        });
+                                        this.deleteRowMod(i);
+                                      }}
+                                    />
+                                  </Fab>
+                                </Tooltip>
+                              </td>
                               <td>
                                 <Tooltip title="Supprimer cet article">
                                   <Fab size="small">
@@ -683,43 +996,45 @@ class LigBLArticle extends Component {
                 </Card>
               </Col>
             </Row>
+            {/* <EditRowModal
+              show={this.state.openEditModal}
+              onHide={EditModalClose}
+              quantt={quantt}
+              remiss={remiss}
+              artid={artid}
+              totalhtt={totalhtt}
+              puttcnett={puttcnett}
+              numfacccc={numfacccc}
+              numligg={numligg}
+              prixunix={prixunix}
+              tab={this.state.tab}
+            /> */}
           </Modal.Body>
           <Modal.Footer>
-            {/* {
-              // !this.state.btnEnabled ? (
-              //   <Button disabled variant="contained" style={{ width: "30%" }}>
-              //     Enregistrer
-              //   </Button>
-              // ) : (
-              this.state.tab.map((t, i) => ( */}
-            <Button
-              variant="contained"
-              style={{
-                backgroundColor: "rgb(0, 8, 126)",
-                color: "white",
-                width: "30%",
-              }}
-              onClick={() => {
-                this.props.submitHandler(
-                  this.state.tab,
-                  this.state.totalqte,
-                  this.state.sumremisearticle,
-                  this.state.totalhtbrut,
-                  this.state.totaltva,
-                  this.state.totalhtnet,
-                  this.state.remiseglobal,
-                  this.state.netapayer,
-                  this.state.btnEnabled
-                );
-                // this.enregistrer();
-                this.props.onHide();
-              }}
-            >
-              Enregistrer
-            </Button>
-            {/* ))
-              // )
-            } */}
+            {!this.state.btnEnabled ? (
+              <Button disabled variant="contained" style={{ width: "30%" }}>
+                Enregistrer
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                style={{
+                  backgroundColor: "rgb(0, 8, 126)",
+                  color: "white",
+                  width: "30%",
+                }}
+                onClick={() => {
+                  this.enregistrer();
+                  this.props.onHide();
+                  this.props.onHide01();
+                  window.alert("Modification enregistrés");
+                  //   this.props.SelectBL();
+                  // this.setState({ reload: true });
+                }}
+              >
+                Enregistrer
+              </Button>
+            )}
           </Modal.Footer>
         </Modal>
       </div>
@@ -730,6 +1045,7 @@ class LigBLArticle extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectArticle: () => dispatch(SelectArticle()),
+    SelectBL: () => dispatch(SelectBL()),
   };
 }
 
@@ -739,4 +1055,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LigBLArticle);
+export default connect(mapStateToProps, mapDispatchToProps)(ModifierBE);

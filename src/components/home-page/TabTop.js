@@ -37,13 +37,15 @@ class TabTop extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.props.tops.tops.map((t) => (
-                  <tr key={t.codcli}>
-                    <td> {t.codcli} </td>
-                    <td> {t.raisoc} </td>
-                    <td> {Number(t.sommemntbn).toFixed(3)} </td>
-                  </tr>
-                ))}
+                {this.props.tops.tops.map((t) =>
+                  t.raisoc === "CLIENT PASSAGER" ? null : (
+                    <tr key={t.codcli}>
+                      <td> {t.codcli} </td>
+                      <td> {t.raisoc} </td>
+                      <td> {Number(t.sommemntbn).toFixed(3)} </td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </Table>
           </Tab>

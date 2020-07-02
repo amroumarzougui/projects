@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Modal, Card } from "react-bootstrap";
 import "../styling/Styles.css";
-import "./bl.scss";
+import "./be.scss";
 import { Input, Label, FormGroup, Col, Row, Table } from "reactstrap";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
@@ -23,7 +23,7 @@ import Typography from "@material-ui/core/Typography";
 
 const roundTo = require("round-to");
 
-class LigBLArticle extends Component {
+class LigBEArticle extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -739,4 +739,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LigBLArticle);
+export default connect(mapStateToProps, mapDispatchToProps)(LigBEArticle);

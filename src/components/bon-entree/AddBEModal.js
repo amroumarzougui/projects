@@ -9,19 +9,23 @@ import {
   Accordion,
 } from "react-bootstrap";
 import "../styling/Styles.css";
-import "./facture.scss";
+// import "../commande-client-devis/ss.scss";
+import "./be.scss";
 
-import { TextField, Paper, Button } from "@material-ui/core";
+import {
+  TextField,
+  Paper,
+  Button,
+  Snackbar,
+  IconButton,
+  MenuItem,
+} from "@material-ui/core";
 import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { connect } from "react-redux";
 import { SelectClient } from "../../redux/actions/GetClients";
-import { GetNumFacDevis } from "../../redux/actions/GetNumfacDevis";
-import { SelectArticle } from "../../redux/actions/GetArticles";
-import { Input, Label, Table } from "reactstrap";
-import Center from "react-center";
 
 import Tooltip from "@material-ui/core/Tooltip";
 
@@ -30,20 +34,15 @@ import Fab from "@material-ui/core/Fab";
 
 import { Divider, Chip } from "@material-ui/core";
 import VisibilityIcon from "@material-ui/icons/Visibility";
-
-// import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
-// import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-
-// import AddClientPassagerModal from "../commande-client-devis/AddClientPassagerModal";
-import LigFactureArticle from "./LigFactureArticle";
+import { SelectBECod } from "../../redux/actions/GetBECode";
+import LigBEArticle from "./LigBEArticle";
 
 const roundTo = require("round-to");
-
 var curr = new Date();
 curr.setDate(curr.getDate());
 var date = curr.toISOString().substr(0, 10);
 
-class AddBLModal extends Component {
+class AddBEModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -71,12 +70,23 @@ class AddBLModal extends Component {
       btnEnabled: false,
       cemail: "",
       openActionModal: false,
+      rechs: [],
+      codetva: "",
+      typach: [
+        { code: "L", label: "L" },
+        { code: "F", label: "F" },
+      ],
+
+      nextsubmit: false,
+
+      snackbaropen: false,
+      snackbarmsg: ",",
     };
   }
 
   componentDidMount() {
     this.props.SelectClient();
-    this.props.GetNumFacDevis();
+    this.props.SelectBECod();
   }
 
   submitHandler = (
@@ -103,22 +113,171 @@ class AddBLModal extends Component {
     });
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.setState({ openActionModal: true });
-  };
-
   handleChange = (name) => (event) => {
     this.setState({ [name]: event.target.checked });
   };
-  render() {
-    const { dvnumfac, dvraisoc, rem, clientmail } = this.state;
 
-    let addModalClose1 = () => this.setState({ addModalShow1: false });
+  remiseChange = (event) => {
+    this.setState({ remiseg: event.target.value });
+  };
+
+  clientHandlerChange = (event) => {
+    fetch(
+      `http://192.168.1.100:81/api/fournisseurs?codfrss=${event.target.value}`
+    )
+      .then((response) => response.json())
+      .then((data) => this.setState({ rechs: data }));
+  };
+
+  enregistrer = (event) => {
+    event.preventDefault();
+
+    this.state.tab.map((k, index) => {
+      for (var i = 0; i < this.state.tab.length; i++) {
+        fetch(
+          `http://192.168.1.100:81/api/LigBEREs/{ID}?numfac=${event.target.codbe.value}&typfac=BE&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${event.target.datfac.value}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
+          {
+            method: "POST",
+            header: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then(
+            (result) => {
+              //   this.setState({ snackbaropen: true, snackbarmsg: result });
+
+              console.log(result);
+              // window.alert(result);
+            },
+            (error) => {
+              this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+            }
+          );
+      }
+    });
+
+    fetch(
+      `http://192.168.1.100:81/api/BEREs?numfac=${event.target.codbe.value}&typfac=BE&datfac=${event.target.datfac.value}&codfrs=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&taurem=${event.target.remise.value}&pj=${event.target.pj.value}&typach=${event.target.typach.value}`,
+      {
+        method: "POST",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          this.setState({ snackbaropen: true, snackbarmsg: result });
+
+          console.log(result);
+          //// window.alert(result);
+        },
+        (error) => {
+          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        }
+      );
+
+    fetch(
+      `http://192.168.1.100:81/api/Switch?code=BE2&valeur=${
+        parseInt(event.target.codbe.value) + 1
+      }`,
+      {
+        method: "PUT",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          //  this.setState({ snackbaropen: true, snackbarmsg: result });
+
+          console.log(result);
+          this.props.onHide();
+          this.props.SelectBECod();
+          //// window.alert(result);
+        },
+        (error) => {
+          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        }
+      );
+
+    // fetch(`http://192.168.1.100:81/api/LigBLBRs?FAC=20203500&typfacc=BL`, {
+    //   method: "POST",
+    //   header: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    // })
+    //   .then((res) => res.json())
+    //   .then(
+    //     (result) => {
+    //       this.setState({ snackbaropen: true, snackbarmsg: result });
+
+    //       console.log(result);
+    //       //// window.alert(result);
+    //     },
+    //     (error) => {
+    //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+    //     }
+    //   );
+
+    // fetch(
+    //   `http://192.168.1.100:81/api/LigBLBRs?FAC=20203008&Typfacc=bl&CODDEPP=`,
+    //   {
+    //     method: "POST",
+    //     header: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // )
+    //   .then((res) => res.json())
+    //   .then(
+    //     (result) => {
+    //       this.props.onHide();
+    //       this.SelectBL();
+    //       this.setState({ snackbaropen: true, snackbarmsg: result });
+
+    //       console.log(result);
+    //       //// window.alert(result);
+    //     },
+    //     (error) => {
+    //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+    //     }
+    //   );
+  };
+
+  render() {
     let ligModalClose = () => this.setState({ ligModalShow: false });
+
+    const { rem } = this.state;
 
     return (
       <div className="container">
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          open={this.state.snackbaropen}
+          autoHideDuration={2000}
+          onClose={this.snackbarClose}
+          message={<span id="message-id"> {this.state.snackbarmsg} </span>}
+          action={[
+            <IconButton
+              key="close"
+              color="inherit"
+              onClick={this.snackbarClose}
+            >
+              x
+            </IconButton>,
+          ]}
+        ></Snackbar>
         <Modal
           {...this.props}
           size="lg"
@@ -130,71 +289,62 @@ class AddBLModal extends Component {
             style={{ backgroundColor: "white", color: "#020F64" }}
           >
             <Modal.Title id="contained-modal-title-vcenter">
-              <b>Ajouter Facture</b>
+              <b>Ajouter Bon d'Entrée</b>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <form>
+            <form onSubmit={this.enregistrer}>
               <Card>
                 <Card.Body>
                   <Row style={{ marginBottom: "-20px", marginTop: "-20px" }}>
                     <Col sm={3}>
                       <FormGroup>
-                        <TextField
-                          // className="card add-input"
-                          id="standard-basic"
-                          label="Code Facture"
-                          margin="normal"
-                          //variant="outlined"
-                          fullWidth
-                          name="codbc"
-                        />
+                        {this.props.codbes.codbes.map((t) => (
+                          <TextField
+                            // className="card add-input"
+                            id="standard-basic"
+                            label="№ BL"
+                            margin="normal"
+                            //variant="outlined"
+                            value={parseInt(t.valeur)}
+                            fullWidth
+                            name="codbe"
+                            disabled
+                          />
+                        ))}
                       </FormGroup>
                     </Col>
-                    <Col sm={5}></Col>
+                    {/* <Col sm={5}></Col> */}
+                    <Col sm={5}>
+                      <TextField
+                        id="standard-basic"
+                        label="Date"
+                        margin="normal"
+                        //variant="outlined"
+                        type="date"
+                        fullWidth
+                        name="datfac"
+                        defaultValue={this.state.defaultdate}
+                      />
+                    </Col>
 
-                    <Col sm={4}>
-                      <FormGroup>
-                        {this.state.showButtonModalPassager ? (
-                          <Tooltip title="Ajouter les détails du client passager">
-                            <Button
-                              style={{
-                                backgroundColor: "#3f51b5",
-                                color: "white",
-                                fontWeight: "bold",
-                                width: "100%",
-                                marginTop: "20px",
-                                height: "40px",
-                              }}
-                              onClick={() =>
-                                this.setState({
-                                  addModalShow1: true,
-                                  dvnumfac: this.props.numfac.numfac.map(
-                                    (numf) => parseInt(numf.valeur, 10) + 1
-                                  ),
-                                  dvraisoc: this.state.raisonsocial,
-                                })
-                              }
-                            >
-                              Détails Client Passager
-                            </Button>
-                          </Tooltip>
-                        ) : null}
-                        {/* <AddClientPassagerModal
-                          show={this.state.addModalShow1}
-                          onHide={addModalClose1}
-                          dvnumfac={dvnumfac}
-                          dvraisoc={dvraisoc}
-                        /> */}
-                      </FormGroup>
+                    <Col sm={2}>
+                      <TextField
+                        id="outlined-select-currency"
+                        select
+                        label="Type"
+                        margin="normal"
+                        fullWidth
+                        name="typach"
+                      >
+                        {this.state.typach.map((option) => (
+                          <MenuItem key={option.code} value={option.code}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
                     </Col>
                   </Row>
-
-                  {/* <Row style={{ marginBottom: "-15px" }}>
-                                        <Col sm={4}>
-                                            <Label><b>Chercher client par:</b></Label>
-                                        </Col>
-                                    </Row> */}
 
                   <Row style={{ marginBottom: "-20px" }}>
                     <Col sm={4}>
@@ -224,142 +374,78 @@ class AddBLModal extends Component {
                         </Typography>
                       </FormGroup>
                     </Col>
-                    <Col sm={4}>
-                      <FormGroup>
-                        {this.state.gilad ? (
-                          // <Autocomplete
-                          //     id="include-input-in-list"
-                          //     includeInputInList
-                          //     className="ajouter-client-input"
-                          //     options={this.props.clients.clients}
-                          //     getOptionLabel={option => option.codcli}
-                          //     onChange={(event, getOptionLabel) => {
-                          //         getOptionLabel
-                          //             ? this.setState({
-                          //                 raisonsocial: getOptionLabel.raisoc,
-                          //                 remiseg: getOptionLabel.remise,
-                          //                 codeclient: getOptionLabel.codcli,
-                          //                 categoriefiscale: getOptionLabel.catfisc,
-                          //                 btnEnable: true,
-                          //                 showTimbre: getOptionLabel.timbre,
-                          //                 showForfitaire: getOptionLabel.regimecli,
-                          //                 showButtonModalPassager:
-                          //                     getOptionLabel.passager,
-                          //                 cemail: getOptionLabel.email
-                          //             })
-                          //             : this.setState({
-                          //                 raisonsocial: "",
-                          //                 remiseg: 0,
-                          //                 codeclient: "",
-                          //                 categoriefiscale: "",
-                          //                 btnEnable: false,
-                          //                 showTimbre: false,
-                          //                 showForfitaire: 0,
-                          //                 showButtonModalPassager: false
-                          //             });
-                          //     }}
+                    {this.state.gilad ? (
+                      <Col sm={3}>
+                        <FormGroup>
                           <Autocomplete
                             id="include-input-in-list"
                             includeInputInList
                             className="ajouter-client-input"
-                            options={this.props.clients.clients}
-                            getOptionLabel={(option) => option.title}
+                            // options={this.props.clients.clients}
+                            options={this.state.rechs}
+                            getOptionLabel={(option) => option.codfrs}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
                                 ? this.setState({
-                                    raisonsocial: getOptionLabel.title,
-                                    remiseg: getOptionLabel.userId,
-                                    codeclient: getOptionLabel.id,
-                                    categoriefiscale: getOptionLabel.userId,
+                                    raisonsocial: getOptionLabel.raisoc,
+                                    codeclient: getOptionLabel.codfrs,
                                     btnEnable: true,
-                                    showTimbre: getOptionLabel.completed,
-                                    showForfitaire: getOptionLabel.userId,
-                                    showButtonModalPassager:
-                                      getOptionLabel.completed,
-                                    cemail: getOptionLabel.title,
+                                    showTimbre: getOptionLabel.timbre,
+
+                                    cemail: getOptionLabel.email,
+                                    codetva: getOptionLabel.CodeTVA,
                                   })
                                 : this.setState({
                                     raisonsocial: "",
-                                    remiseg: 0,
                                     codeclient: "",
-                                    categoriefiscale: "",
                                     btnEnable: false,
                                     showTimbre: false,
-                                    showForfitaire: 0,
                                     showButtonModalPassager: false,
+                                    codetva: "",
                                   });
                             }}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
-                                label="Code client"
+                                label="Code Fournisseur"
                                 margin="normal"
                                 //variant="outlined"
                                 fullWidth
+                                onChange={this.clientHandlerChange}
+                                name="codcli"
                               />
                             )}
                           />
-                        ) : (
-                          // <Autocomplete
-                          //     id="include-input-in-list"
-                          //     includeInputInList
-                          //     className="ajouter-client-input"
-                          //     options={this.props.clients.clients}
-                          //     getOptionLabel={option => option.raisoc}
-                          //     onChange={(event, getOptionLabel) => {
-                          //         getOptionLabel
-                          //             ? this.setState({
-                          //                 raisonsocial: getOptionLabel.raisoc,
-                          //                 remiseg: getOptionLabel.remise,
-                          //                 codeclient: getOptionLabel.codcli,
-                          //                 categoriefiscale: getOptionLabel.catfisc,
-                          //                 btnEnable: true,
-                          //                 showTimbre: getOptionLabel.timbre,
-                          //                 showForfitaire: getOptionLabel.regimecli,
-                          //                 showButtonModalPassager:
-                          //                     getOptionLabel.passager,
-                          //                 cemail: getOptionLabel.email
-                          //             })
-                          //             : this.setState({
-                          //                 raisonsocial: "",
-                          //                 remiseg: 0,
-                          //                 codeclient: "",
-                          //                 categoriefiscale: "",
-                          //                 btnEnable: false,
-                          //                 showTimbre: false,
-                          //                 showForfitaire: 0,
-                          //                 showButtonModalPassager: false
-                          //             });
-                          //     }}
+                        </FormGroup>
+                      </Col>
+                    ) : (
+                      <Col sm={5}>
+                        <FormGroup>
                           <Autocomplete
                             id="include-input-in-list"
                             includeInputInList
                             className="ajouter-client-input"
-                            options={this.props.clients.clients}
-                            getOptionLabel={(option) => option.title}
+                            // options={this.props.clients.clients}
+                            options={this.state.rechs}
+                            getOptionLabel={(option) => option.raisoc}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
                                 ? this.setState({
-                                    raisonsocial: getOptionLabel.title,
-                                    remiseg: getOptionLabel.userId,
-                                    codeclient: getOptionLabel.id,
-                                    categoriefiscale: getOptionLabel.userId,
+                                    raisonsocial: getOptionLabel.raisoc,
+                                    codeclient: getOptionLabel.codfrs,
                                     btnEnable: true,
-                                    showTimbre: getOptionLabel.completed,
-                                    showForfitaire: getOptionLabel.userId,
-                                    showButtonModalPassager:
-                                      getOptionLabel.completed,
-                                    cemail: getOptionLabel.title,
+                                    showTimbre: getOptionLabel.timbre,
+
+                                    cemail: getOptionLabel.email,
+                                    codetva: getOptionLabel.CodeTVA,
                                   })
                                 : this.setState({
                                     raisonsocial: "",
-                                    remiseg: 0,
                                     codeclient: "",
-                                    categoriefiscale: "",
                                     btnEnable: false,
                                     showTimbre: false,
-                                    showForfitaire: 0,
                                     showButtonModalPassager: false,
+                                    codetva: "",
                                   });
                             }}
                             renderInput={(params) => (
@@ -369,15 +455,16 @@ class AddBLModal extends Component {
                                 margin="normal"
                                 //variant="outlined"
                                 fullWidth
+                                onChange={this.clientHandlerChange}
+                                name="raissoc"
                               />
                             )}
                           />
-                        )}
-                      </FormGroup>
-                    </Col>
-
-                    <Col sm={4}>
-                      {this.state.gilad ? (
+                        </FormGroup>
+                      </Col>
+                    )}
+                    {this.state.gilad ? (
+                      <Col sm={5}>
                         <FormGroup>
                           <TextField
                             id="standard-basic"
@@ -390,50 +477,49 @@ class AddBLModal extends Component {
                             disabled
                           />
                         </FormGroup>
-                      ) : (
+                      </Col>
+                    ) : (
+                      <Col sm={3}>
                         <FormGroup>
                           <TextField
                             id="standard-basic"
-                            label="Code client"
+                            label="Code Fournisseur"
                             margin="normal"
                             //variant="outlined"
                             value={this.state.codeclient}
                             fullWidth
-                            name="codecli"
+                            name="codcli"
                             disabled
                           />
                         </FormGroup>
-                      )}
-                    </Col>
+                      </Col>
+                    )}
                   </Row>
 
                   <Row>
                     <Col sm={4}>
-                      <TextField
+                      {/* <TextField
                         id="standard-basic"
-                        label="Date"
-                        margin="normal"
-                        //variant="outlined"
-                        type="date"
-                        fullWidth
-                        name="remise"
-                        defaultValue={this.state.defaultdate}
-                      />
-                    </Col>
-
-                    <Col sm={2}>
-                      <TextField
-                        id="standard-basic"
-                        label="Cat Fiscale"
+                        label="Categorie Fiscale"
                         margin="normal"
                         //variant="outlined"
                         fullWidth
                         name="categoriefiscale"
                         value={this.state.categoriefiscale}
+                      /> */}
+                      <TextField
+                        id="standard-basic"
+                        label="Code TVA"
+                        margin="normal"
+                        //variant="outlined"
+                        fullWidth
+                        name="codetva"
+                        value={this.state.codetva}
+                        disabled
                       />
                     </Col>
 
-                    <Col sm={2}>
+                    <Col sm={3}>
                       <TextField
                         id="standard-basic"
                         label="Remise Globale %"
@@ -441,43 +527,37 @@ class AddBLModal extends Component {
                         //variant="outlined"
                         fullWidth
                         name="remise"
-                        value={this.state.remiseg}
+                        onChange={this.remiseChange}
+                        // value={this.state.remiseg}
                       />
                     </Col>
 
-                    <Col sm={2}>
-                      <FormGroup style={{ marginTop: "20px" }}>
+                    <Col sm={3}>
+                      <TextField
+                        id="standard-basic"
+                        label="PJ"
+                        margin="normal"
+                        fullWidth
+                        name="pj"
+                        //   onChange={this.remiseChange}
+                      />
+                    </Col>
+
+                    {/* <Col sm={2}>
+                      <FormGroup style={{ marginTop: "40px" }}>
                         {this.state.showTimbre ? (
-                          <Alert
-                            style={{
-                              width: "100%",
-                              textAlign: "center",
-                              fontSize: "12px",
-                            }}
-                            variant={"success"}
-                          >
-                            <b style={{ marginTop: "-10px" }}></b>Timbre✔
-                          </Alert>
+                          <p style={{ color: "grey" }}>Timbre: ✔</p>
                         ) : null}
                       </FormGroup>
                     </Col>
 
                     <Col sm={2}>
-                      <FormGroup style={{ marginTop: "20px" }}>
+                      <FormGroup style={{ marginTop: "40px" }}>
                         {this.state.showForfitaire === 1 ? (
-                          <Alert
-                            style={{
-                              width: "100%",
-                              textAlign: "center",
-                              fontSize: "12px",
-                            }}
-                            variant={"success"}
-                          >
-                            <b style={{ marginTop: "-10px" }}></b>Forfitaire
-                          </Alert>
+                          <p style={{ color: "grey" }}>Forfitaire: ✔</p>
                         ) : null}
                       </FormGroup>
-                    </Col>
+                    </Col> */}
                   </Row>
                 </Card.Body>
               </Card>
@@ -518,7 +598,7 @@ class AddBLModal extends Component {
                                         height: "40px",
                                       }}
                                       aria-label="add"
-                                      onClick={() =>
+                                      onClick={(event) =>
                                         this.setState({
                                           ligModalShow: true,
                                           rem: this.state.remiseg,
@@ -551,13 +631,6 @@ class AddBLModal extends Component {
                                 </h5>
                               </label>
                             )}
-
-                            <LigFactureArticle
-                              submitHandler={this.submitHandler}
-                              show={this.state.ligModalShow}
-                              onHide={ligModalClose}
-                              rem={rem}
-                            />
                           </Col>
                         </Row>
                       </Col>
@@ -565,86 +638,59 @@ class AddBLModal extends Component {
                   </Card.Header>
                   <Accordion.Collapse eventKey="0">
                     <Card.Body>
-                      <div className="tab28">
+                      <div className="tabbl2">
                         <table>
                           <thead
                             style={{ textAlign: "center", fontSize: "12px" }}
                           >
                             <tr>
-                              <th>Article</th>
-                              <th>Désignation</th>
+                              <th>Code</th>
+                              <th style={{ width: "37%" }}>Désignation</th>
                               <th>Quantité</th>
-                              <th>Unité</th>
                               <th>PU HT</th>
-                              <th>Fodec</th>
                               <th>Remise</th>
                               <th>TVA</th>
+                              <th>PUTTCNet</th>
                               <th>TotalHT</th>
-                              <th>PUNet</th>
                             </tr>
                           </thead>
                           <tbody>
                             {this.state.tab.map((t) => (
                               <tr style={{ textAlign: "center" }}>
-                                <td>{t.codearticle}</td>
-                                <td style={{ fontSize: "12px" }}>{t.des}</td>
-                                <td>{t.qte}</td>
-                                <td>{t.unite}</td>
-                                <td>{t.puht}</td>
                                 <td>
-                                  {t.faudec === "A" ? (
-                                    <span>✔</span>
-                                  ) : (
-                                    <span>Ø</span>
-                                  )}
+                                  <span>{t.codearticle}</span>
                                 </td>
-                                <td>{t.remisea}</td>
-                                <td>{t.tva}</td>
-                                <td>{t.totalht}</td>
-                                <td>{t.puttcnet}</td>
+                                <td style={{ fontSize: "12px", width: "37%" }}>
+                                  <span> {t.des} </span>
+                                </td>
+                                <td>
+                                  {" "}
+                                  <span> {t.qte}</span>
+                                </td>
+                                <td>
+                                  {" "}
+                                  <span> {Number(t.puht).toFixed(2)}</span>
+                                </td>
+                                <td>
+                                  {" "}
+                                  <span> {Number(t.remisea).toFixed(2)}</span>
+                                </td>
+                                <td>
+                                  {" "}
+                                  <span> {Number(t.tva).toFixed(2)}</span>
+                                </td>
+                                <td>
+                                  {" "}
+                                  <span> {Number(t.puttcnet).toFixed(3)}</span>
+                                </td>
+                                <td>
+                                  {" "}
+                                  <span> {Number(t.totalht).toFixed(2)}</span>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
-
-                        {/* <Table>
-                                                <Thead style={{ textAlign: "center" }}>
-                                                    <Tr>
-                                                        <Th style={{ width: "10%" }}>Article</Th>
-                                                        <Th style={{ width: "20%" }}>Dés</Th>
-                                                        <Th style={{ width: "10%" }}>Quantité</Th>
-                                                        <Th style={{ width: "10%" }}>Unité</Th>
-                                                        <Th style={{ width: "10%" }}>PU HT</Th>
-                                                        <Th style={{ width: "7%" }}>Fodec</Th>
-                                                        <Th style={{ width: "5%" }}>Remise</Th>
-                                                        <Th style={{ width: "5%" }}>TVA</Th>
-                                                        <Th style={{ width: "10%" }}>Total HT</Th>
-                                                        <Th style={{ width: "13%" }}>PUTTC Net</Th>
-                                                    </Tr>
-                                                </Thead>
-                                                <Tbody style={{ textAlign: "center" }}>
-                                                    {this.state.tab.map(t => (
-                                                        <Tr>
-                                                            <Td>{t.codearticle}</Td>
-                                                            <Td>{t.des}</Td>
-                                                            <Td>{t.qte}</Td>
-                                                            <Td>{t.unite}</Td>
-                                                            <Td>{t.puht}</Td>
-                                                            <Td>
-                                                                {t.faudec === "A" ? (
-                                                                    <span>✔</span>
-                                                                ) : (
-                                                                        <span>Ø</span>
-                                                                    )}
-                                                            </Td>
-                                                            <Td>{t.remisea}</Td>
-                                                            <Td>{t.tva}</Td>
-                                                            <Td>{t.totalht}</Td>
-                                                            <Td>{t.puttcnet}</Td>
-                                                        </Tr>
-                                                    ))}
-                                                </Tbody>
-                                            </Table> */}
                       </div>
                     </Card.Body>
                   </Accordion.Collapse>
@@ -824,10 +870,57 @@ class AddBLModal extends Component {
                   </Row>
                 </Card.Body>
               </Card>
+
+              <Row>
+                <Col sm={8}></Col>
+                <Col sm={4}>
+                  {this.state.totalqte === 0 ? (
+                    <Button
+                      variant="contained"
+                      disabled
+                      style={{ marginTop: "20px", width: "100%" }}
+                    >
+                      Enregistrer tous
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      // color="secondary"
+                      type="submit"
+                      style={{
+                        marginTop: "20px",
+                        width: "100%",
+                        color: "white",
+                        backgroundColor: "#020F64",
+                      }}
+                      // onClick={(e) => {
+                      //   e.preventDefault();
+                      //   this.setState({
+                      //     openActionModal: true,
+                      //     clientmail: this.state.cemail,
+                      //   });
+                      // }}
+                    >
+                      Enregistrer tous
+                    </Button>
+                  )}
+                </Col>
+              </Row>
             </form>
           </Modal.Body>
           <Modal.Footer></Modal.Footer>
         </Modal>
+
+        <LigBEArticle
+          submitHandler={this.submitHandler}
+          show={this.state.ligModalShow}
+          onHide={ligModalClose}
+          numfaccc={this.props.codbes.codbes.map(
+            (nu) => parseInt(nu.valeur, 10) + 1
+          )}
+          datfac={this.state.defaultdate}
+          rem={rem}
+        />
       </div>
     );
   }
@@ -836,17 +929,15 @@ class AddBLModal extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectClient: () => dispatch(SelectClient()),
-    GetNumFacDevis: () => dispatch(GetNumFacDevis()),
-    SelectArticle: () => dispatch(SelectArticle()),
+    SelectBECod: () => dispatch(SelectBECod()),
   };
 }
 
 function mapStateToProps(state) {
   return {
     clients: state.clients,
-    numfac: state.numfac,
-    articles: state.articles,
+    codbes: state.codbes,
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddBLModal);
+export default connect(mapStateToProps, mapDispatchToProps)(AddBEModal);

@@ -135,7 +135,7 @@ class FicheFournisseur extends Component {
                   <tr>
                     <th>Code</th>
                     <th style={{ width: "40%" }}>Raison sociale</th>
-                    <th>Adresse</th>
+                    <th>Ville</th>
                     <th>Solde Facture</th>
                     <th>Solde Globale</th>
                   </tr>
@@ -177,7 +177,7 @@ class FicheFournisseur extends Component {
                       </td>
 
                       <td>
-                        <span>{test.adr}</span>
+                        <span>{test.ville}</span>
                       </td>
 
                       <td>
@@ -198,7 +198,7 @@ class FicheFournisseur extends Component {
                   <tr>
                     <th>Code</th>
                     <th style={{ width: "40%" }}>Raison sociale</th>
-                    <th>Adresse</th>
+                    <th>Ville</th>
                     <th>Solde Facture</th>
                     <th>Solde Globale</th>
                   </tr>
@@ -240,7 +240,7 @@ class FicheFournisseur extends Component {
                       </td>
 
                       <td>
-                        <span>{test.adr}</span>
+                        <span>{test.ville}</span>
                       </td>
 
                       <td>

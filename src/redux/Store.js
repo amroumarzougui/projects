@@ -34,6 +34,8 @@ import GetCodBCReducer from "./reducers/Getcodbc";
 import GettopclientReducer from "./reducers/Top5";
 import GetTopFrsReducer from "./reducers/Top5Frs";
 import GetSumChargeReducer from "./reducers/SumCharge";
+import GetBEReducer from "./reducers/GetBE";
+import GetBECodReducer from "./reducers/GetBECod";
 
 const middleware = [thunkMiddlewar];
 const composeEnhancers =
@@ -74,6 +76,8 @@ const myStore = createStore(
     tops: GettopclientReducer,
     topfrss: GetTopFrsReducer,
     charges: GetSumChargeReducer,
+    bes: GetBEReducer,
+    codbes: GetBECodReducer,
   }),
   enhancer
 );

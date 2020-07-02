@@ -4,6 +4,10 @@ import AddFamilleModal from "../gestion-des-articles/AddFamilleModal";
 import AddSousFamilleModal from "../gestion-des-articles/AddSousFamilleModal";
 import { Tooltip } from "@material-ui/core";
 import { Button } from "react-bootstrap";
+import { Tabs, Tab, Table } from "react-bootstrap";
+import Famille from "./Famille";
+import SousFamille from "./SousFamille";
+import TVA from "./TVA";
 
 class Nomenclature extends Component {
   constructor(props) {
@@ -27,8 +31,69 @@ class Nomenclature extends Component {
             <i class="far fa-plus-square"> Nomenclature</i>
           </u>
         </div>
-        <h3>Nomenclature</h3>
-        <Row>
+        <Tabs
+          defaultActiveKey="home"
+          transition={false}
+          id="noanim-tab-example"
+        >
+          <Tab eventKey="home" title="Famille">
+            <Row>
+              <Col sm={3}></Col>
+              <Col>
+                <h3
+                  style={{
+                    margin: "20px",
+                    marginTop: "30px",
+                    color: "#17a2b8",
+                  }}
+                >
+                  Ajouter Famille Article
+                </h3>
+                <Famille />
+              </Col>
+              <Col sm={3}></Col>
+            </Row>
+          </Tab>
+          <Tab eventKey="profile" title="Sous Famille">
+            <Row>
+              <Col sm={3}></Col>
+              <Col>
+                <h3
+                  style={{
+                    margin: "20px",
+                    marginTop: "30px",
+                    color: "#6610f2",
+                  }}
+                >
+                  Ajouter Sous-Famille Article
+                </h3>
+                <SousFamille />
+              </Col>
+              <Col sm={3}></Col>
+            </Row>
+          </Tab>
+
+          <Tab eventKey="tva" title="TVA">
+            <Row>
+              <Col sm={3}></Col>
+              <Col>
+                <h3
+                  style={{
+                    margin: "20px",
+                    marginTop: "30px",
+                    color: "#17a2b8",
+                  }}
+                >
+                  Ajouter TVA
+                </h3>
+                <TVA />
+              </Col>
+              <Col sm={3}></Col>
+            </Row>
+          </Tab>
+        </Tabs>
+
+        {/* <Row>
           <Col sm={5}>
             <Tooltip title="ajouter une nouvelle famille article">
               <Button
@@ -73,6 +138,7 @@ class Nomenclature extends Component {
             />
           </Col>
         </Row>
+      */}
       </div>
     );
   }

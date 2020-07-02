@@ -386,20 +386,51 @@ class ModifierLigDevis extends Component {
       .then((result) => {
         console.log(result);
         // this.setState({ enrsnackbaropen: true, snackbarmsg: result });
-      });
 
-    ///////////// second part add new table to database //////////////
+        ///////////// second part add new table to database //////////////
 
-    this.state.tab.map((k, index) => {
-      for (var i = 0; i < this.state.tab.length; i++) {
+        this.state.tab.map((k, index) => {
+          for (var i = 0; i < this.state.tab.length; i++) {
+            fetch(
+              `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=${
+                this.props.numfacc
+              }&typfac=DV&numlig=${index + 10}&codart=${k.codart}&quantite=${
+                k.quantite
+              }&fodart=0&desart=${k.desart}&datfac=${
+                this.props.datfac
+              }&priuni=${k.priuni}&remise=${k.remise}&unite${
+                k.unite
+              }&codtva=3&tautva=${k.tautva}`,
+              {
+                method: "POST",
+                header: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              }
+            )
+              .then((res) => res.json())
+              .then(
+                (result) => {
+                  //   this.setState({ enrsnackbaropen: true, snackbarmsg: result });
+
+                  console.log(result);
+                  // window.alert(result);
+                },
+                (error) => {
+                  this.setState({
+                    enrsnackbaropen: true,
+                    snackbarmsg: "failed",
+                  });
+                }
+              );
+          }
+        });
+
+        //////////////////// third party /////////////////
+
         fetch(
-          `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=${
-            this.props.numfacc
-          }&typfac=DV&numlig=${index + 10}&codart=${k.codart}&quantite=${
-            k.quantite
-          }&fodart=0&desart=${k.desart}&datfac=${this.props.datfac}&priuni=${
-            k.priuni
-          }&remise=${k.remise}&unite${k.unite}&codtva=3&tautva=${k.tautva}`,
+          `http://192.168.1.100:81/api/LigBCDV?FAC=${this.props.numfacc}&typfacc=DV`,
           {
             method: "POST",
             header: {
@@ -411,42 +442,13 @@ class ModifierLigDevis extends Component {
           .then((res) => res.json())
           .then(
             (result) => {
-              //   this.setState({ enrsnackbaropen: true, snackbarmsg: result });
-
               console.log(result);
-              // window.alert(result);
             },
             (error) => {
-              this.setState({
-                enrsnackbaropen: true,
-                snackbarmsg: "failed",
-              });
+              this.setState({ snackbaropen: true, snackbarmsg: "failed" });
             }
           );
-      }
-    });
-
-    //////////////////// third party /////////////////
-
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV?FAC=${this.props.numfacc}&typfacc=DV`,
-      {
-        method: "POST",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
-      );
+      });
   };
 
   render() {
@@ -830,7 +832,20 @@ class ModifierLigDevis extends Component {
                       </FormGroup>
                     </Col>
                   </Row>
-                  {this.state.des === "" ? (
+                  {this.state.changeButton ? (
+                    <Center>
+                      <Button
+                        style={{ width: "320px" }}
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          this.modifiermodification();
+                        }}
+                      >
+                        Enregistrer les modifications
+                      </Button>
+                    </Center>
+                  ) : this.state.des === "" ? (
                     <Center>
                       <Button
                         disabled

@@ -782,9 +782,9 @@ class GetBLByIdModal extends Component {
 
                 {this.state.clientimp.map((t) =>
                   t.codtva === "" ? (
-                    <h6>Code TVA : {t.cin}</h6>
-                  ) : (
                     <h6>Code TVA : --</h6>
+                  ) : (
+                    <h6>Code TVA : {t.codtva}</h6>
                   )
                 )}
               </Col>
@@ -796,13 +796,14 @@ class GetBLByIdModal extends Component {
                 // marginRight: "50px",
                 marginTop: "10px",
                 width: "99%",
+                minHeight: "620px",
               }}
             >
-              <Table
+              <table
                 style={{
                   textAlign: "center",
                   borderStyle: "1px",
-                  eight: "650px",
+                  width: "100%",
                 }}
               >
                 <thead
@@ -810,6 +811,8 @@ class GetBLByIdModal extends Component {
                     textAlign: "center",
                     fontSize: "20px",
                     fontWeight: "bold",
+                    paddingTop: "10px",
+                    paddingBottom: "10px",
                   }}
                 >
                   <tr>
@@ -819,47 +822,37 @@ class GetBLByIdModal extends Component {
                     <th>PUHT</th>
                     <th>Remise</th>
                     <th>TVA</th>
-                    <th>PUTTCNet</th>
                     <th>TotalHT</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {this.props.tabtab.map((t, i) => (
-                    <tr key={i} style={{ textAlign: "center" }}>
-                      <td>
-                        <span>{t.codart}</span>
-                      </td>
-                      <td style={{ fontSize: "12px", width: "37%" }}>
-                        {t.desart}
-                      </td>
-                      <td>
-                        <span>{t.quantite}</span>
-                      </td>
+                    <tr
+                      key={i}
+                      style={{
+                        textAlign: "center",
+                        // paddingTop: "50px",
+                        // paddingBottom: "50px",
+                        height: "50px",
+                      }}
+                    >
+                      <td>{t.codart}</td>
+                      <td style={{ width: "37%" }}>{t.desart}</td>
+                      <td>{t.quantite}</td>
                       {/* <td>
                         <span>{t.unite}</span>
                       </td> */}
-                      <td>
-                        <span>{Number(t.priuni).toFixed(3)}</span>
-                      </td>
+                      <td>{Number(t.priuni).toFixed(3)}</td>
 
-                      <td>
-                        <span>{Number(t.remise).toFixed(2)}</span>
-                      </td>
-                      <td>
-                        <span>{Number(t.tautva).toFixed(2)}</span>
-                      </td>
+                      <td>{Number(t.remise).toFixed(2)}</td>
+                      <td>{Number(t.tautva).toFixed(2)}</td>
 
-                      <td>
-                        <span>{Number(t.PUTTCNET).toFixed(3)}</span>
-                      </td>
-                      <td>
-                        <span>{Number(t.montht).toFixed(3)}</span>
-                      </td>
+                      <td>{Number(t.montht).toFixed(3)}</td>
                     </tr>
                   ))}
                 </tbody>
-              </Table>
+              </table>
             </div>
 
             <br />
@@ -902,8 +895,15 @@ class GetBLByIdModal extends Component {
                   </thead>
                   <tbody>
                     <tr style={{ height: "50px" }}>
-                      <td>{this.props.totaltva}</td>
-                      <td>{this.props.totaltva}</td>
+                      <td>
+                        {Number(
+                          (Number(this.props.totaltva) /
+                            Number(this.props.totalhtnet)) *
+                            100
+                        ).toFixed(2)}{" "}
+                        %
+                      </td>
+                      <td>{this.props.totalhtnet}</td>
                       <td>{this.props.totaltva}</td>
                     </tr>
                   </tbody>
@@ -920,7 +920,7 @@ class GetBLByIdModal extends Component {
                 <h5>
                   <b>Total quantité: </b>
                 </h5>
-                &nbsp;&nbsp;&nbsp; <h5>{this.props.sum}</h5>
+                &nbsp;&nbsp;&nbsp; <h5>{this.props.sumqt}</h5>
               </div>
 
               <table

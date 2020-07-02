@@ -136,7 +136,7 @@ class FicheClient extends Component {
                     ))} */}
                     <th>Code</th>
                     <th style={{ width: "40%" }}>Raison sociale</th>
-                    <th>Adresse</th>
+                    <th>Ville</th>
                     <th>Solde Facture</th>
                     <th>Solde Globale</th>
                   </tr>
@@ -179,7 +179,7 @@ class FicheClient extends Component {
                       </td>
 
                       <td>
-                        <span>{test.adr}</span>
+                        <span>{test.ville}</span>
                       </td>
 
                       <td>
@@ -200,7 +200,7 @@ class FicheClient extends Component {
                   <tr>
                     <th>Code</th>
                     <th style={{ width: "40%" }}>Raison sociale</th>
-                    <th>Adresse</th>
+                    <th>Ville</th>
                     <th>Solde Facture</th>
                     <th>Solde Globale</th>
                   </tr>
@@ -243,7 +243,7 @@ class FicheClient extends Component {
                       </td>
 
                       <td>
-                        <span>{test.adr}</span>
+                        <span>{test.ville}</span>
                       </td>
 
                       <td>

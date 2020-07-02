@@ -180,7 +180,7 @@ class FieldArraysFormClass extends Component {
     this.state.tab.map((k, index) => {
       for (var i = 0; i < this.state.tab.length; i++) {
         fetch(
-          `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=20200023&typfac=DV&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${event.target.datfac.value}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
+          `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=${event.target.numfac.value}&typfac=DV&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${event.target.datfac.value}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
           {
             method: "POST",
             header: {
@@ -206,7 +206,7 @@ class FieldArraysFormClass extends Component {
 
     //////////// post BCDV /////////////////////////////
     fetch(
-      `http://192.168.1.100:81/api/BCDVCLIs?numfac=20200023&typfac=DV&taurem=${event.target.remise.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${event.target.datfac.value}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}`,
+      `http://192.168.1.100:81/api/BCDVCLIs?numfac=${event.target.numfac.value}&typfac=DV&taurem=${event.target.remise.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${event.target.datfac.value}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}`,
       {
         method: "POST",
         header: {
@@ -231,19 +231,51 @@ class FieldArraysFormClass extends Component {
       );
 
     ////////////////////// les calculs ///////////////////
-    fetch(`http://192.168.1.100:81/api/LigBCDV?FAC=20200023&typfacc=DV`, {
-      method: "POST",
-      header: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `http://192.168.1.100:81/api/LigBCDV?FAC=${event.target.numfac.value}&typfacc=DV`,
+      {
+        method: "POST",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then(
         (result) => {
           this.setState({ snackbaropen: true, snackbarmsg: result });
 
           console.log(result);
+          //// window.alert(result);
+        },
+        (error) => {
+          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        }
+      );
+
+    //////////// switch update ////////////////
+
+    fetch(
+      `http://192.168.1.100:81/api/Switch?code=DV2&valeur=${
+        parseInt(event.target.numfac.value) + 1
+      }`,
+      {
+        method: "PUT",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          //  this.setState({ snackbaropen: true, snackbarmsg: result });
+
+          console.log(result);
+          //  this.props.onHide();
+          this.props.GetNumFacDevis();
           //// window.alert(result);
         },
         (error) => {
@@ -285,7 +317,7 @@ class FieldArraysFormClass extends Component {
                         id="standard-basic"
                         label="№ Devis"
                         margin="normal"
-                        value={parseInt(num.valeur, 10) + 1}
+                        value={parseInt(num.valeur)}
                         fullWidth
                         name="numfac"
                         disabled
@@ -482,7 +514,7 @@ class FieldArraysFormClass extends Component {
                 <Col sm={3}>
                   <TextField
                     id="standard-basic"
-                    label="Remise %"
+                    label="Remise Globale %"
                     margin="normal"
                     //variant="outlined"
                     fullWidth
@@ -858,9 +890,7 @@ class FieldArraysFormClass extends Component {
           submitHandler={this.submitHandler}
           show={this.state.ligModalShow}
           onHide={ligModalClose}
-          numfaccc={this.props.numfac.numfac.map(
-            (nu) => parseInt(nu.valeur, 10) + 1
-          )}
+          numfaccc={this.props.numfac.numfac.map((nu) => parseInt(nu.valeur))}
           dateee={this.state.defaultdate}
         />
       </div>

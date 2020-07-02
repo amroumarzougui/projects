@@ -15,10 +15,18 @@ class CircleChart extends Component {
 
     this.state = {
       data: {},
+      sum: [],
+      k: 0,
     };
   }
 
   componentDidMount() {
+    // fetch(`http://192.168.1.100:81/api/TotalClient`)
+    //   .then((response) => response.json())
+    //   .then((data) => this.setState({ sum: data, k: data.Column1 }));
+
+    // this.state.sum.map((t) => this.setState({ k: t.Column1 }));
+
     Axios.get(`http://192.168.1.100:81/api/GraphCperR`).then((res) => {
       console.log(res);
 

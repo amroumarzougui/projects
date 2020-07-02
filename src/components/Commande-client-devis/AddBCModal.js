@@ -143,7 +143,7 @@ class AddBCModal extends Component {
     this.state.tab.map((k, index) => {
       for (var i = 0; i < this.state.tab.length; i++) {
         fetch(
-          `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=20200017&typfac=BC&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${this.state.defaultdate}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
+          `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=${event.target.codbc.value}&typfac=BC&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${this.state.defaultdate}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
           {
             method: "POST",
             header: {
@@ -155,9 +155,9 @@ class AddBCModal extends Component {
           .then((res) => res.json())
           .then(
             (result) => {
-              this.setState({ snackbaropen: true, snackbarmsg: result });
+              //  this.setState({ snackbaropen: true, snackbarmsg: result });
 
-              console.log("22", result);
+              console.log(result);
               // window.alert(result);
             },
             (error) => {
@@ -169,7 +169,7 @@ class AddBCModal extends Component {
 
     //////////// post BCDV /////////////////////////////
     fetch(
-      `http://192.168.1.100:81/api/BCDVCLIs?numfac=20200017&typfac=BC&taurem=${event.target.remise.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}`,
+      `http://192.168.1.100:81/api/BCDVCLIs?numfac=${event.target.codbc.value}&typfac=BC&taurem=${event.target.remise.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}`,
       {
         method: "POST",
         header: {
@@ -192,19 +192,51 @@ class AddBCModal extends Component {
       );
 
     ////////////////////// les calculs ///////////////////
-    fetch(`http://192.168.1.100:81/api/LigBCDV?FAC=20200017&typfacc=BC`, {
-      method: "POST",
-      header: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `http://192.168.1.100:81/api/LigBCDV?FAC=${event.target.codbc.value}&typfacc=BC`,
+      {
+        method: "POST",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then(
         (result) => {
-          this.setState({ snackbaropen: true, snackbarmsg: result });
+          //  this.setState({ snackbaropen: true, snackbarmsg: result });
 
           console.log(result);
+          //// window.alert(result);
+        },
+        (error) => {
+          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        }
+      );
+
+    //////////// switch update ////////////////
+
+    fetch(
+      `http://192.168.1.100:81/api/Switch?code=BC2&valeur=${
+        parseInt(event.target.codbc.value) + 1
+      }`,
+      {
+        method: "PUT",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          //  this.setState({ snackbaropen: true, snackbarmsg: result });
+
+          console.log(result);
+          this.props.onHide();
+          this.props.GetNumFacBC();
           //// window.alert(result);
         },
         (error) => {
@@ -267,7 +299,7 @@ class AddBCModal extends Component {
                             //variant="outlined"
                             fullWidth
                             name="codbc"
-                            value={parseInt(t.valeur) + 1}
+                            value={parseInt(t.valeur)}
                             disabled
                           />
                         ))}
@@ -462,7 +494,7 @@ class AddBCModal extends Component {
                     <Col sm={3}>
                       <TextField
                         id="standard-basic"
-                        label="Remise %"
+                        label="Remise Globale %"
                         margin="normal"
                         //variant="outlined"
                         fullWidth
@@ -843,8 +875,8 @@ class AddBCModal extends Component {
           show={this.state.ligModalShow}
           onHide={ligModalClose}
           rem={rem}
-          numfaccc={this.props.numfacbcs.numfacbcs.map(
-            (nu) => parseInt(nu.numfac, 10) + 1
+          numfaccc={this.props.numfacbcs.numfacbcs.map((nu) =>
+            parseInt(nu.valeur)
           )}
           datfac={this.state.defaultdate}
         />

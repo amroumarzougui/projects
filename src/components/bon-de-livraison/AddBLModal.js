@@ -149,7 +149,7 @@ class AddBLModal extends Component {
     this.state.tab.map((k, index) => {
       for (var i = 0; i < this.state.tab.length; i++) {
         fetch(
-          `http://192.168.1.100:81/api/LigBLBRs/{ID}?numfac=20203008&typfac=BL&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${this.state.defaultdate}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
+          `http://192.168.1.100:81/api/LigBLBRs/{ID}?numfac=${event.target.codbl.value}&typfac=BL&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${this.state.defaultdate}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
           {
             method: "POST",
             header: {
@@ -174,7 +174,7 @@ class AddBLModal extends Component {
     });
 
     fetch(
-      `http://192.168.1.100:81/api/BLBRs?numfac=20203008&typfac=BL&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}`,
+      `http://192.168.1.100:81/api/BLBRs?numfac=${event.target.codbl.value}&typfac=BL&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}`,
       {
         method: "POST",
         header: {
@@ -196,13 +196,16 @@ class AddBLModal extends Component {
         }
       );
 
-    fetch(`http://192.168.1.100:81/api/LigBLBRs?FAC=20203008&typfacc=BL`, {
-      method: "POST",
-      header: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `http://192.168.1.100:81/api/LigBLBRs?FAC=${event.target.codbl.value}&typfacc=BL`,
+      {
+        method: "POST",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then(
         (result) => {
@@ -217,7 +220,7 @@ class AddBLModal extends Component {
       );
 
     fetch(
-      `http://192.168.1.100:81/api/LigBLBRs?FAC=20203008&Typfacc=bl&CODDEPP=`,
+      `http://192.168.1.100:81/api/LigBLBRs?FAC=${event.target.codbl.value}&Typfacc=bl&CODDEPP=`,
       {
         method: "POST",
         header: {
@@ -234,6 +237,35 @@ class AddBLModal extends Component {
           this.setState({ snackbaropen: true, snackbarmsg: result });
 
           console.log(result);
+          //// window.alert(result);
+        },
+        (error) => {
+          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        }
+      );
+
+    //////////// switch update ////////////////
+
+    fetch(
+      `http://192.168.1.100:81/api/Switch?code=BL2&valeur=${
+        parseInt(event.target.codbl.value) + 1
+      }`,
+      {
+        method: "PUT",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          //  this.setState({ snackbaropen: true, snackbarmsg: result });
+
+          console.log(result);
+          this.props.onHide();
+          this.props.SelectBLCod();
           //// window.alert(result);
         },
         (error) => {
@@ -299,7 +331,7 @@ class AddBLModal extends Component {
                             label="№ BL"
                             margin="normal"
                             //variant="outlined"
-                            value={parseInt(t.numfac) + 1}
+                            value={parseInt(t.valeur)}
                             fullWidth
                             name="codbl"
                             disabled
@@ -498,7 +530,7 @@ class AddBLModal extends Component {
                     <Col sm={3}>
                       <TextField
                         id="standard-basic"
-                        label="Remise %"
+                        label="Remise Globale %"
                         margin="normal"
                         //variant="outlined"
                         fullWidth
@@ -879,9 +911,7 @@ class AddBLModal extends Component {
           show={this.state.ligModalShow}
           onHide={ligModalClose}
           rem={rem}
-          numfaccc={this.props.codbls.codbls.map(
-            (nu) => parseInt(nu.numfac, 10) + 1
-          )}
+          numfaccc={this.props.codbls.codbls.map((nu) => parseInt(nu.valeur))}
           datfac={this.state.defaultdate}
         />
       </div>
