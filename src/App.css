@@ -162,30 +162,34 @@ li a.dropdown-toggle {
   display: flex;
   color: #020f64;
   font-size: 30px;
-  justify-content: center;
+  justify-content: flex-end;
   margin-right: 20px;
+  margin-bottom: -10px;
 }
 .bl-icon {
   display: flex;
   color: #020f64;
   font-size: 30px;
-  justify-content: center;
+  justify-content: flex-end;
   margin-right: 20px;
+  margin-bottom: -10px;
 }
 .f-icon {
   display: flex;
   /* color: #808080b3; */
   color: #020f64;
   font-size: 30px;
-  justify-content: center;
+  justify-content: flex-end;
   margin-right: 20px;
+  margin-bottom: -10px;
 }
 .bc-icon {
   display: flex;
   color: #020f64;
   font-size: 30px;
-  justify-content: center;
+  justify-content: flex-end;
   margin-right: 20px;
+  margin-bottom: -10px;
 }
 .page-icon p {
   margin-left: 10px;

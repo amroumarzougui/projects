@@ -26,8 +26,6 @@ import { connect } from "react-redux";
 import { SelectClient } from "../../redux/actions/GetClients";
 import { GetNumFacDevis } from "../../redux/actions/GetNumfacDevis";
 import { SelectArticle } from "../../redux/actions/GetArticles";
-import { Input, Label, Table } from "reactstrap";
-import Center from "react-center";
 
 import Tooltip from "@material-ui/core/Tooltip";
 import AddClientPassagerModal from "./AddClientPassagerModal";
@@ -38,12 +36,9 @@ import Fab from "@material-ui/core/Fab";
 import { Divider, Chip } from "@material-ui/core";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 
-// import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
-// import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-
-import LigModal from "./LigModal";
 import LigBCArticle from "./LigBCArticle";
 import { GetNumFacBC } from "../../redux/actions/Getcodbc";
+import { SelectBC } from "../../redux/actions/GetBC";
 
 const roundTo = require("round-to");
 
@@ -136,6 +131,10 @@ class AddBCModal extends Component {
     this.setState({ [name]: event.target.checked });
   };
 
+  remiseglobalChange = (event) => {
+    this.setState({ remiseg: event.target.value });
+  };
+
   enregistrer = (event) => {
     event.preventDefault();
 
@@ -155,10 +154,7 @@ class AddBCModal extends Component {
           .then((res) => res.json())
           .then(
             (result) => {
-              //  this.setState({ snackbaropen: true, snackbarmsg: result });
-
               console.log(result);
-              // window.alert(result);
             },
             (error) => {
               this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -181,34 +177,27 @@ class AddBCModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
+          this.props.onHide();
+          this.props.SelectBC();
+
+          fetch(
+            `http://192.168.1.100:81/api/LigBCDV?FAC=${this.props.numfacbcs.numfacbcs.map(
+              (nu) => parseInt(nu.valeur)
+            )}&typfacc=BC`,
+            {
+              method: "POST",
+              header: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
           this.setState({ snackbaropen: true, snackbarmsg: result });
+          this.props.GetNumFacBC();
 
           console.log(result);
-          //// window.alert(result);
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
-      );
-
-    ////////////////////// les calculs ///////////////////
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV?FAC=${event.target.codbc.value}&typfacc=BC`,
-      {
-        method: "POST",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          //  this.setState({ snackbaropen: true, snackbarmsg: result });
-
-          console.log(result);
-          //// window.alert(result);
+          window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -232,12 +221,7 @@ class AddBCModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
-          //  this.setState({ snackbaropen: true, snackbarmsg: result });
-
           console.log(result);
-          this.props.onHide();
-          this.props.GetNumFacBC();
-          //// window.alert(result);
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -499,6 +483,7 @@ class AddBCModal extends Component {
                         //variant="outlined"
                         fullWidth
                         name="remise"
+                        onChange={this.remiseglobalChange}
                         value={this.state.remiseg}
                       />
                     </Col>
@@ -679,11 +664,13 @@ class AddBCModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total HT Brut
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totalhtbrut, 3)}
+                        {Number(this.state.totalhtbrut).toFixed(3)}
                       </p>
                     </Col>
 
@@ -697,11 +684,13 @@ class AddBCModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Remise Article
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.sumremisearticle, 3)}
+                        {Number(this.state.sumremisearticle).toFixed(3)}
                       </p>
                     </Col>
 
@@ -715,11 +704,13 @@ class AddBCModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total TVA
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totaltva, 3)}
+                        {Number(this.state.totaltva).toFixed(3)}
                       </p>
                     </Col>
 
@@ -733,7 +724,9 @@ class AddBCModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total Quantité
                       </p>
                       <p style={{ color: "black" }}>{this.state.totalqte}</p>
@@ -774,11 +767,13 @@ class AddBCModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total HT Net
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totalhtnet, 3)}
+                        {Number(this.state.totalhtnet).toFixed(3)}
                       </p>
                     </Col>
 
@@ -792,11 +787,13 @@ class AddBCModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Remise Globale
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.remiseglobal, 3)}
+                        {Number(this.state.remiseglobal).toFixed(3)}
                       </p>
                     </Col>
 
@@ -810,11 +807,13 @@ class AddBCModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total TVA
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totaltva, 3)}
+                        {Number(this.state.totaltva).toFixed(3)}
                       </p>
                     </Col>
 
@@ -828,11 +827,17 @@ class AddBCModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{
+                          color: "rgb(220, 0, 78)",
+                          fontWeight: "bold",
+                          marginBottom: "-5px",
+                        }}
+                      >
                         Net à Payer
                       </p>
-                      <p style={{ color: "black" }}>
-                        {roundTo(this.state.netapayer, 3)}
+                      <p style={{ color: "black", fontWeight: "bold" }}>
+                        {Number(this.state.netapayer).toFixed(3)}
                       </p>
                     </Col>
                   </Row>
@@ -891,6 +896,7 @@ function mapDispatchToProps(dispatch) {
     GetNumFacDevis: () => dispatch(GetNumFacDevis()),
     SelectArticle: () => dispatch(SelectArticle()),
     GetNumFacBC: () => dispatch(GetNumFacBC()),
+    SelectBC: () => dispatch(SelectBC()),
   };
 }
 

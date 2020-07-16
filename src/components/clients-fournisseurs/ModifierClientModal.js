@@ -49,14 +49,18 @@ class ModifierClientModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
+          this.props.onHide();
+
           this.setState({ snackbaropen: true, snackbarmsg: result });
+          this.props.SelectClient();
+
+          window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
         }
       );
-    this.props.SelectClient();
-    this.props.onHide();
+
     //  this.props.onHide01();
   };
 

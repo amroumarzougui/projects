@@ -3,7 +3,7 @@ import { Collapse, NavItem, NavLink } from "reactstrap";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
 
-const SubMenu = props => {
+const SubMenu = (props) => {
   const [collapsed, setCollapsed] = useState(true);
   const toggleNavbar = () => setCollapsed(!collapsed);
   const { title, items, icon } = props;
@@ -14,7 +14,7 @@ const SubMenu = props => {
         onClick={toggleNavbar}
         className={classNames({ "menu-open": !collapsed })}
       >
-        <NavLink className="dropdown-toggle" >
+        <NavLink className="dropdown-toggle">
           {/* <FontAwesomeIcon icon={icon} className="mr-2" /> */}
 
           {title}
@@ -31,13 +31,13 @@ const SubMenu = props => {
               key={index}
               to={
                 "/" + item.title &&
-                item.title
-                  .toLowerCase()
-                  .split(" ")
-                  .join("-")
+                item.title.toLowerCase().split(" ").join("-")
               }
+              // onClick={toggleNavbar}
             >
-              <NavItem style={{ marginLeft: "30px" }} className="pl-4">{item.icon}&nbsp;&nbsp;{item.title}</NavItem>
+              <NavItem style={{ marginLeft: "30px" }} className="pl-4">
+                {item.icon}&nbsp;&nbsp;{item.title}
+              </NavItem>
             </Link>
           ))}
       </Collapse>

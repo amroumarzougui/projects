@@ -36,6 +36,8 @@ import { Divider, Chip } from "@material-ui/core";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { SelectBECod } from "../../redux/actions/GetBECode";
 import LigBEArticle from "./LigBEArticle";
+import { SelectBE } from "../../redux/actions/GetBE";
+import { SelectFacFrsCod } from "../../redux/actions/GetFacFrsCod";
 
 const roundTo = require("round-to");
 var curr = new Date();
@@ -81,13 +83,21 @@ class AddBEModal extends Component {
 
       snackbaropen: false,
       snackbarmsg: ",",
+      codf: "",
     };
   }
 
   componentDidMount() {
     this.props.SelectClient();
     this.props.SelectBECod();
+    this.props.SelectFacFrsCod();
   }
+
+  typachChange = () => {
+    this.props.codfacfrss.codfacfrss.map((t) =>
+      this.setState({ codf: t.valeur })
+    );
+  };
 
   submitHandler = (
     tab,
@@ -160,7 +170,13 @@ class AddBEModal extends Component {
     });
 
     fetch(
-      `http://192.168.1.100:81/api/BEREs?numfac=${event.target.codbe.value}&typfac=BE&datfac=${event.target.datfac.value}&codfrs=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&taurem=${event.target.remise.value}&pj=${event.target.pj.value}&typach=${event.target.typach.value}`,
+      `http://192.168.1.100:81/api/BEREs?numfac=${
+        event.target.codbe.value
+      }&typfac=BE&datfac=${event.target.datfac.value}&codfrs=${
+        event.target.codcli.value
+      }&raisoc=${event.target.raissoc.value}&catfisc=${"0"}&taurem=${
+        event.target.remise.value
+      }&pj=${event.target.pj.value}&typach=${event.target.typach.value}`,
       {
         method: "POST",
         header: {
@@ -172,10 +188,41 @@ class AddBEModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
-          this.setState({ snackbaropen: true, snackbarmsg: result });
+          this.props.onHide();
+          this.props.SelectBE();
 
+          ///////partie calcul be /////////////////
+          fetch(
+            `http://192.168.1.100:81/api/LIGBEREs?FACc=${this.props.codbes.codbes.map(
+              (nu) => parseInt(nu.valeur)
+            )}&typfacc=BE`,
+            {
+              method: "POST",
+              header: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          this.setState({ snackbaropen: true, snackbarmsg: result });
+          window.location.reload();
+
+          this.props.SelectBECod();
           console.log(result);
-          //// window.alert(result);
+          // fetch(
+          //   `http://192.168.1.100:81/api/LIGBEREs?FACc=${this.props.codbes.codbes.map(
+          //     (nu) => parseInt(nu.valeur)
+          //   )}&typfacc=BE`,
+          //   {
+          //     method: "POST",
+          //     header: {
+          //       Accept: "application/json",
+          //       "Content-Type": "application/json",
+          //     },
+          //   }
+          // );
+          window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -197,62 +244,68 @@ class AddBEModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
-          //  this.setState({ snackbaropen: true, snackbarmsg: result });
-
           console.log(result);
-          this.props.onHide();
-          this.props.SelectBECod();
-          //// window.alert(result);
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
         }
       );
 
-    // fetch(`http://192.168.1.100:81/api/LigBLBRs?FAC=20203500&typfacc=BL`, {
-    //   method: "POST",
-    //   header: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    // })
-    //   .then((res) => res.json())
-    //   .then(
-    //     (result) => {
-    //       this.setState({ snackbaropen: true, snackbarmsg: result });
+    if (event.target.typach.value === "L") {
+      fetch(
+        `http://192.168.1.100:81/api/FacFrs?numfac=${event.target.codbe.value}&typfac=BF&datfac=${event.target.datfac.value}&codfrs=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&pj=${event.target.pj.value}&numbe=${event.target.codbe.value}&taurem=${event.target.remise.value}&pj=${event.target.pj.value}`,
+        {
+          method: "POST",
+          header: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          fetch(
+            `http://192.168.1.100:81/api/Switch?code=BF2&valeur=${
+              parseInt(event.target.codbe.value) + 1
+            }`,
+            {
+              method: "PUT",
+              header: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        });
+    }
 
-    //       console.log(result);
-    //       //// window.alert(result);
-    //     },
-    //     (error) => {
-    //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-    //     }
-    //   );
-
-    // fetch(
-    //   `http://192.168.1.100:81/api/LigBLBRs?FAC=20203008&Typfacc=bl&CODDEPP=`,
-    //   {
-    //     method: "POST",
-    //     header: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // )
-    //   .then((res) => res.json())
-    //   .then(
-    //     (result) => {
-    //       this.props.onHide();
-    //       this.SelectBL();
-    //       this.setState({ snackbaropen: true, snackbarmsg: result });
-
-    //       console.log(result);
-    //       //// window.alert(result);
-    //     },
-    //     (error) => {
-    //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-    //     }
-    //   );
+    if (event.target.typach.value === "F") {
+      fetch(
+        `http://192.168.1.100:81/api/FacFrs?numfac=${this.state.codf}&typfac=FF&datfac=${event.target.datfac.value}&codfrs=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&pj=${event.target.pj.value}&numbe=${event.target.codbe.value}&taurem=${event.target.remise.value}&pj=${event.target.pj.value}`,
+        {
+          method: "POST",
+          header: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          fetch(
+            `http://192.168.1.100:81/api/Switch?code=FF2&valeur=${
+              parseInt(this.state.codf) + 1
+            }`,
+            {
+              method: "PUT",
+              header: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        });
+    }
   };
 
   render() {
@@ -336,6 +389,7 @@ class AddBEModal extends Component {
                         margin="normal"
                         fullWidth
                         name="typach"
+                        onChange={this.typachChange}
                       >
                         {this.state.typach.map((option) => (
                           <MenuItem key={option.code} value={option.code}>
@@ -498,15 +552,6 @@ class AddBEModal extends Component {
 
                   <Row>
                     <Col sm={4}>
-                      {/* <TextField
-                        id="standard-basic"
-                        label="Categorie Fiscale"
-                        margin="normal"
-                        //variant="outlined"
-                        fullWidth
-                        name="categoriefiscale"
-                        value={this.state.categoriefiscale}
-                      /> */}
                       <TextField
                         id="standard-basic"
                         label="Code TVA"
@@ -539,25 +584,8 @@ class AddBEModal extends Component {
                         margin="normal"
                         fullWidth
                         name="pj"
-                        //   onChange={this.remiseChange}
                       />
                     </Col>
-
-                    {/* <Col sm={2}>
-                      <FormGroup style={{ marginTop: "40px" }}>
-                        {this.state.showTimbre ? (
-                          <p style={{ color: "grey" }}>Timbre: ✔</p>
-                        ) : null}
-                      </FormGroup>
-                    </Col>
-
-                    <Col sm={2}>
-                      <FormGroup style={{ marginTop: "40px" }}>
-                        {this.state.showForfitaire === 1 ? (
-                          <p style={{ color: "grey" }}>Forfitaire: ✔</p>
-                        ) : null}
-                      </FormGroup>
-                    </Col> */}
                   </Row>
                 </Card.Body>
               </Card>
@@ -711,11 +739,13 @@ class AddBEModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total HT Brut
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totalhtbrut, 3)}
+                        {Number(this.state.totalhtbrut).toFixed(3)}
                       </p>
                     </Col>
 
@@ -729,11 +759,13 @@ class AddBEModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Remise Article
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.sumremisearticle, 3)}
+                        {Number(this.state.sumremisearticle).toFixed(3)}
                       </p>
                     </Col>
 
@@ -747,11 +779,13 @@ class AddBEModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total TVA
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totaltva, 3)}
+                        {Number(this.state.totaltva).toFixed(3)}
                       </p>
                     </Col>
 
@@ -765,7 +799,9 @@ class AddBEModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total Quantité
                       </p>
                       <p style={{ color: "black" }}>{this.state.totalqte}</p>
@@ -806,11 +842,13 @@ class AddBEModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total HT Net
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totalhtnet, 3)}
+                        {Number(this.state.totalhtnet).toFixed(3)}
                       </p>
                     </Col>
 
@@ -824,11 +862,13 @@ class AddBEModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Remise Globale
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.remiseglobal, 3)}
+                        {Number(this.state.remiseglobal).toFixed(3)}
                       </p>
                     </Col>
 
@@ -842,11 +882,13 @@ class AddBEModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total TVA
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totaltva, 3)}
+                        {Number(this.state.totaltva).toFixed(3)}
                       </p>
                     </Col>
 
@@ -860,11 +902,17 @@ class AddBEModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{
+                          color: "rgb(220, 0, 78)",
+                          fontWeight: "bold",
+                          marginBottom: "-5px",
+                        }}
+                      >
                         Net à Payer
                       </p>
-                      <p style={{ color: "black" }}>
-                        {roundTo(this.state.netapayer, 3)}
+                      <p style={{ color: "black", fontWeight: "bold" }}>
+                        {Number(this.state.netapayer).toFixed(3)}
                       </p>
                     </Col>
                   </Row>
@@ -893,13 +941,6 @@ class AddBEModal extends Component {
                         color: "white",
                         backgroundColor: "#020F64",
                       }}
-                      // onClick={(e) => {
-                      //   e.preventDefault();
-                      //   this.setState({
-                      //     openActionModal: true,
-                      //     clientmail: this.state.cemail,
-                      //   });
-                      // }}
                     >
                       Enregistrer tous
                     </Button>
@@ -930,6 +971,8 @@ function mapDispatchToProps(dispatch) {
   return {
     SelectClient: () => dispatch(SelectClient()),
     SelectBECod: () => dispatch(SelectBECod()),
+    SelectBE: () => dispatch(SelectBE()),
+    SelectFacFrsCod: () => dispatch(SelectFacFrsCod()),
   };
 }
 
@@ -937,6 +980,7 @@ function mapStateToProps(state) {
   return {
     clients: state.clients,
     codbes: state.codbes,
+    codfacfrss: state.codfacfrss,
   };
 }
 

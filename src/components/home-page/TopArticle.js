@@ -40,7 +40,7 @@ class TopArticle extends Component {
 
           datasets: [
             {
-              label: "Clients / Région",
+              label: "Les % des articles les plus vendus",
 
               data: runscore,
 

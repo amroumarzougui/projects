@@ -27,23 +27,16 @@ import { connect } from "react-redux";
 import { SelectClient } from "../../redux/actions/GetClients";
 import { GetNumFacDevis } from "../../redux/actions/GetNumfacDevis";
 import { SelectArticle } from "../../redux/actions/GetArticles";
-import { Input, Label, Table } from "reactstrap";
-
 import Tooltip from "@material-ui/core/Tooltip";
-
 import AddIcon from "@material-ui/icons/Add";
 import Fab from "@material-ui/core/Fab";
 
 import { Divider, Chip } from "@material-ui/core";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 
-// import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
-// import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-
 import LigBLArticle from "./LigBLArticle";
 import { SelectBLCod } from "../../redux/actions/GetBLcod";
 import { SelectBL } from "../../redux/actions/GetBL";
-// import AddClientPassagerModal from "../commande-client-devis/AddClientPassagerModal";
 
 const roundTo = require("round-to");
 
@@ -85,18 +78,6 @@ class AddBLModal extends Component {
 
       snackbaropen: false,
       snackbarmsg: ",",
-      tabtabb: [
-        {
-          a: "55",
-          b: 12,
-          c: "55",
-        },
-        {
-          a: "44",
-          b: 10,
-          c: "44",
-        },
-      ],
     };
   }
 
@@ -143,6 +124,10 @@ class AddBLModal extends Component {
     this.setState({ [name]: event.target.checked });
   };
 
+  remiseglobalChange = (event) => {
+    this.setState({ remiseg: event.target.value });
+  };
+
   enregistrer = (event) => {
     event.preventDefault();
 
@@ -161,10 +146,7 @@ class AddBLModal extends Component {
           .then((res) => res.json())
           .then(
             (result) => {
-              this.setState({ snackbaropen: true, snackbarmsg: result });
-
-              console.log("22", result);
-              // window.alert(result);
+              console.log(result);
             },
             (error) => {
               this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -174,7 +156,7 @@ class AddBLModal extends Component {
     });
 
     fetch(
-      `http://192.168.1.100:81/api/BLBRs?numfac=${event.target.codbl.value}&typfac=BL&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}`,
+      `http://192.168.1.100:81/api/BLBRs?numfac=${event.target.codbl.value}&typfac=BL&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}&taurem=${this.state.remiseg}`,
       {
         method: "POST",
         header: {
@@ -186,33 +168,27 @@ class AddBLModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
+          this.props.onHide();
+
+          this.props.SelectBL();
+
+          fetch(
+            `http://192.168.1.100:81/api/LigBLBRs?FAC=${this.props.codbls.codbls.map(
+              (nu) => parseInt(nu.valeur)
+            )}&typfacc=BL`,
+            {
+              method: "POST",
+              header: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
           this.setState({ snackbaropen: true, snackbarmsg: result });
-
+          this.props.SelectBLCod();
           console.log(result);
-          //// window.alert(result);
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
-      );
-
-    fetch(
-      `http://192.168.1.100:81/api/LigBLBRs?FAC=${event.target.codbl.value}&typfacc=BL`,
-      {
-        method: "POST",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          this.setState({ snackbaropen: true, snackbarmsg: result });
-
-          console.log(result);
-          //// window.alert(result);
+          window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -232,12 +208,7 @@ class AddBLModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
-          this.props.onHide();
-          this.SelectBL();
-          this.setState({ snackbaropen: true, snackbarmsg: result });
-
           console.log(result);
-          //// window.alert(result);
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -261,12 +232,7 @@ class AddBLModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
-          //  this.setState({ snackbaropen: true, snackbarmsg: result });
-
           console.log(result);
-          this.props.onHide();
-          this.props.SelectBLCod();
-          //// window.alert(result);
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -348,7 +314,6 @@ class AddBLModal extends Component {
                         //variant="outlined"
                         type="date"
                         fullWidth
-                        name="remise"
                         defaultValue={this.state.defaultdate}
                       />
                     </Col>
@@ -524,6 +489,7 @@ class AddBLModal extends Component {
                         fullWidth
                         name="categoriefiscale"
                         value={this.state.categoriefiscale}
+                        disabled
                       />
                     </Col>
 
@@ -536,6 +502,7 @@ class AddBLModal extends Component {
                         fullWidth
                         name="remise"
                         value={this.state.remiseg}
+                        onChange={this.remiseglobalChange}
                       />
                     </Col>
 
@@ -707,11 +674,13 @@ class AddBLModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total HT Brut
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totalhtbrut, 3)}
+                        {Number(this.state.totalhtbrut).toFixed(3)}
                       </p>
                     </Col>
 
@@ -725,11 +694,13 @@ class AddBLModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Remise Article
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.sumremisearticle, 3)}
+                        {Number(this.state.sumremisearticle).toFixed(3)}
                       </p>
                     </Col>
 
@@ -743,11 +714,13 @@ class AddBLModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total TVA
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totaltva, 3)}
+                        {Number(this.state.totaltva).toFixed(3)}
                       </p>
                     </Col>
 
@@ -761,7 +734,9 @@ class AddBLModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total Quantité
                       </p>
                       <p style={{ color: "black" }}>{this.state.totalqte}</p>
@@ -802,11 +777,13 @@ class AddBLModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total HT Net
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totalhtnet, 3)}
+                        {Number(this.state.totalhtnet).toFixed(3)}
                       </p>
                     </Col>
 
@@ -820,11 +797,13 @@ class AddBLModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Remise Globale
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.remiseglobal, 3)}
+                        {Number(this.state.remiseglobal).toFixed(3)}
                       </p>
                     </Col>
 
@@ -838,11 +817,13 @@ class AddBLModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total TVA
                       </p>
                       <p style={{ color: "black" }}>
-                        {roundTo(this.state.totaltva, 3)}
+                        {Number(this.state.totaltva).toFixed(3)}
                       </p>
                     </Col>
 
@@ -856,11 +837,17 @@ class AddBLModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p style={{ color: "grey", marginBottom: "-5px" }}>
+                      <p
+                        style={{
+                          color: "rgb(220, 0, 78)",
+                          fontWeight: "bold",
+                          marginBottom: "-5px",
+                        }}
+                      >
                         Net à Payer
                       </p>
-                      <p style={{ color: "black" }}>
-                        {roundTo(this.state.netapayer, 3)}
+                      <p style={{ color: "black", fontWeight: "bold" }}>
+                        {Number(this.state.netapayer).toFixed(3)}
                       </p>
                     </Col>
                   </Row>
@@ -889,13 +876,6 @@ class AddBLModal extends Component {
                         color: "white",
                         backgroundColor: "#020F64",
                       }}
-                      // onClick={(e) => {
-                      //   e.preventDefault();
-                      //   this.setState({
-                      //     openActionModal: true,
-                      //     clientmail: this.state.cemail,
-                      //   });
-                      // }}
                     >
                       Enregistrer tous
                     </Button>

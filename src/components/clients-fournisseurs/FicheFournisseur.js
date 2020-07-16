@@ -134,10 +134,10 @@ class FicheFournisseur extends Component {
                 <thead>
                   <tr>
                     <th>Code</th>
-                    <th style={{ width: "40%" }}>Raison sociale</th>
+                    <th>Raison sociale</th>
                     <th>Ville</th>
                     <th>Solde Facture</th>
-                    <th>Solde Globale</th>
+                    <th>Solde Global</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -172,13 +172,19 @@ class FicheFournisseur extends Component {
                         <span>{test.codfrs}</span>
                       </td>
 
-                      <td style={{ width: "40%" }}>
+                      <td>
                         <span>{test.raisoc}</span>
                       </td>
 
-                      <td>
-                        <span>{test.ville}</span>
-                      </td>
+                      {test.ville === "" ? (
+                        <td>
+                          <span>--</span>
+                        </td>
+                      ) : (
+                        <td>
+                          <span>{test.ville}</span>
+                        </td>
+                      )}
 
                       <td>
                         <span>{Number(test.soldfac).toFixed(3)}</span>
@@ -197,10 +203,10 @@ class FicheFournisseur extends Component {
                 <thead>
                   <tr>
                     <th>Code</th>
-                    <th style={{ width: "40%" }}>Raison sociale</th>
+                    <th>Raison sociale</th>
                     <th>Ville</th>
                     <th>Solde Facture</th>
-                    <th>Solde Globale</th>
+                    <th>Solde Global</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -235,13 +241,19 @@ class FicheFournisseur extends Component {
                         <span>{test.codfrs}</span>
                       </td>
 
-                      <td style={{ width: "40%" }}>
+                      <td>
                         <span>{test.raisoc}</span>
                       </td>
 
-                      <td>
-                        <span>{test.ville}</span>
-                      </td>
+                      {test.ville === "" ? (
+                        <td>
+                          <span>--</span>
+                        </td>
+                      ) : (
+                        <td>
+                          <span>{test.ville}</span>
+                        </td>
+                      )}
 
                       <td>
                         <span>{Number(test.soldfac).toFixed(3)}</span>

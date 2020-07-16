@@ -15,12 +15,12 @@
     padding: 10px;
     text-align: center;
     span {
-      font-size: 14px;
+      font-size: 12px;
     }
   }
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
   }
   table {
     height: fit-content;
@@ -67,15 +67,15 @@
     padding: 10px;
     text-align: center;
     span {
-      font-size: 14px;
+      font-size: 13px;
     }
     .bigpart {
       width: 60%;
     }
   }
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
   }
   table {
     height: fit-content;
@@ -90,7 +90,7 @@
     tbody {
       overflow-y: auto;
       display: block;
-      max-height: 22em;
+      max-height: 33em;
 
       tr:hover {
         animation: tdanimation 1s infinite;
@@ -247,11 +247,14 @@ and also iPads specifically.
     td:nth-of-type(3):before {
       content: "Code client";
     }
-    td:nth-of-type(4):before {
-      content: "Raison Sociale";
+    // td:nth-of-type(4):before {
+    //   content: "Raison Sociale";
+    // }
+    td:nth-of-type(4) {
+      display: none;
     }
     td:nth-of-type(5):before {
-      content: "Montant TotalTTC";
+      content: "Montant";
     }
   }
 }

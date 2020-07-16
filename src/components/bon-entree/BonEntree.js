@@ -133,7 +133,9 @@ class BonEntree extends Component {
                   <th>№ BE</th>
                   <th>Date</th>
 
-                  <th style={{ width: "55%" }}>Fournisseur</th>
+                  {/* <th style={{ width: "55%" }}>Fournisseur</th> */}
+                  <th>Code Frs</th>
+                  <th style={{ width: "40%" }}>Raison social</th>
                   <th>Montant</th>
                 </tr>
               </thead>
@@ -192,8 +194,14 @@ class BonEntree extends Component {
                       </span>
                     </td>
 
-                    <td style={{ width: "55%" }}>
+                    {/* <td style={{ width: "55%" }}>
                       <span>{test.codfrs}</span> &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span>{test.raisoc}</span>
+                    </td> */}
+                    <td>
+                      <span>{test.codfrs}</span>
+                    </td>
+                    <td style={{ width: "40%" }}>
                       <span>{test.raisoc}</span>
                     </td>
 
@@ -212,9 +220,9 @@ class BonEntree extends Component {
                 <tr>
                   <th>№ BE</th>
                   <th>Date</th>
-                  {/* <th>Code Fournisseur</th>
-                  <th style={{ width: "40%" }}>Raison Sociale</th> */}
-                  <th style={{ width: "55%" }}>Fournisseur</th>
+                  <th>Code Frs</th>
+                  <th style={{ width: "40%" }}>Raison social</th>
+                  {/* <th style={{ width: "55%" }}>Fournisseur</th> */}
 
                   <th>Montant</th>
                 </tr>
@@ -275,8 +283,15 @@ class BonEntree extends Component {
                       </span>
                     </td>
 
-                    <td style={{ width: "55%" }}>
+                    {/* <td style={{ width: "55%" }}>
                       <span>{test.codfrs}</span> &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span>{test.raisoc}</span>
+                    </td> */}
+
+                    <td>
+                      <span>{test.codfrs}</span>
+                    </td>
+                    <td style={{ width: "40%" }}>
                       <span>{test.raisoc}</span>
                     </td>
 

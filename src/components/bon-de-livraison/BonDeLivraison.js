@@ -74,6 +74,7 @@ class BonDeLivraison extends Component {
       sumqt,
       facture,
       catfisc,
+      SumHtBrut,
     } = this.state;
 
     if (this.state.loggedIn === false) {
@@ -124,8 +125,6 @@ class BonDeLivraison extends Component {
         </div>
         <br />
 
-        {/* <div className="bl-table"> */}
-
         {this.state.rechercheclicked ? (
           <div className="tabbl">
             <table>
@@ -133,9 +132,9 @@ class BonDeLivraison extends Component {
                 <tr>
                   <th>№ BL</th>
                   <th>Date</th>
-                  {/* <th>Code client</th>
-                  <th style={{ width: "40%" }}>Raison Sociale</th> */}
-                  <th style={{ width: "40%" }}>Client</th>
+                  <th>Code client</th>
+                  <th style={{ width: "40%" }}>Raison Sociale</th>
+                  {/* <th style={{ width: "40%" }}>Client</th> */}
                   <th>Facturé</th>
                   <th>Montant</th>
                 </tr>
@@ -158,29 +157,54 @@ class BonDeLivraison extends Component {
                                 (a, v) => a + parseInt(v.quantite),
                                 0
                               ),
+                            SumHtBrut:
+                              data &&
+                              data.reduce(
+                                (a, v) => a + parseInt(v.quantite) * v.priuni,
+                                0
+                              ),
+                            getBLByIdModalShow: true,
+                            blid: test.numfac,
+                            datebl: test.datfac,
+                            client: test.codcli,
+                            raisonsociale: test.raisoc,
+                            totalhtbrut: test.smhtb,
+                            remiselignes: test.smremart,
+                            remiseglobale: test.smremglo,
+                            totalhtnet: test.smhtn,
+                            totaldc: test.smDC,
+                            totalcos: test.smCOS,
+                            totalttc: test.mntbon,
+                            totaltva: test.smtva,
+                            droitdetimbre: test.timbre,
+                            avanceimpot: test.ForfaitCli,
+                            //  rem: test.id,
+                            annuler: test.annuler,
+                            facture: test.facture,
+                            catfisc: test.catfisc,
                           })
                         );
-                      this.setState({
-                        getBLByIdModalShow: true,
-                        blid: test.numfac,
-                        datebl: test.datfac,
-                        client: test.codcli,
-                        raisonsociale: test.raisoc,
-                        totalhtbrut: test.smhtb,
-                        remiselignes: test.smremart,
-                        remiseglobale: test.smremglo,
-                        totalhtnet: test.smhtn,
-                        totaldc: test.smDC,
-                        totalcos: test.smCOS,
-                        totalttc: test.mntbon,
-                        totaltva: test.smtva,
-                        droitdetimbre: test.timbre,
-                        avanceimpot: test.ForfaitCli,
-                        //  rem: test.id,
-                        annuler: test.annuler,
-                        facture: test.facture,
-                        catfisc: test.catfisc,
-                      });
+                      // this.setState({
+                      //   getBLByIdModalShow: true,
+                      //   blid: test.numfac,
+                      //   datebl: test.datfac,
+                      //   client: test.codcli,
+                      //   raisonsociale: test.raisoc,
+                      //   totalhtbrut: test.smhtb,
+                      //   remiselignes: test.smremart,
+                      //   remiseglobale: test.smremglo,
+                      //   totalhtnet: test.smhtn,
+                      //   totaldc: test.smDC,
+                      //   totalcos: test.smCOS,
+                      //   totalttc: test.mntbon,
+                      //   totaltva: test.smtva,
+                      //   droitdetimbre: test.timbre,
+                      //   avanceimpot: test.ForfaitCli,
+                      //   //  rem: test.id,
+                      //   annuler: test.annuler,
+                      //   facture: test.facture,
+                      //   catfisc: test.catfisc,
+                      // });
                     }}
                   >
                     <td>
@@ -196,18 +220,18 @@ class BonDeLivraison extends Component {
                       </span>
                     </td>
 
-                    {/* <td>
+                    <td>
                       <span>{test.codcli}</span>
                     </td>
 
                     <td style={{ width: "40%" }}>
                       <span>{test.raisoc}</span>
-                    </td> */}
-
+                    </td>
+                    {/* 
                     <td style={{ width: "40%" }}>
                       <span>{test.codcli}</span> &nbsp;&nbsp;&nbsp;&nbsp;
                       <span>{test.raisoc}</span>
-                    </td>
+                    </td> */}
                     <td>
                       {test.facture === test.numfac ? (
                         <span>✔</span>
@@ -230,9 +254,9 @@ class BonDeLivraison extends Component {
                 <tr>
                   <th>№ BL</th>
                   <th>Date</th>
-                  {/* <th>Code client</th>
-                  <th style={{ width: "40%" }}>Raison Sociale</th> */}
-                  <th style={{ width: "40%" }}>Client</th>
+                  <th>Code client</th>
+                  <th style={{ width: "40%" }}>Raison Sociale</th>
+                  {/* <th style={{ width: "40%" }}>Client</th> */}
                   <th>Facturé</th>
 
                   <th>Montant</th>
@@ -256,29 +280,55 @@ class BonDeLivraison extends Component {
                                 (a, v) => a + parseInt(v.quantite),
                                 0
                               ),
+                            SumHtBrut:
+                              data &&
+                              data.reduce(
+                                (a, v) => a + parseInt(v.quantite) * v.priuni,
+                                0
+                              ),
+                            getBLByIdModalShow: true,
+                            blid: test.numfac,
+                            datebl: test.datfac,
+                            client: test.codcli,
+                            raisonsociale: test.raisoc,
+                            totalhtbrut: test.smhtb,
+                            remiselignes: test.smremart,
+                            remiseglobale: test.smremglo,
+                            totalhtnet: test.smhtn,
+                            totaldc: test.smDC,
+                            totalcos: test.smCOS,
+                            totalttc: test.mntbon,
+                            totaltva: test.smtva,
+                            droitdetimbre: test.timbre,
+                            avanceimpot: test.ForfaitCli,
+                            //  rem: test.id,
+                            annuler: test.annuler,
+                            facture: test.facture,
+                            catfisc: test.catfisc,
                           })
                         );
-                      this.setState({
-                        getBLByIdModalShow: true,
-                        blid: test.numfac,
-                        datebl: test.datfac,
-                        client: test.codcli,
-                        raisonsociale: test.raisoc,
-                        totalhtbrut: test.smhtb,
-                        remiselignes: test.smremart,
-                        remiseglobale: test.smremglo,
-                        totalhtnet: test.smhtn,
-                        totaldc: test.smDC,
-                        totalcos: test.smCOS,
-                        totalttc: test.mntbon,
-                        totaltva: test.smtva,
-                        droitdetimbre: test.timbre,
-                        avanceimpot: test.ForfaitCli,
-                        //  rem: test.id,
-                        annuler: test.annuler,
-                        facture: test.facture,
-                        catfisc: test.catfisc,
-                      });
+
+                      // this.setState({
+                      //   getBLByIdModalShow: true,
+                      //   blid: test.numfac,
+                      //   datebl: test.datfac,
+                      //   client: test.codcli,
+                      //   raisonsociale: test.raisoc,
+                      //   totalhtbrut: test.smhtb,
+                      //   remiselignes: test.smremart,
+                      //   remiseglobale: test.smremglo,
+                      //   totalhtnet: test.smhtn,
+                      //   totaldc: test.smDC,
+                      //   totalcos: test.smCOS,
+                      //   totalttc: test.mntbon,
+                      //   totaltva: test.smtva,
+                      //   droitdetimbre: test.timbre,
+                      //   avanceimpot: test.ForfaitCli,
+                      //   //  rem: test.id,
+                      //   annuler: test.annuler,
+                      //   facture: test.facture,
+                      //   catfisc: test.catfisc,
+                      // });
                     }}
                   >
                     <td>
@@ -294,8 +344,15 @@ class BonDeLivraison extends Component {
                       </span>
                     </td>
 
-                    <td style={{ width: "40%" }}>
+                    {/* <td style={{ width: "40%" }}>
                       <span>{test.codcli}</span> &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span>{test.raisoc}</span>
+                    </td> */}
+                    <td>
+                      <span>{test.codcli}</span>
+                    </td>
+
+                    <td style={{ width: "40%" }}>
                       <span>{test.raisoc}</span>
                     </td>
                     <td>
@@ -340,6 +397,7 @@ class BonDeLivraison extends Component {
           sumqt={sumqt}
           facture={facture}
           catfisc={catfisc}
+          SumHtBrut={SumHtBrut}
         />
       </div>
     );

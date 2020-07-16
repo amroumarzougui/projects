@@ -247,18 +247,19 @@
   td,
   th {
     display: flex;
-    width: 15%;
+    width: 20%;
     justify-content: center;
     align-items: center;
     padding: 10px;
     text-align: center;
+
     span {
       font-size: 14px;
     }
   }
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
   }
   table {
     height: fit-content;
@@ -273,7 +274,7 @@
     tbody {
       overflow-y: auto;
       display: block;
-      max-height: 22em;
+      max-height: 33em;
 
       tr:hover {
         animation: tdanimation 1s infinite;
@@ -405,6 +406,9 @@ and also iPads specifically.
       position: relative;
       padding-left: 50%;
       width: auto;
+      // span {
+      //   font-size: 12px;
+      // }
     }
 
     td:before {
@@ -427,8 +431,14 @@ and also iPads specifically.
     td:nth-of-type(2):before {
       content: "Raison sociale";
     }
-    td:nth-of-type(3):before {
-      content: "Adresse";
+    // td:nth-of-type(2) {
+    //   width: 400px;
+    // }
+    // td:nth-of-type(3):before {
+    //   content: "Ville";
+    // }
+    td:nth-of-type(3) {
+      display: none;
     }
     td:nth-of-type(4):before {
       content: "Solde facture";

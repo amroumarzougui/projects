@@ -18,6 +18,7 @@ import Facture from "../facture/Facture";
 import Login from "../../Login/Login";
 import Nomenclature from "../Nomenclatures/Nomenclature";
 import BonEntree from "../bon-entree/BonEntree";
+import Reglement from "../reglement/Reglement";
 // import Logout from "./Logout";
 export default (props) => (
   <Container
@@ -66,6 +67,7 @@ export default (props) => (
       <Route exact path="/facture" component={Facture} />
       <Route exact path="/homepage" component={HomePage} />
       <Route exact path="/nomenclature" component={Nomenclature} />
+      <Route exact path="/reglement" component={Reglement} />
     </Switch>
   </Container>
 );

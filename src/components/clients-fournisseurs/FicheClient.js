@@ -108,7 +108,10 @@ class FicheClient extends Component {
                   </div>
                 </Col>
                 <Col sm="3">
-                  <div id="" style={{ textAlign: "center" }}>
+                  <div
+                    id=""
+                    style={{ textAlign: "center", marginLeft: "50px" }}
+                  >
                     <button
                       className="icon-btn add-btn"
                       onClick={() => this.setState({ addModalShow: true })}
@@ -135,10 +138,10 @@ class FicheClient extends Component {
                       </th>
                     ))} */}
                     <th>Code</th>
-                    <th style={{ width: "40%" }}>Raison sociale</th>
+                    <th>Raison sociale</th>
                     <th>Ville</th>
                     <th>Solde Facture</th>
-                    <th>Solde Globale</th>
+                    <th>Solde Global</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -174,13 +177,19 @@ class FicheClient extends Component {
                         <span>{test.codcli}</span>
                       </td>
 
-                      <td style={{ width: "40%" }}>
+                      <td>
                         <span>{test.raisoc}</span>
                       </td>
 
-                      <td>
-                        <span>{test.ville}</span>
-                      </td>
+                      {test.ville === "" ? (
+                        <td>
+                          <span>--</span>
+                        </td>
+                      ) : (
+                        <td>
+                          <span>{test.ville}</span>
+                        </td>
+                      )}
 
                       <td>
                         <span>{Number(test.soldfac).toFixed(3)}</span>
@@ -199,10 +208,10 @@ class FicheClient extends Component {
                 <thead>
                   <tr>
                     <th>Code</th>
-                    <th style={{ width: "40%" }}>Raison sociale</th>
+                    <th>Raison sociale</th>
                     <th>Ville</th>
                     <th>Solde Facture</th>
-                    <th>Solde Globale</th>
+                    <th>Solde Global</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -238,13 +247,18 @@ class FicheClient extends Component {
                         <span>{test.codcli}</span>
                       </td>
 
-                      <td style={{ width: "40%" }}>
+                      <td>
                         <span>{test.raisoc}</span>
                       </td>
-
-                      <td>
-                        <span>{test.ville}</span>
-                      </td>
+                      {test.ville === "" ? (
+                        <td>
+                          <span>--</span>
+                        </td>
+                      ) : (
+                        <td>
+                          <span>{test.ville}</span>
+                        </td>
+                      )}
 
                       <td>
                         <span>{Number(test.soldfac).toFixed(3)}</span>

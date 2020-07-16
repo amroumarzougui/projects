@@ -74,6 +74,7 @@ class BonDeCommande extends Component {
       annuler,
       catfisc,
       sumqt,
+      //totalhtbr,
     } = this.state;
 
     if (this.state.loggedIn === false) {
@@ -132,7 +133,9 @@ class BonDeCommande extends Component {
                 <tr>
                   <th>№ BC</th>
                   <th>Date</th>
-                  <th style={{ width: "55%" }}>Client</th>
+                  {/* <th style={{ width: "55%" }}>Client</th> */}
+                  <th>Code client</th>
+                  <th style={{ width: "40%" }}>Raison Sociale</th>
                   <th>Montant </th>
                 </tr>
               </thead>
@@ -154,8 +157,15 @@ class BonDeCommande extends Component {
                                 (a, v) => a + parseInt(v.quantite),
                                 0
                               ),
+                            // totalhtbr:
+                            //   data &&
+                            //   data.reduce(
+                            //     (a, v) => a + parseInt(v.quantite) * v.priuni,
+                            //     0
+                            //   ),
                           })
                         );
+
                       this.setState({
                         getBCByIdModalShow: true,
                         bcid: test.numfac,
@@ -190,8 +200,14 @@ class BonDeCommande extends Component {
                       </span>
                     </td>
 
-                    <td style={{ width: "55%" }}>
+                    {/* <td style={{ width: "55%" }}>
                       <span>{test.codcli}</span> &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span>{test.raisoc}</span>
+                    </td> */}
+                    <td>
+                      <span>{test.codcli}</span>
+                    </td>
+                    <td style={{ width: "40%" }}>
                       <span>{test.raisoc}</span>
                     </td>
 
@@ -210,7 +226,9 @@ class BonDeCommande extends Component {
                 <tr>
                   <th>№ BC</th>
                   <th>Date</th>
-                  <th style={{ width: "55%" }}>Client</th>
+                  {/* <th style={{ width: "55%" }}>Client</th> */}
+                  <th>Code client</th>
+                  <th style={{ width: "40%" }}>Raison Sociale</th>
                   <th>Montant </th>
                 </tr>
               </thead>
@@ -232,8 +250,15 @@ class BonDeCommande extends Component {
                                 (a, v) => a + parseInt(v.quantite),
                                 0
                               ),
+                            // totalhtbr:
+                            //   data &&
+                            //   data.reduce(
+                            //     (a, v) => a + parseInt(v.quantite) * v.priuni,
+                            //     0
+                            //   ),
                           })
                         );
+
                       this.setState({
                         getBCByIdModalShow: true,
                         bcid: test.numfac,
@@ -268,8 +293,14 @@ class BonDeCommande extends Component {
                       </span>
                     </td>
 
-                    <td style={{ width: "55%" }}>
+                    {/* <td style={{ width: "55%" }}>
                       <span>{test.codcli}</span> &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span>{test.raisoc}</span>
+                    </td> */}
+                    <td>
+                      <span>{test.codcli}</span>
+                    </td>
+                    <td style={{ width: "40%" }}>
                       <span>{test.raisoc}</span>
                     </td>
 
@@ -306,6 +337,7 @@ class BonDeCommande extends Component {
           tabtab={this.state.tabtab}
           annuler={annuler}
           sumqt={sumqt}
+          // totalhtbr={totalhtbr}
         />
       </div>
     );

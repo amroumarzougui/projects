@@ -41,14 +41,14 @@ class TabTwo extends Component {
           {this.state.change ? (
             <div>
               <p className="p1" style={{ margin: "10px" }}>
-                % clients par région
+                % Des clients par région
               </p>
               <CircleChart />
             </div>
           ) : (
             <div>
               <p className="p1" style={{ margin: "10px" }}>
-                Les articles les vendus
+                % Des articles les plus vendus
               </p>
 
               <TopArticle />

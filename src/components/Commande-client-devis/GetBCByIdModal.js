@@ -15,7 +15,7 @@ import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import CancelPresentationIcon from "@material-ui/icons/CancelPresentation";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import ModifierBCModal from "./ModifierBCModal";
-import { Divider, Fab } from "@material-ui/core";
+import { Divider, Fab, Snackbar, IconButton } from "@material-ui/core";
 import ReactToPrint from "react-to-print";
 import HomeIcon from "@material-ui/icons/Home";
 import PhoneIcon from "@material-ui/icons/Phone";
@@ -63,6 +63,8 @@ class GetBCByIdModal extends Component {
       netapayer: 0,
 
       clientimp: [],
+      snackbaropen: false,
+      snackbarmsg: "",
     };
   }
 
@@ -83,6 +85,10 @@ class GetBCByIdModal extends Component {
 
   openMail = () => {
     // this.setState({ openMailModal: true });
+  };
+
+  snackbarClose = (event) => {
+    this.setState({ snackbaropen: false });
   };
 
   openModifier = () => {
@@ -172,6 +178,22 @@ class GetBCByIdModal extends Component {
 
     return (
       <div className="container">
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          open={this.state.snackbaropen}
+          autoHideDuration={2000}
+          onClose={this.snackbarClose}
+          message={<span id="message-id"> {this.state.snackbarmsg} </span>}
+          action={[
+            <IconButton
+              key="close"
+              color="inherit"
+              onClick={this.snackbarClose}
+            >
+              x
+            </IconButton>,
+          ]}
+        ></Snackbar>
         <Modal
           {...this.props}
           size="lg"
@@ -192,7 +214,7 @@ class GetBCByIdModal extends Component {
                 <Row>
                   <Col style={{ textAlign: "center" }} sm={2}>
                     <Typography variant="h6" component="h2">
-                      <Label>№ BC</Label>
+                      <Label style={{ color: "#020f64" }}>№ BC</Label>
                     </Typography>
                     <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.bcid}
@@ -201,7 +223,7 @@ class GetBCByIdModal extends Component {
 
                   <Col style={{ textAlign: "center" }} sm={3}>
                     <Typography variant="h6" component="h2">
-                      <Label>Date BC</Label>
+                      <Label style={{ color: "#020f64" }}>Date BC</Label>
                     </Typography>
                     <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.datebc}
@@ -210,7 +232,7 @@ class GetBCByIdModal extends Component {
 
                   <Col style={{ textAlign: "center" }} sm={3}>
                     <Typography variant="h6" component="h2">
-                      <Label>Client</Label>
+                      <Label style={{ color: "#020f64" }}>Client</Label>
                     </Typography>
                     <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.client}
@@ -219,7 +241,7 @@ class GetBCByIdModal extends Component {
 
                   <Col style={{ textAlign: "center" }} sm={4}>
                     <Typography variant="h6" component="h2">
-                      <Label>Raison Sociale</Label>
+                      <Label style={{ color: "#020f64" }}>Raison Sociale</Label>
                     </Typography>
                     <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.raisonsociale}
@@ -243,6 +265,7 @@ class GetBCByIdModal extends Component {
                         <th>Remise</th>
                         <th>TVA</th>
                         <th>TotalHT</th>
+                        <th>PUTTCNET</th>
                       </tr>
                     </thead>
                     <tbody
@@ -263,9 +286,7 @@ class GetBCByIdModal extends Component {
                           <td>
                             <span>{t.quantite}</span>
                           </td>
-                          {/* <td>
-                            <span>{t.unite}</span>
-                          </td> */}
+
                           <td>
                             <span>{Number(t.priuni).toFixed(3)}</span>
                           </td>
@@ -277,11 +298,11 @@ class GetBCByIdModal extends Component {
                             <span>{Number(t.tautva).toFixed(2)}</span>
                           </td>
 
-                          {/* <td>
-                            <span>{Number(t.PUTTCNET).toFixed(3)}</span>
-                          </td> */}
                           <td>
                             <span>{Number(t.montht).toFixed(3)}</span>
+                          </td>
+                          <td>
+                            <span>{Number(t.PUTTCNET).toFixed(3)}</span>
                           </td>
                         </tr>
                       ))}
@@ -304,12 +325,22 @@ class GetBCByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total HT Brut
                     </p>
+                    {/* {this.props.totalhtbrut === 0 ? (
+                      <p style={{ color: "black" }}>
+                        {Number(this.props.totalhtbr).toFixed(3)}
+                      </p>
+                    ) : (
+                      <p style={{ color: "black" }}>
+                        {Number(this.props.totalhtbrut).toFixed(3)}
+                      </p>
+                    )} */}
+
                     <p style={{ color: "black" }}>
                       {Number(this.props.totalhtbrut).toFixed(3)}
-                    </p>{" "}
+                    </p>
                   </Col>
 
                   <Col
@@ -322,7 +353,7 @@ class GetBCByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Remise Article
                     </p>
                     <p style={{ color: "black" }}>
@@ -340,7 +371,7 @@ class GetBCByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total TVA
                     </p>
                     <p style={{ color: "black" }}>
@@ -358,7 +389,7 @@ class GetBCByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total Quantité
                     </p>
                     <p style={{ color: "black" }}>
@@ -396,7 +427,7 @@ class GetBCByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total HT Net
                     </p>
                     <p style={{ color: "black" }}>
@@ -414,7 +445,7 @@ class GetBCByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Remise Globale
                     </p>
                     <p style={{ color: "black" }}>
@@ -432,7 +463,7 @@ class GetBCByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total TTC
                     </p>
                     <p style={{ color: "black" }}>
@@ -450,12 +481,19 @@ class GetBCByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p
+                      style={{
+                        color: "rgb(220, 0, 78)",
+                        fontWeight: "bold",
+                        marginBottom: "-5px",
+                      }}
+                    >
                       Net à Payer
                     </p>
-                    <p style={{ color: "black" }}>
+                    {/* <p style={{ color: "black" }}>{this.state.netapayer}</p> */}
+                    <p style={{ color: "black", fontWeight: "bold" }}>
                       {Number(this.props.totalttc).toFixed(3)}
-                    </p>{" "}
+                    </p>
                   </Col>
                 </Row>
               </Card.Body>

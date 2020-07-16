@@ -36,6 +36,14 @@ import GetTopFrsReducer from "./reducers/Top5Frs";
 import GetSumChargeReducer from "./reducers/SumCharge";
 import GetBEReducer from "./reducers/GetBE";
 import GetBECodReducer from "./reducers/GetBECod";
+import GetFacFrsCodReducer from "./reducers/GetFacFrsCod";
+import GetRECodReducer from "./reducers/GetRECod";
+import GetRegReducer from "./reducers/GetReg";
+import GetNomeBQReducer from "./reducers/GetNomeBQ";
+import GetNomeAGReducer from "./reducers/GetNomeAG";
+import GetNomeCSReducer from "./reducers/GetNomeCS";
+import GetNomeSCReducer from "./reducers/GetNomeSituation";
+import GetNomeCCBReducer from "./reducers/GetNomeCCB";
 
 const middleware = [thunkMiddlewar];
 const composeEnhancers =
@@ -78,6 +86,14 @@ const myStore = createStore(
     charges: GetSumChargeReducer,
     bes: GetBEReducer,
     codbes: GetBECodReducer,
+    codfacfrss: GetFacFrsCodReducer,
+    codres: GetRECodReducer,
+    regs: GetRegReducer,
+    bqs: GetNomeBQReducer,
+    ags: GetNomeAGReducer,
+    css: GetNomeCSReducer,
+    scs: GetNomeSCReducer,
+    ccbs: GetNomeCCBReducer,
   }),
   enhancer
 );

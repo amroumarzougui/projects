@@ -1,10 +1,14 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import { Row, Col, Button, Carousel, Alert } from "react-bootstrap";
+import { Row, Col, Button, Carousel, Alert, Card } from "react-bootstrap";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import { Fab, TextField } from "@material-ui/core";
 import Center from "react-center";
 import { Snackbar } from "@material-ui/core";
+
+import image6 from "./ts.jpg";
+import image7 from "./ts3.jpg";
+import image8 from "./ts2.jpg";
 
 import image1 from "./k.jpg";
 import image2 from "./k1.jpeg";
@@ -16,11 +20,18 @@ import { GetDBFolder } from "../redux/actions/GetDBFolders";
 import { Label, Input } from "reactstrap";
 import { setUserSession } from "./Common";
 
+import "./login.css";
+
 const imgMyimageexample = require("./b2.jpg");
 const divStyle = {
+  backgroundImage: `url(${image7})`,
+  height: "100%",
+  backgroundSize: "cover",
+};
+
+const divStylee = {
   width: "100%",
-  //  height: '100vh',
-  minHeight: "640px",
+  height: "100vh",
   backgroundImage: `url(${imgMyimageexample})`,
   backgroundSize: "cover",
 };
@@ -82,7 +93,6 @@ class Login extends Component {
               `abcd${this.state.username}1234ghqsd`
             );
           localStorage.setItem("username", `${this.state.username}`);
-          // setUserSession(result.data.Codrep, result.data);
           this.setState({ loggedIn: true });
         },
         (error) => {
@@ -111,66 +121,151 @@ class Login extends Component {
             username ou password invalide!!!
           </Alert>
         </Snackbar>
-
-        <Row>
-          <Col
-            sm={12}
-            style={{
-              paddingRight: "50px",
-              marginTop: "100px",
-              textAlign: "center",
-            }}
-          >
-            <Center>
-              {/* <Fab size="medium" color="secondary"> */}
-              <div
+        <div>
+          <div>
+            <Row>
+              <Col
+                sm={7}
+                className="carous"
                 style={{
-                  backgroundColor: "rgb(220, 0, 78)",
-                  color: "white",
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "50%",
+                  textAlign: "center",
                 }}
               >
-                <LockOpenIcon
-                  style={{ width: "35px", height: "35px", margin: "7px" }}
-                />
-              </div>
-            </Center>
-            <br />
+                <div>
+                  <Carousel>
+                    <Carousel.Item>
+                      <img
+                        style={{ height: "97vh", width: "100%" }}
+                        className="d-block w-100"
+                        src={image1}
+                        alt="First slide"
+                      />
+                      <Carousel.Caption>
+                        <p style={{ color: "white", fontSize: "100px" }}>
+                          SYROS
+                        </p>
+                        <p style={{ color: "white", fontSize: "50px" }}>
+                          Gestion commercial
+                        </p>
+                      </Carousel.Caption>
+                    </Carousel.Item>
+                    <Carousel.Item>
+                      <img
+                        style={{ height: "97vh", width: "100%" }}
+                        className="d-block w-100"
+                        src={image2}
+                        alt="First slide"
+                      />
+                      <Carousel.Caption style={{ marginTop: "-250px" }}>
+                        <p style={{ color: "white", fontSize: "50px" }}>
+                          Gérer vos affaires
+                        </p>
+                        <ul
+                          style={{
+                            color: "white",
+                            fontSize: "30px",
+                            marginLeft: "50px",
+                          }}
+                        >
+                          <li>
+                            Vente <span>✔</span>
+                          </li>
+                          <li>
+                            Achat <span>✔</span>
+                          </li>
+                          <li>
+                            Facture <span>✔</span>
+                          </li>
+                          <li>
+                            Statéstiques <span>✔</span>
+                          </li>
+                          <li>
+                            Analyse <span>✔</span>
+                          </li>
+                        </ul>
+                      </Carousel.Caption>
+                    </Carousel.Item>
 
-            {/* </Fab> */}
-            <h3>Login</h3>
-            <br />
+                    <Carousel.Item>
+                      <img
+                        style={{ height: "97vh", width: "100%" }}
+                        className="d-block w-100"
+                        src={image5}
+                        alt="First slide"
+                      />
+                      <Carousel.Caption></Carousel.Caption>
+                    </Carousel.Item>
+                  </Carousel>
+                </div>
+              </Col>
 
-            <form onSubmit={this.submitForm}>
-              <TextField
-                id="outlined-basic"
-                label="username"
-                variant="outlined"
-                name="username"
-                value={this.state.username}
-                onChange={this.onChange}
-                required
-                fullWidth
-              />
+              <Col
+                sm={5}
+                style={{
+                  marginTop: "100px",
+                  textAlign: "center",
+                }}
+              >
+                <Row>
+                  <Col sm={2}></Col>
 
-              <br />
-              <br />
-              <TextField
-                id="outlined-basic"
-                label="password"
-                type="password"
-                variant="outlined"
-                name="password"
-                // value={this.state.password}
-                onChange={this.onChange}
-                required
-                fullWidth
-              />
-              <br />
-              <br />
-              {/* <Label className="labell">Dossier</Label>
+                  <Col sm={8}>
+                    {/* <Card style={{ background: "rgba(4,0,64 ,0.2)" }}> */}
+                    {/* <Card style={divStyle}>
+                  <Card.Body> */}
+                    <Center>
+                      <div
+                        style={{
+                          backgroundColor: "rgb(220, 0, 78)",
+                          color: "white",
+                          width: "50px",
+                          height: "50px",
+                          borderRadius: "50%",
+                          justifyContent: "center",
+                          justifyItems: "center",
+                        }}
+                      >
+                        <LockOpenIcon
+                          style={{
+                            width: "35px",
+                            height: "35px",
+                            margin: "7px",
+                          }}
+                        />
+                      </div>
+                    </Center>
+
+                    <br />
+                    <h3>Login</h3>
+                    <br />
+                    <form onSubmit={this.submitForm}>
+                      <TextField
+                        id="outlined-basic"
+                        label="username"
+                        variant="outlined"
+                        name="username"
+                        value={this.state.username}
+                        onChange={this.onChange}
+                        required
+                        fullWidth
+                      />
+
+                      <br />
+                      <br />
+                      <TextField
+                        id="outlined-basic"
+                        label="password"
+                        type="password"
+                        variant="outlined"
+                        name="password"
+                        // value={this.state.password}
+                        onChange={this.onChange}
+                        required
+                        fullWidth
+                      />
+                      <br />
+                      <br />
+                      {/* <Label className="labell">Dossier</Label>
               <Input
                 type="select"
                 name="folder"
@@ -182,18 +277,27 @@ class Login extends Component {
                   </option>
                 ))}
               </Input> */}
-              <br />
-              <br />
-              <Button
-                type="submit"
-                style={{ backgroundColor: "#1976d2", width: "100%" }}
-              >
-                Login
-              </Button>
-              <br />
-            </form>
-          </Col>
-        </Row>
+                      <br />
+
+                      <Button
+                        type="submit"
+                        style={{ backgroundColor: "#1976d2", width: "100%" }}
+                      >
+                        Login
+                      </Button>
+                    </form>
+                    {/* </Card.Body>
+                </Card> */}
+                  </Col>
+
+                  <Col sm={2}></Col>
+                </Row>
+              </Col>
+
+              <Col Sm={4}></Col>
+            </Row>
+          </div>
+        </div>
       </div>
     );
   }

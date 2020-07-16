@@ -443,6 +443,7 @@ class ModifierLigDevis extends Component {
           .then(
             (result) => {
               console.log(result);
+              window.location.reload();
             },
             (error) => {
               this.setState({ snackbaropen: true, snackbarmsg: "failed" });

@@ -35,6 +35,7 @@ import { SelectClient } from "../../redux/actions/GetClients";
 import HomeIcon from "@material-ui/icons/Home";
 import LocationCityIcon from "@material-ui/icons/LocationCity";
 import PhoneIcon from "@material-ui/icons/Phone";
+import "./ss.scss";
 
 const actions = [
   // { icon: <PrintIcon />, name: "Imprimer" },
@@ -80,12 +81,12 @@ class EditDevisClientModal extends Component {
     this.props.SelectClient();
   }
 
-  submitHandler = (shown, artligs) => {
-    this.setState({
-      shown: shown,
-      artligs: artligs,
-    });
-  };
+  // submitHandler = (shown, artligs) => {
+  //   this.setState({
+  //     shown: shown,
+  //     artligs: artligs,
+  //   });
+  // };
 
   annuler = () => {
     this.props.annuler === "0"
@@ -185,18 +186,6 @@ class EditDevisClientModal extends Component {
   render() {
     let ModifierModalClose = () => this.setState({ openModifierModal: false });
 
-    const netapayer =
-      parseInt(this.props.totalttc) + parseInt(this.props.droitdetimbre);
-    const SumQte =
-      this.state.test &&
-      this.state.test.reduce((a, v) => a + parseInt(v.qte), 0);
-
-    const Sumttcc =
-      this.state.artligs &&
-      this.state.artligs.reduce((a, v) => a + v.puttcnet, 0);
-
-    // this.setState({ ttt: Sumttcc });
-
     return (
       <div className="container">
         <Snackbar
@@ -249,9 +238,12 @@ class EditDevisClientModal extends Component {
           aria-labelledby="contained-modal-title-vcenter"
           centered
         >
-          <Modal.Header closeButton>
+          <Modal.Header
+            closeButton
+            style={{ backgroundColor: "white", color: "#08052B" }}
+          >
             <Modal.Title id="contained-modal-title-vcenter">
-              Détails devis client
+              <b>Détails devis client</b>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -260,18 +252,18 @@ class EditDevisClientModal extends Component {
                 <Row>
                   <Col style={{ textAlign: "center" }} sm={2}>
                     <Typography variant="h5" component="h2">
-                      <Label>№ Devis</Label>
+                      <Label style={{ color: "#020f64" }}>№ Devis</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.devisid}
                     </Typography>
                   </Col>
 
                   <Col style={{ textAlign: "center" }} sm={3}>
                     <Typography variant="h5" component="h2">
-                      <Label>Date Devis</Label>
+                      <Label style={{ color: "#020f64" }}>Date Devis</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {/* {this.props.datedevis} */}
                       {new Date(this.props.datedevis).toLocaleDateString(
                         "fr",
@@ -282,18 +274,18 @@ class EditDevisClientModal extends Component {
 
                   <Col style={{ textAlign: "center" }} sm={2}>
                     <Typography variant="h5" component="h2">
-                      <Label>Client</Label>
+                      <Label style={{ color: "#020f64" }}>Client</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.client}
                     </Typography>
                   </Col>
 
                   <Col style={{ textAlign: "center" }} sm={5}>
                     <Typography variant="h5" component="h2">
-                      <Label>Raison sociale</Label>
+                      <Label style={{ color: "#020f64" }}>Raison sociale</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.raisonsociale}
                     </Typography>
                   </Col>
@@ -309,7 +301,7 @@ class EditDevisClientModal extends Component {
                     <thead>
                       <tr style={{ textAlign: "center", fontSize: "12px" }}>
                         <th>Code</th>
-                        <th style={{ width: "37%" }}>Désignation</th>
+                        <th style={{ width: "40%" }}>Désignation</th>
                         <th>Quantité</th>
                         {/* <th>Unité</th> */}
                         <th>PUHT</th>
@@ -331,7 +323,7 @@ class EditDevisClientModal extends Component {
                           <td>
                             <span>{t.codart}</span>
                           </td>
-                          <td style={{ fontSize: "12px", width: "37%" }}>
+                          <td style={{ fontSize: "12px", width: "40%" }}>
                             {t.desart}
                           </td>
                           <td>
@@ -378,7 +370,7 @@ class EditDevisClientModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total HT Brut
                     </p>
                     <p style={{ color: "black" }}>
@@ -396,7 +388,7 @@ class EditDevisClientModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Remise Article
                     </p>
                     <p style={{ color: "black" }}>
@@ -414,7 +406,7 @@ class EditDevisClientModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total TVA
                     </p>
                     <p style={{ color: "black" }}>
@@ -432,7 +424,7 @@ class EditDevisClientModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total Quantité
                     </p>
                     {/* {this.state.sums.map((sum) => (
@@ -470,7 +462,7 @@ class EditDevisClientModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total HT Net
                     </p>
                     <p style={{ color: "black" }}>
@@ -488,7 +480,7 @@ class EditDevisClientModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Remise Globale
                     </p>
                     <p style={{ color: "black" }}>
@@ -506,7 +498,7 @@ class EditDevisClientModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total TTC
                     </p>
                     <p style={{ color: "black" }}>
@@ -524,10 +516,16 @@ class EditDevisClientModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p
+                      style={{
+                        color: "rgb(220, 0, 78)",
+                        fontWeight: "bold",
+                        marginBottom: "-5px",
+                      }}
+                    >
                       Net à Payer
                     </p>
-                    <p style={{ color: "black" }}>
+                    <p style={{ color: "black", fontWeight: "bold" }}>
                       {Number(this.props.totalttc).toFixed(3)}
                     </p>
                   </Col>

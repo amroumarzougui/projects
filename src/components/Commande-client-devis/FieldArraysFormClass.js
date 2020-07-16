@@ -25,7 +25,6 @@ import Typography from "@material-ui/core/Typography";
 
 import "./Styling.css";
 import "./ss.scss";
-import ActionModal from "./ActionModal";
 import { SelectUser } from "../../redux/actions/DevisClient";
 const roundTo = require("round-to");
 
@@ -109,22 +108,6 @@ class FieldArraysFormClass extends Component {
     });
   };
 
-  // annuler(numfac) {
-  //   if (window.confirm("Voulez vous annuler ?")) {
-  //     fetch(`http://192.168.1.100:81/api/LigBCDV/` + numfac, {
-  //       method: "DELETE",
-  //       header: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //       .then((res) => res.json())
-  //       .then((result) => {
-  //         console.log(result);
-  //       });
-  //   }
-  // }
-
   handleSubmit = (e) => {
     e.preventDefault();
     this.setState({ openActionModal: true });
@@ -134,37 +117,12 @@ class FieldArraysFormClass extends Component {
     this.setState({ [name]: event.target.checked });
   };
 
-  submitHandlerr = (event) => {
-    event.preventDefault();
-
-    fetch(
-      `http://192.168.1.100:81/api/BCDVCLIs?numfac=${event.target.numfac.value}&typfac=DV&datfac=${event.target.datfac.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raisoc.value}&smhtb=${this.state.totalhtbrut}&smremart=${this.state.sumremisearticle}&smremglo=${this.state.remiseglobal}&smhtn=${this.state.totalhtnet}&smDC=0&smCOS=0&mntbon=${this.state.netapayer}&smtva=${this.state.totaltva}&valtimbre=0&ForfaitCli=${this.state.showForfitaire}&catfisc=0&heur=1900-01-01T00:00:00&totalputtcnet=50.2`,
-      {
-        method: "POST",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          this.props.hide();
-
-          this.setState({ snackbaropen: true, snackbarmsg: result });
-          this.props.SelectUser();
-          this.props.GetNumFacDevis();
-          console.log(result);
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
-      );
-  };
-
   snackbarClose = () => {
     this.setState({ snackbaropen: false });
+  };
+
+  remiseglobalChange = (event) => {
+    this.setState({ remiseg: event.target.value });
   };
 
   clientHandlerChange = (event) => {
@@ -192,10 +150,7 @@ class FieldArraysFormClass extends Component {
           .then((res) => res.json())
           .then(
             (result) => {
-              // this.setState({ snackbaropen: true, snackbarmsg: result });
-
               console.log(result);
-              // window.alert(result);
             },
             (error) => {
               this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -218,36 +173,25 @@ class FieldArraysFormClass extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
-          this.setState({ snackbaropen: true, snackbarmsg: result });
-
-          console.log(result);
-          // this.props.onHide();
+          this.props.hide();
           this.props.SelectUser();
-          //// window.alert(result);
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
-      );
-
-    ////////////////////// les calculs ///////////////////
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV?FAC=${event.target.numfac.value}&typfacc=DV`,
-      {
-        method: "POST",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
+          fetch(
+            `http://192.168.1.100:81/api/LigBCDV?FAC=${this.props.numfac.numfac.map(
+              (nu) => parseInt(nu.valeur)
+            )}&typfacc=DV`,
+            {
+              method: "POST",
+              header: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+            }
+          );
           this.setState({ snackbaropen: true, snackbarmsg: result });
+          this.props.GetNumFacDevis();
 
           console.log(result);
-          //// window.alert(result);
+          window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -271,12 +215,7 @@ class FieldArraysFormClass extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
-          //  this.setState({ snackbaropen: true, snackbarmsg: result });
-
           console.log(result);
-          //  this.props.onHide();
-          this.props.GetNumFacDevis();
-          //// window.alert(result);
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -286,6 +225,7 @@ class FieldArraysFormClass extends Component {
 
   render() {
     let ligModalClose = () => this.setState({ ligModalShow: false });
+    const { dvnumfac, dvraisoc, rem, clientmail } = this.state;
 
     return (
       <div>
@@ -520,15 +460,13 @@ class FieldArraysFormClass extends Component {
                     fullWidth
                     name="remise"
                     value={this.state.remiseg}
+                    onChange={this.remiseglobalChange}
                   />
                 </Col>
 
                 <Col sm={2}>
                   <FormGroup style={{ marginTop: "40px" }}>
                     {this.state.showTimbre ? (
-                      //     <Alert style={{ width: "100%", textAlign: "center", fontSize: "12px" }} variant={"success"}>
-                      //         <b style={{ marginTop: "-10px" }}></b>Timbre✔
-                      // </Alert>
                       <p style={{ color: "grey" }}>Timbre: ✔</p>
                     ) : null}
                   </FormGroup>
@@ -537,12 +475,6 @@ class FieldArraysFormClass extends Component {
                 <Col sm={2}>
                   <FormGroup style={{ marginTop: "40px" }}>
                     {this.state.showForfitaire === 1 ? (
-                      //             <Alert style={{
-                      //                 width: "100%", textAlign: "center",
-                      //                 fontSize: "12px"
-                      //             }} variant={"success"}>
-                      //                 <b style={{ marginTop: "-10px" }}></b>Forfitaire
-                      //  </Alert>
                       <p style={{ color: "grey" }}>Forfitaire: ✔</p>
                     ) : null}
                   </FormGroup>
@@ -697,11 +629,11 @@ class FieldArraysFormClass extends Component {
                     textAlign: "center",
                   }}
                 >
-                  <p style={{ color: "grey", marginBottom: "-5px" }}>
+                  <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                     Total HT Brut
                   </p>
                   <p style={{ color: "black" }}>
-                    {roundTo(this.state.totalhtbrut, 3)}
+                    {Number(this.state.totalhtbrut).toFixed(3)}
                   </p>
                 </Col>
 
@@ -715,11 +647,11 @@ class FieldArraysFormClass extends Component {
                     textAlign: "center",
                   }}
                 >
-                  <p style={{ color: "grey", marginBottom: "-5px" }}>
+                  <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                     Remise Article
                   </p>
                   <p style={{ color: "black" }}>
-                    {roundTo(this.state.sumremisearticle, 3)}
+                    {Number(this.state.sumremisearticle).toFixed(3)}
                   </p>
                 </Col>
 
@@ -733,11 +665,11 @@ class FieldArraysFormClass extends Component {
                     textAlign: "center",
                   }}
                 >
-                  <p style={{ color: "grey", marginBottom: "-5px" }}>
+                  <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                     Total TVA
                   </p>
                   <p style={{ color: "black" }}>
-                    {roundTo(this.state.totaltva, 3)}
+                    {Number(this.state.totaltva).toFixed(3)}
                   </p>
                 </Col>
 
@@ -751,7 +683,7 @@ class FieldArraysFormClass extends Component {
                     textAlign: "center",
                   }}
                 >
-                  <p style={{ color: "grey", marginBottom: "-5px" }}>
+                  <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                     Total Quantité
                   </p>
                   <p style={{ color: "black" }}>{this.state.totalqte}</p>
@@ -792,7 +724,7 @@ class FieldArraysFormClass extends Component {
                     textAlign: "center",
                   }}
                 >
-                  <p style={{ color: "grey", marginBottom: "-5px" }}>
+                  <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                     Total HT Net
                   </p>
                   <p style={{ color: "black" }}>
@@ -810,11 +742,11 @@ class FieldArraysFormClass extends Component {
                     textAlign: "center",
                   }}
                 >
-                  <p style={{ color: "grey", marginBottom: "-5px" }}>
+                  <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                     Remise Globale
                   </p>
                   <p style={{ color: "black" }}>
-                    {roundTo(this.state.remiseglobal, 3)}
+                    {Number(this.state.remiseglobal).toFixed(3)}
                   </p>
                 </Col>
 
@@ -828,11 +760,11 @@ class FieldArraysFormClass extends Component {
                     textAlign: "center",
                   }}
                 >
-                  <p style={{ color: "grey", marginBottom: "-5px" }}>
+                  <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                     Total TVA
                   </p>
                   <p style={{ color: "black" }}>
-                    {roundTo(this.state.totaltva, 3)}
+                    {Number(this.state.totaltva).toFixed(3)}
                   </p>
                 </Col>
 
@@ -846,11 +778,17 @@ class FieldArraysFormClass extends Component {
                     textAlign: "center",
                   }}
                 >
-                  <p style={{ color: "grey", marginBottom: "-5px" }}>
+                  <p
+                    style={{
+                      color: "rgb(220, 0, 78)",
+                      fontWeight: "bold",
+                      marginBottom: "-5px",
+                    }}
+                  >
                     Net à Payer
                   </p>
-                  <p style={{ color: "black" }}>
-                    {roundTo(this.state.netapayer, 3)}
+                  <p style={{ color: "black", fontWeight: "bold" }}>
+                    {Number(this.state.netapayer).toFixed(3)}
                   </p>
                 </Col>
               </Row>
@@ -892,6 +830,7 @@ class FieldArraysFormClass extends Component {
           onHide={ligModalClose}
           numfaccc={this.props.numfac.numfac.map((nu) => parseInt(nu.valeur))}
           dateee={this.state.defaultdate}
+          rem={rem}
         />
       </div>
     );

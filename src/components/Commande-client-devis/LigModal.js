@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Modal, Card } from "react-bootstrap";
-import "../styling/Styles.css";
 import { Input, Label, FormGroup, Col, Row, Table } from "reactstrap";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import { SelectArticle } from "../../redux/actions/GetArticles";
-import { TextField, Fab, IconButton } from "@material-ui/core";
+import { TextField, Fab } from "@material-ui/core";
 import "../styling/Styling.scss";
+import "./ss.scss";
 import Center from "react-center";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
@@ -19,12 +19,10 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import "./ss.scss";
-
-const roundTo = require("round-to");
-
 // import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 // import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+
+const roundTo = require("round-to");
 
 class LigModal extends Component {
   constructor(props) {
@@ -35,7 +33,7 @@ class LigModal extends Component {
       totalht: 0,
       des: "",
       unite: "",
-      puht: 0,
+      puht: "",
       remisea: 0,
       tva: 0,
       puttcnet: 0,
@@ -54,9 +52,6 @@ class LigModal extends Component {
       qtte: 0,
       btnEnabled: false,
       gilad: true,
-      snackbarmsg: ",",
-      numlig: 0,
-      artligs: [],
       rechs: [],
     };
   }
@@ -64,12 +59,6 @@ class LigModal extends Component {
   componentDidMount() {
     this.props.SelectArticle();
   }
-
-  articleHandlerChange = (event) => {
-    fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
-      .then((response) => response.json())
-      .then((data) => this.setState({ rechs: data }));
-  };
 
   snackbarClose = (event) => {
     this.setState({ snackbaropen: false });
@@ -79,20 +68,31 @@ class LigModal extends Component {
     this.setState({ snackbarfail: false });
   };
 
+  articleHandlerChange = (event) => {
+    fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
+      .then((response) => response.json())
+      .then((data) => this.setState({ rechs: data }));
+  };
+
   qteHandler = (event) => {
     console.log(typeof parseInt(event.target.value));
     console.log(typeof this.state.totalqte);
 
-    const toti = roundTo(event.target.value * this.state.puht, 3);
-
     this.setState({
       qte: event.target.value,
-      puttcnet: roundTo(
-        parseFloat(this.state.puht) +
-          parseFloat(this.state.puht) * (parseFloat(this.state.tva) / 100),
-        3
-      ),
-      totalht: toti,
+      puttcnet: this.state.puht + this.state.puht * (this.state.tva / 100),
+      totalht:
+        event.target.value *
+        this.state.puht *
+        ((100 - this.state.remisea) / 100),
+    });
+  };
+
+  remiseHandler = (event) => {
+    this.setState({
+      remisea: event.target.value,
+      totalht:
+        this.state.qte * this.state.puht * ((100 - event.target.value) / 100),
     });
   };
 
@@ -175,61 +175,6 @@ class LigModal extends Component {
     });
   };
 
-  submitHandlers = (event) => {
-    event.preventDefault();
-
-    //////////////////////////// ligbcdvcli submit ////////////////////
-
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV?numfac=${this.props.numfaccc}
-      &typfac=DV
-      &numlig=${this.state.numlig}
-      &codart=${this.state.codearticle}
-      &desart=${this.state.des}
-      &quantite=${this.state.qte}
-      &priuni=${this.state.puht}
-      &remise=${this.state.remisea}
-      &tautva=${this.state.tva}
-      &fodart=${this.state.faudec}
-      &datfac=${this.props.dateee}
-      &unite=${this.state.unite}
-      &totalht=${this.state.totalht}
-      &puttcnet=${this.state.puttcnet}`,
-      {
-        method: "POST",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          this.setState({ snackbaropen: true, snackbarmsg: result });
-          console.log(result);
-          this.GetSameLig();
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
-      );
-
-    this.setState({
-      codearticle: "",
-      qte: "",
-      totalht: 0,
-      des: "",
-      unite: "",
-      //  puht: "",
-      remisea: 0,
-      tva: 0,
-      puttcnet: 0,
-      faudec: "N",
-      numlig: parseInt(this.state.numlig) + 10,
-    });
-  };
-
   onCellChange = (event) => {
     this.setState({ codearticle: event.target.value });
   };
@@ -288,6 +233,11 @@ class LigModal extends Component {
 
   render() {
     let editModalClose = () => this.setState({ editModalShow: false });
+
+    console.log(
+      this.state.totalqte,
+      `remise article =${this.state.sumremisearticle}`
+    );
 
     return (
       <div className="container">
@@ -567,10 +517,11 @@ class LigModal extends Component {
                             <TextField
                               id="standard-basic"
                               label="Remise %"
-                              defaultValue={this.state.remisea}
+                              value={this.state.remisea}
                               fullWidth
-                              name="remiseea"
+                              name="remisea"
                               // disabled
+                              onChange={this.remiseHandler}
                             />
                           </FormGroup>
                         </Col>
@@ -727,7 +678,6 @@ class LigModal extends Component {
                 onClick={() => {
                   this.props.submitHandler(
                     this.state.tab,
-                    this.state.artligs,
                     this.state.totalqte,
                     this.state.sumremisearticle,
                     this.state.totalhtbrut,

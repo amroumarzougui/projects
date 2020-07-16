@@ -82,7 +82,18 @@ class LigBLArticle extends Component {
     this.setState({
       qte: event.target.value,
       puttcnet: this.state.puht + this.state.puht * (this.state.tva / 100),
-      totalht: event.target.value * this.state.puht,
+      totalht:
+        event.target.value *
+        this.state.puht *
+        ((100 - this.state.remisea) / 100),
+    });
+  };
+
+  remiseHandler = (event) => {
+    this.setState({
+      remisea: event.target.value,
+      totalht:
+        this.state.qte * this.state.puht * ((100 - event.target.value) / 100),
     });
   };
 
@@ -152,7 +163,7 @@ class LigBLArticle extends Component {
       unite: this.state.unite,
       puht: this.state.puht,
       faudec: this.state.faudec,
-      remisea: event.target.remiseea.value,
+      remisea: event.target.remisea.value,
       tva: this.state.tva,
       puttcnet: this.state.puttcnet,
       totalht: this.state.totalht,
@@ -261,23 +272,6 @@ class LigBLArticle extends Component {
           </Alert>
         </Snackbar>
 
-        {/* <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          open={this.state.snackbaropen}
-          autoHideDuration={2000}
-          onClose={this.snackbarClose}
-          message={<span id="message-id"> {this.state.snackbarmsg} </span>}
-          action={[
-            <IconButton
-              key="close"
-              color="inherit"
-              onClick={this.snackbarClose}
-            >
-              x
-            </IconButton>,
-          ]}
-        ></Snackbar> */}
-
         <Modal
           {...this.props}
           size="lg"
@@ -295,10 +289,9 @@ class LigBLArticle extends Component {
                 <Card>
                   <Card.Body>
                     <form onSubmit={this.submitHandlers}>
-                      <Row form>
-                        <Col sm={4}>
+                      <Row form style={{ marginBottom: "-20px" }}>
+                        <Col sm={8}>
                           <FormGroup>
-                            <Label>Chercher article par :</Label>
                             <Typography component="div">
                               <Grid
                                 component="label"
@@ -306,6 +299,10 @@ class LigBLArticle extends Component {
                                 alignItems="center"
                                 spacing={1}
                               >
+                                <Grid>
+                                  <b>Chercher article par :</b>
+                                </Grid>
+                                &nbsp;&nbsp;
                                 <Grid item>Désignation</Grid>
                                 <Grid item>
                                   <Switch
@@ -323,14 +320,26 @@ class LigBLArticle extends Component {
                           </FormGroup>
                         </Col>
 
-                        <Col sm={4}>
+                        <Col sm={3}>
+                          <FormGroup
+                            style={{ marginTop: "10px", marginLeft: "10px" }}
+                          >
+                            {this.state.faudec === "A" ? (
+                              <p style={{ color: "grey" }}>Fodec: ✔</p>
+                            ) : null}
+                          </FormGroup>
+                        </Col>
+                      </Row>
+
+                      <Row form>
+                        <Col sm={5}>
                           <FormGroup>
                             {this.state.gilad ? (
                               <Autocomplete
                                 id="include-input-in-list"
                                 includeInputInList
                                 className="ajouter-client-input"
-                                // options={this.props.articles.articles}
+                                //   options={this.props.articles.articles}
                                 options={this.state.rechs}
                                 getOptionLabel={(option) => option.codart}
                                 onChange={(event, getOptionLabel) => {
@@ -370,7 +379,7 @@ class LigBLArticle extends Component {
                                 id="include-input-in-list"
                                 includeInputInList
                                 className="ajouter-client-input"
-                                // options={this.props.articles.articles}
+                                //   options={this.props.articles.articles}
                                 options={this.state.rechs}
                                 getOptionLabel={(option) => option.desart}
                                 onChange={(event, getOptionLabel) => {
@@ -417,7 +426,7 @@ class LigBLArticle extends Component {
                           />
                         </FormGroup>
 
-                        <Col sm={4}>
+                        <Col sm={5}>
                           {this.state.gilad ? (
                             <FormGroup>
                               <TextField
@@ -442,10 +451,8 @@ class LigBLArticle extends Component {
                             </FormGroup>
                           )}
                         </Col>
-                      </Row>
 
-                      <Row form>
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             {this.state.des === "" ? (
                               <TextField
@@ -456,7 +463,7 @@ class LigBLArticle extends Component {
                                 InputLabelProps={{
                                   shrink: true,
                                 }}
-                                style={{ marginTop: "0px" }}
+                                style={{ marginTop: "16px" }}
                                 margin="normal"
                                 fullWidth
                                 required
@@ -469,7 +476,7 @@ class LigBLArticle extends Component {
                                 InputLabelProps={{
                                   shrink: true,
                                 }}
-                                style={{ marginTop: "0px" }}
+                                style={{ marginTop: "16px" }}
                                 value={this.state.qte}
                                 onChange={this.qteHandler}
                                 margin="normal"
@@ -479,8 +486,10 @@ class LigBLArticle extends Component {
                             )}
                           </FormGroup>
                         </Col>
+                      </Row>
 
-                        <Col sm={3}>
+                      <Row form>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -492,7 +501,7 @@ class LigBLArticle extends Component {
                           </FormGroup>
                         </Col>
 
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -504,22 +513,21 @@ class LigBLArticle extends Component {
                           </FormGroup>
                         </Col>
 
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
                               label="Remise %"
                               defaultValue={this.state.remisea}
                               fullWidth
-                              name="remiseea"
+                              name="remisea"
                               // disabled
+                              onChange={this.remiseHandler}
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
 
-                      <Row form>
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -530,7 +538,7 @@ class LigBLArticle extends Component {
                             />
                           </FormGroup>
                         </Col>
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -542,7 +550,7 @@ class LigBLArticle extends Component {
                           </FormGroup>
                         </Col>
 
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <FormGroup>
                             <TextField
                               id="standard-basic"
@@ -551,34 +559,6 @@ class LigBLArticle extends Component {
                               fullWidth
                               disabled
                             />
-                          </FormGroup>
-                        </Col>
-
-                        <Col sm={3}>
-                          <FormGroup
-                            style={{ marginTop: "10px", marginLeft: "10px" }}
-                          >
-                            <Label> Fodec </Label>
-                            {this.state.faudec === "A" ? (
-                              <Checkbox
-                                defaultChecked
-                                value="secondary"
-                                color="primary"
-                                inputProps={{
-                                  "aria-label": "secondary checkbox",
-                                }}
-                              />
-                            ) : (
-                              <Label>
-                                <Checkbox
-                                  disabled
-                                  value="disabled"
-                                  inputProps={{
-                                    "aria-label": "disabled checkbox",
-                                  }}
-                                />
-                              </Label>
-                            )}
                           </FormGroup>
                         </Col>
                       </Row>

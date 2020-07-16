@@ -19,16 +19,17 @@
     }
   }
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
+    // background: #020f64;
+    // color: #b8d0e8;
   }
   table {
     height: fit-content;
     thead {
       display: table;
-      background: #eee;
-      // background-image: linear-gradient(to right,  #eee , #eee  100%) !important;
-      color: black;
+      background: #b8d0e8;
+      color: #020f64;
       table-layout: fixed;
       width: 100%;
     }
@@ -62,32 +63,31 @@
   th {
     display: flex;
     width: 15%;
-    justify-content: left;
-    align-items: left;
+    justify-content: center;
+    align-items: center;
     padding: 10px;
-    text-align: left;
+    text-align: center;
     span {
-      font-size: 14px;
+      font-size: 13px;
     }
   }
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
   }
   table {
     height: fit-content;
     thead {
       display: table;
-      background: #eee;
-      // background-image: linear-gradient(to right,  #eee , #eee  100%) !important;
-      color: black;
+      background: #b8d0e8;
+      color: #020f64;
       table-layout: fixed;
       width: 100%;
     }
     tbody {
       overflow-y: auto;
       display: block;
-      max-height: 22em;
+      max-height: 33em;
 
       tr:hover {
         animation: tdanimation 1s infinite;
@@ -247,9 +247,15 @@
     //   content: "Raison Sociale";
     // }
     td:nth-of-type(3):before {
-      content: "Client";
+      content: "Code Client";
     }
-    td:nth-of-type(4):before {
+    td:nth-of-type(4) {
+      display: none;
+    }
+    td:nth-of-type(5):before {
+      content: "Facturé";
+    }
+    td:nth-of-type(6):before {
       content: "Montant";
     }
   }

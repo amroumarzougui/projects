@@ -131,18 +131,18 @@ class GetFactureByIdModal extends Component {
                 <Row>
                   <Col style={{ textAlign: "center" }} sm={3}>
                     <Typography variant="h6" component="h2">
-                      <Label>№ Facture</Label>
+                      <Label style={{ color: "#020f64" }}>№ Facture</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.blid}
                     </Typography>
                   </Col>
 
                   <Col style={{ textAlign: "center" }} sm={3}>
                     <Typography variant="h6" component="h2">
-                      <Label>Date Facture</Label>
+                      <Label style={{ color: "#020f64" }}>Date Facture</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {new Date(this.props.datebl).toLocaleDateString(
                         "fr",
                         DATE_OPTIONS
@@ -152,18 +152,18 @@ class GetFactureByIdModal extends Component {
 
                   <Col style={{ textAlign: "center" }} sm={3}>
                     <Typography variant="h6" component="h2">
-                      <Label>Client</Label>
+                      <Label style={{ color: "#020f64" }}>Client</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.client}
                     </Typography>
                   </Col>
 
                   <Col style={{ textAlign: "center" }} sm={3}>
                     <Typography variant="h6" component="h2">
-                      <Label>Raison Sociale</Label>
+                      <Label style={{ color: "#020f64" }}>Raison Sociale</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.raisonsociale}
                     </Typography>
                   </Col>
@@ -184,7 +184,7 @@ class GetFactureByIdModal extends Component {
                         <th>Remise</th>
                         <th>TVA</th>
                         <th>TotalHT</th>
-                        <th>PUNet</th>
+                        <th>PUTTCNET</th>
                       </tr>
                     </thead>
                     <tbody
@@ -243,7 +243,7 @@ class GetFactureByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total HT Brut
                     </p>
                     <p style={{ color: "black" }}>
@@ -261,7 +261,7 @@ class GetFactureByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Remise Article
                     </p>
                     <p style={{ color: "black" }}>
@@ -279,7 +279,7 @@ class GetFactureByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total TVA
                     </p>
                     <p style={{ color: "black" }}>
@@ -297,7 +297,7 @@ class GetFactureByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total Quantité
                     </p>
                     <p style={{ color: "black" }}>
@@ -335,7 +335,7 @@ class GetFactureByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total HT Net
                     </p>
                     <p style={{ color: "black" }}>
@@ -353,7 +353,7 @@ class GetFactureByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Remise Globale
                     </p>
                     <p style={{ color: "black" }}>
@@ -371,7 +371,7 @@ class GetFactureByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total TTC
                     </p>
                     <p style={{ color: "black" }}>
@@ -389,12 +389,18 @@ class GetFactureByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p
+                      style={{
+                        color: "rgb(220, 0, 78)",
+                        fontWeight: "bold",
+                        marginBottom: "-5px",
+                      }}
+                    >
                       Net à Payer
                     </p>
-                    <p style={{ color: "black" }}>
+                    <p style={{ color: "black", fontWeight: "bold" }}>
                       {Number(this.props.totalttc).toFixed(3)}
-                    </p>{" "}
+                    </p>
                   </Col>
                 </Row>
               </Card.Body>
@@ -425,7 +431,7 @@ class GetFactureByIdModal extends Component {
                       tooltipTitle={action.name}
                       onClick={() => {
                         this.handleClose();
-                        action.name == "Imprimer" && this.imprimer();
+                        //  action.name == "Imprimer" && this.imprimer();
                         // action.name == "Modifier" && this.openModifier();
                         // action.name == "Supprimer" && this.supprimer();
                         // action.name == "Annuler" && this.annuler();

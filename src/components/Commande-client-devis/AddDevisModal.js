@@ -17,40 +17,11 @@ class AddDevisModal extends Component {
       snacckbarmsg: "",
       defaultdate: date,
     };
-
-    this.submitHnadler = this.submitHnadler.bind(this);
   }
 
   snackbarClose = (event) => {
     this.setState({ snackbaropen: false });
   };
-
-  submitHnadler(event) {
-    event.preventDefault();
-
-    fetch("http://localhost:57104/api/Department", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        DepartmentID: null,
-        DepartmentName: event.target.DepartmentName.value,
-      }),
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          //alert(result);
-          this.setState({ snackbaropen: true, snacckbarmsg: result });
-        },
-        (error) => {
-          //alert('Failed');
-          this.setState({ snackbaropen: true, snacckbarmsg: "failed" });
-        }
-      );
-  }
 
   render() {
     return (
@@ -79,7 +50,7 @@ class AddDevisModal extends Component {
           centered
         >
           <Modal.Header
-            //  closeButton
+            closeButton
             style={{ backgroundColor: "white", color: "#020F64" }}
           >
             <Modal.Title id="contained-modal-title-vcenter">

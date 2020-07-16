@@ -77,9 +77,7 @@ class HomePage extends Component {
                 <Card.Body>
                   <Row>
                     <Col sm={6}>
-                      <h6>
-                        <b>Total Charge</b>
-                      </h6>
+                      <p className="p1">Total Charge</p>
                     </Col>
                     <Col sm={6}>
                       {this.props.charges.charges.map((t) => (

@@ -103,7 +103,7 @@
   td,
   th {
     display: flex;
-    width: 10%;
+    width: 12%;
     justify-content: center;
     align-items: center;
     padding: 10px;
@@ -117,8 +117,8 @@
   }
 
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
   }
   table {
     height: fit-content;
@@ -133,7 +133,7 @@
     tbody {
       overflow-y: auto;
       display: block;
-      max-height: 22em;
+      max-height: 33em;
 
       tr:hover {
         animation: tdanimation 1s infinite;

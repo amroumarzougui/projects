@@ -336,8 +336,8 @@
     }
   }
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
   }
   table {
     height: fit-content;
@@ -384,12 +384,12 @@
     padding: 10px;
     text-align: center;
     span {
-      font-size: 14px;
+      font-size: 13px;
     }
   }
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
   }
   table {
     height: fit-content;
@@ -404,7 +404,7 @@
     tbody {
       overflow-y: auto;
       display: block;
-      max-height: 22em;
+      max-height: 33em;
 
       tr:hover {
         animation: tdanimation 1s infinite;
@@ -425,7 +425,7 @@ and also iPads specifically.
 */
 @media only screen and (max-width: 760px),
   (min-device-width: 768px) and (max-device-width: 1024px) {
-  .tab28 {
+  .tabd28 {
     /* Force table to not be like tables anymore */
     table,
     thead,
@@ -474,34 +474,27 @@ and also iPads specifically.
 	Label the data
 	*/
     td:nth-of-type(1):before {
-      content: "Article";
+      content: "Code";
     }
-    td:nth-of-type(2):before {
-      content: "Désignation";
+    td:nth-of-type(2) {
+      display: none;
     }
     td:nth-of-type(3):before {
       content: "Quantité";
     }
+
     td:nth-of-type(4):before {
-      content: "Unité";
-    }
-    td:nth-of-type(5):before {
       content: "PU HT";
     }
-    td:nth-of-type(6):before {
-      content: "Fodec";
-    }
-    td:nth-of-type(7):before {
+
+    td:nth-of-type(5):before {
       content: "Remise";
     }
-    td:nth-of-type(8):before {
+    td:nth-of-type(6):before {
       content: "TVA";
     }
-    td:nth-of-type(9):before {
+    td:nth-of-type(7):before {
       content: "Total HT";
-    }
-    td:nth-of-type(10):before {
-      content: "PUNet";
     }
   }
   .tabd {
@@ -561,11 +554,14 @@ and also iPads specifically.
     td:nth-of-type(3):before {
       content: "Code client";
     }
-    td:nth-of-type(4):before {
-      content: "Raison Sociale";
+    // td:nth-of-type(4):before {
+    //   content: "Raison Sociale";
+    // }
+    td:nth-of-type(4) {
+      display: none;
     }
     td:nth-of-type(5):before {
-      content: "Montant TotalTTC";
+      content: "Montant";
     }
   }
 }

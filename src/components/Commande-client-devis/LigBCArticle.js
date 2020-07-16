@@ -89,9 +89,6 @@ class LigBCArticlel extends Component {
   };
 
   remiseHandler = (event) => {
-    // console.log(typeof parseInt(event.target.value));
-    // console.log(typeof this.state.totalqte);
-
     this.setState({
       remisea: event.target.value,
       totalht:

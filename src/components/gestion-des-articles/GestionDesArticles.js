@@ -180,7 +180,7 @@ class FicheArticle extends Component {
                     ))} */}
                     <th>Code</th>
 
-                    <th style={{ width: "50%" }}>Désignation</th>
+                    <th style={{ width: "40%" }}>Désignation</th>
                     <th>Stock</th>
 
                     <th>P.U.V HT</th>
@@ -235,7 +235,7 @@ class FicheArticle extends Component {
                         <span>{article.codart}</span>
                       </td>
 
-                      <td style={{ width: "50%" }}>
+                      <td style={{ width: "40%" }}>
                         <span>{article.desart}</span>
                       </td>
 

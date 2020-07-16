@@ -24,7 +24,8 @@ const SideBar = (props) => (
         alt="Contact"
         style={{ width: "100%", height: "100%" }}
       /> */}
-      <h3>SYROS</h3>
+      {/* <h3>SYROS</h3> */}
+      <h3> </h3>
       {/* <img
         src={image}
         alt="Contact"
@@ -34,9 +35,9 @@ const SideBar = (props) => (
     <div className="side-menu">
       <Nav vertical className="list-unstyled pb-3">
         <div>
-          <Link to={"/homepage"} className="title">
+          <Link to={"/homepage"} className="title" onClick={props.toggle}>
             <NavItem style={{ paddingLeft: "27px" }}>
-              <i className="fab fa-dashcube"> DashBoard</i>
+              <i class="fas fa-chart-bar"> DashBoard</i>
             </NavItem>
           </Link>
 
@@ -49,38 +50,52 @@ const SideBar = (props) => (
               items={el.submenu}
             />
           ))}
-          <Link to={"/bon-entree"} className="title">
+          <Link to={"/bon-entree"} className="title" onClick={props.toggle}>
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i class="fa fa-retweet" aria-hidden="true"></i>
 
               <span style={{ marginLeft: "15px" }}>Bon d'entrée</span>
             </NavItem>
           </Link>
-          <Link to={"/devis"} className="title">
+          <Link to={"/devis"} className="title" onClick={props.toggle}>
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i className="fas fa-tasks"></i>
               <span style={{ marginLeft: "15px" }}>Devis client</span>
             </NavItem>
           </Link>
-          <Link to={"/bon-de-commande"} className="title">
+          <Link
+            to={"/bon-de-commande"}
+            className="title"
+            onClick={props.toggle}
+          >
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i className="fas fa-clipboard-list"></i>
               <span style={{ marginLeft: "17px" }}>Bon de commande</span>
             </NavItem>
           </Link>
-          <Link to={"/bon-de-livraison"} className="title">
+          <Link
+            to={"/bon-de-livraison"}
+            className="title"
+            onClick={props.toggle}
+          >
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i className="fas fa-list-alt"></i>
               <span style={{ marginLeft: "15px" }}>Bon de Livraison</span>{" "}
             </NavItem>
           </Link>
-          <Link to={"/facture"} className="title">
+          <Link to={"/facture"} className="title" onClick={props.toggle}>
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i className="fas fa-file-invoice-dollar"></i>
               <span style={{ marginLeft: "17px" }}>Facture</span>
             </NavItem>
           </Link>
-          <Link to={"/nomenclature"} className="title">
+          <Link to={"/reglement"} className="title" onClick={props.toggle}>
+            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
+              <i className="fab fa-dashcube"></i>
+              <span style={{ marginLeft: "17px" }}>Règlement Client</span>
+            </NavItem>
+          </Link>
+          <Link to={"/nomenclature"} className="title" onClick={props.toggle}>
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i class="far fa-plus-square"></i>
               <span style={{ marginLeft: "17px" }}>Nomenclature</span>
@@ -99,21 +114,17 @@ const SideBar = (props) => (
             </NavItem>
           </a>
 
-          <Link to={"/faq"}>
+          {/* <Link to={"/faq"}>
             <NavItem>
-              {/* <FontAwesomeIcon icon={faQuestion} className="mr-2" />
-              FAQ */}
               <NavItem style={{ fontSize: "16px", paddingLeft: "20px" }}>
                 <i class="far fa-question-circle"></i>
                 <span style={{ marginLeft: "17px" }}>FAQ</span>
               </NavItem>
             </NavItem>
-          </Link>
+          </Link> */}
 
-          <Link to={"/contact"}>
+          <Link to={"/contact"} onClick={props.toggle}>
             <NavItem>
-              {/* <FontAwesomeIcon icon={faPaperPlane} className="mr-2" />
-              Contact */}
               <NavItem style={{ fontSize: "16px", paddingLeft: "20px" }}>
                 <i class="far fa-comment-alt"></i>
                 <span style={{ marginLeft: "17px" }}>Contact</span>

@@ -205,18 +205,18 @@ class GetBEByIdModal extends Component {
                 <Row>
                   <Col style={{ textAlign: "center" }} sm={2}>
                     <Typography variant="h6" component="h2">
-                      <Label>№ BE</Label>
+                      <Label style={{ color: "#020f64" }}>№ BE</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.blid}
                     </Typography>
                   </Col>
 
                   <Col style={{ textAlign: "center" }} sm={3}>
                     <Typography variant="h6" component="h2">
-                      <Label>Date BE</Label>
+                      <Label style={{ color: "#020f64" }}>Date BE</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {/* {this.props.datebl} */}
                       {new Date(this.props.datebl).toLocaleDateString(
                         "fr",
@@ -227,18 +227,18 @@ class GetBEByIdModal extends Component {
 
                   <Col style={{ textAlign: "center" }} sm={2}>
                     <Typography variant="h6" component="h2">
-                      <Label>Fournisseur</Label>
+                      <Label style={{ color: "#020f64" }}>Fournisseur</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.client}
                     </Typography>
                   </Col>
 
                   <Col style={{ textAlign: "center" }} sm={5}>
                     <Typography variant="h6" component="h2">
-                      <Label>Raison Sociale</Label>
+                      <Label style={{ color: "#020f64" }}>Raison Sociale</Label>
                     </Typography>
-                    <Typography style={{ color: "grey" }}>
+                    <Typography style={{ color: "grey", fontSize: "14px" }}>
                       {this.props.raisonsociale}
                     </Typography>
                   </Col>
@@ -259,7 +259,7 @@ class GetBEByIdModal extends Component {
                         <th>PUHT</th>
                         <th>Remise</th>
                         <th>TVA</th>
-                        {/* <th>PUTTCNet</th> */}
+                        <th>PUTTCNet</th>
                         <th>TotalHT</th>
                       </tr>
                     </thead>
@@ -295,9 +295,9 @@ class GetBEByIdModal extends Component {
                             <span>{Number(t.tautva).toFixed(2)}</span>
                           </td>
 
-                          {/* <td>
+                          <td>
                             <span>{Number(t.PUTTCNET).toFixed(3)}</span>
-                          </td> */}
+                          </td>
                           <td>
                             <span>{Number(t.montht).toFixed(3)}</span>
                           </td>
@@ -322,7 +322,7 @@ class GetBEByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total HT Brut
                     </p>
                     <p style={{ color: "black" }}>
@@ -340,7 +340,7 @@ class GetBEByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Remise Article
                     </p>
                     <p style={{ color: "black" }}>
@@ -358,7 +358,7 @@ class GetBEByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total TVA
                     </p>
                     <p style={{ color: "black" }}>
@@ -376,7 +376,7 @@ class GetBEByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total Quantité
                     </p>
                     <p style={{ color: "black" }}>
@@ -415,7 +415,7 @@ class GetBEByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Total HT Net
                     </p>
                     <p style={{ color: "black" }}>
@@ -433,7 +433,7 @@ class GetBEByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                       Remise Globale
                     </p>
                     <p style={{ color: "black" }}>
@@ -469,11 +469,17 @@ class GetBEByIdModal extends Component {
                       textAlign: "center",
                     }}
                   >
-                    <p style={{ color: "grey", marginBottom: "-5px" }}>
+                    <p
+                      style={{
+                        color: "rgb(220, 0, 78)",
+                        fontWeight: "bold",
+                        marginBottom: "-5px",
+                      }}
+                    >
                       Net à Payer
                     </p>
                     {/* <p style={{ color: "black" }}>{this.state.netapayer}</p> */}
-                    <p style={{ color: "black" }}>
+                    <p style={{ color: "black", fontWeight: "bold" }}>
                       {Number(this.props.totalttc).toFixed(3)}
                     </p>
                   </Col>

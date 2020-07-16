@@ -19,8 +19,8 @@
     }
   }
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
   }
   table {
     height: fit-content;
@@ -62,17 +62,18 @@
   th {
     display: flex;
     width: 15%;
-    justify-content: left;
-    align-items: left;
+    justify-content: center;
+    align-items: center;
     padding: 10px;
-    text-align: left;
+    text-align: center;
+
     span {
-      font-size: 14px;
+      font-size: 13px;
     }
   }
   th {
-    background: #cecece;
-    color: black;
+    background: #b8d0e8;
+    color: #020f64;
   }
   table {
     height: fit-content;
@@ -87,7 +88,7 @@
     tbody {
       overflow-y: auto;
       display: block;
-      max-height: 22em;
+      max-height: 33em;
 
       tr:hover {
         animation: tdanimation 1s infinite;
@@ -166,9 +167,7 @@
     td:nth-of-type(3):before {
       content: "Quantité";
     }
-    // td:nth-of-type(4):before {
-    //   content: "Unité";
-    // }
+
     td:nth-of-type(4):before {
       content: "PU HT";
     }
@@ -183,7 +182,7 @@
       content: "Total HT";
     }
     td:nth-of-type(8):before {
-      content: "PUNet";
+      content: "PUTTCNET";
     }
   }
   .tabbe {
@@ -247,9 +246,12 @@
     //   content: "Raison Sociale";
     // }
     td:nth-of-type(3):before {
-      content: "Client";
+      content: "Code Frs";
     }
-    td:nth-of-type(4):before {
+    td:nth-of-type(4) {
+      display: none;
+    }
+    td:nth-of-type(5):before {
       content: "Montant";
     }
   }

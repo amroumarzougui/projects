@@ -482,7 +482,7 @@ class ModifierBLModal extends Component {
               //  this.setState({ snackbaropen: true, snackbarmsg: result });
 
               console.log(result);
-              // window.alert(result);
+              window.location.reload();
             },
             (error) => {
               this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -1038,8 +1038,8 @@ class ModifierBLModal extends Component {
                   this.props.onHide();
                   this.props.onHide01();
                   window.alert("Modification enregistrés");
+
                   this.props.SelectBL();
-                  this.setState({ reload: true });
                 }}
               >
                 Enregistrer

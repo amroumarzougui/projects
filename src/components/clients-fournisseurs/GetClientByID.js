@@ -35,6 +35,11 @@ class GetClientByID extends Component {
       snackbarmsg: "",
     };
   }
+
+  // componentDidMount() {
+  //   document.getElementById("tell").innerHTML =
+  //     '<a href="tel:' + this.props.tel1 + '">' + this.props.tel1 + "</a>";
+  // }
   handleOpen = () => {
     this.setState({ open: true });
   };
@@ -157,14 +162,18 @@ class GetClientByID extends Component {
                 <p style={{ color: "gray", fontSize: "larger" }}>
                   {this.props.codeclient}
                 </p>
+                {/* <a href="tel: 58941408">{this.props.tel1}</a> */}
+
                 <Divider></Divider>
                 {this.props.tel1 === "" && !this.props.tel2 === "" ? (
                   <p>
-                    <PhoneIcon /> {this.props.tel2}
+                    <PhoneIcon />{" "}
+                    <a href={`tel:${this.props.tel2}`}>{this.props.tel2}</a>
                   </p>
                 ) : !this.props.tel1 === "" && this.props.tel2 === "" ? (
-                  <p>
-                    <PhoneIcon /> {this.props.tel1}
+                  <p id="tell">
+                    <PhoneIcon />{" "}
+                    <a href={`tel:${this.props.tel1}`}>{this.props.tel1}</a>
                   </p>
                 ) : this.props.tel1 === "" && this.props.tel2 === "" ? (
                   <p>
@@ -172,7 +181,9 @@ class GetClientByID extends Component {
                   </p>
                 ) : (
                   <p>
-                    <PhoneIcon /> {this.props.tel1} / {this.props.tel2}
+                    <PhoneIcon />{" "}
+                    <a href={`tel:${this.props.tel1}`}>{this.props.tel1}</a> /{" "}
+                    <a href={`tel:${this.props.tel2}`}>{this.props.tel2}</a>
                   </p>
                 )}
                 {this.props.email === "" ? (
@@ -181,7 +192,10 @@ class GetClientByID extends Component {
                   </p>
                 ) : (
                   <p>
-                    <EmailIcon /> {this.props.email}
+                    <EmailIcon />{" "}
+                    <a href={"mailto:" + this.props.email}>
+                      {this.props.email}
+                    </a>
                   </p>
                 )}
 
@@ -191,7 +205,16 @@ class GetClientByID extends Component {
                   </p>
                 ) : (
                   <p>
-                    <HomeIcon /> {this.props.adresse}
+                    <HomeIcon />{" "}
+                    <a
+                      href={
+                        "https://www.google.com/maps/search/" +
+                        this.props.adresse
+                      }
+                      target="_blank"
+                    >
+                      {this.props.adresse}
+                    </a>
                   </p>
                 )}
 
