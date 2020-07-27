@@ -128,6 +128,9 @@ class FullWidthTabs extends Component {
                 "rgb(220, 0, 78)",
 
                 "rgb(220, 0, 78)",
+                "rgb(220, 0, 78)",
+
+                "rgb(220, 0, 78)",
               ],
               // borderColor: "rgba(0,0,0,1)",
               // borderWidth: 2,

@@ -426,10 +426,24 @@ class ModifierBE extends Component {
               .then((res) => res.json())
               .then(
                 (result) => {
-                  //this.setState({ enrsnackbaropen: true, snackbarmsg: result });
+                  ///////partie calcul be /////////////////
+                  fetch(
+                    `http://192.168.1.100:81/api/LIGBEREs?FACc=${this.props.blid}&typfacc=BE`,
+                    {
+                      method: "POST",
+                      header: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                      },
+                    }
+                  );
+
+                  // this.setState({ snackbaropen: true, snackbarmsg: result });
+                  window.location.reload();
 
                   console.log(result);
-                  // window.alert(result);
+
+                  window.location.reload();
                 },
                 (error) => {
                   this.setState({

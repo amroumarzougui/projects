@@ -48,15 +48,16 @@ class ModifierFournisseurModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
+          this.props.onHide();
+          this.props.SelectFournisseur();
           this.setState({ snackbaropen: true, snackbarmsg: result });
           console.log(result);
+          window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
         }
       );
-    this.props.onHide();
-    this.props.SelectFournisseur();
   };
   render() {
     return (

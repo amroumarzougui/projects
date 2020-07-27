@@ -53,16 +53,20 @@ class AddCModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
+          this.props.onHide();
+          this.props.SelectClient();
+
           this.setState({ snackbaropen: true, snackbarmsg: result });
+          this.props.GetCodcli();
+
           console.log(result);
+
+          window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
         }
       );
-    this.props.SelectClient();
-    this.props.onHide();
-    this.props.GetCodcli();
   };
 
   render() {

@@ -18,6 +18,7 @@ import ReactToPrint from "react-to-print";
 import HomeIcon from "@material-ui/icons/Home";
 import PhoneIcon from "@material-ui/icons/Phone";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
+import ModifierReg from "./ModifierReg";
 
 const useStyles = makeStyles((theme) => ({
   typography: {
@@ -28,9 +29,7 @@ const useStyles = makeStyles((theme) => ({
 const actions = [
   // { icon: <PrintIcon />, name: "Imprimer" },
   { icon: <EditIcon />, name: "Modifier" },
-  { icon: <CancelPresentationIcon />, name: "Annuler" },
   { icon: <DeleteOutlineIcon />, name: "Supprimer" },
-  { icon: <FileCopyIcon />, name: "Facturer" },
 ];
 
 const DATE_OPTIONS = {
@@ -40,10 +39,29 @@ const DATE_OPTIONS = {
   day: "numeric",
 };
 
+const DATE_OPTIONSS = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+};
+
+var curr = new Date();
+curr.setDate(curr.getDate());
+var date = curr.toISOString().substr(0, 10);
+
 class GetREByIdModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { open: false, popoverOpen: false, anchorEl: null };
+    this.state = {
+      open: false,
+      popoverOpen: false,
+      anchorEl: null,
+      snackbaropen: false,
+      snackbarmsg: "",
+      clientimp: [],
+      todaydate: date,
+      openModifierModal: false,
+    };
   }
 
   handleClick = (event) => {
@@ -60,17 +78,71 @@ class GetREByIdModal extends Component {
 
   handleOpen = () => {
     this.setState({ open: true });
+    fetch(`http://192.168.1.100:81/api/Clients?codeclient=${this.props.client}`)
+      .then((response) => response.json())
+      .then((data) => this.setState({ clientimp: data }));
   };
 
   handleClose = () => {
     this.setState({ open: false });
   };
 
+  snackbarClose = (event) => {
+    this.setState({ snackbaropen: false });
+  };
+
+  supprimer = () => {
+    if (
+      window.confirm(
+        `êtes-vous sûr de vouloir supprimer Le réglement numéro ${this.props.regid}?`
+      )
+    ) {
+      fetch(`http://192.168.1.100:81/api/REGCLIs/${this.props.regid}`, {
+        method: "DELETE",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          this.props.onHide();
+          this.setState({ snackbaropen: true, snackbarmsg: result });
+          console.log(result);
+
+          window.location.reload();
+        });
+    }
+  };
+
+  openModifier = () => {
+    this.setState({ openModifierModal: true });
+  };
+
   render() {
+    let ModifierModalClose = () => this.setState({ openModifierModal: false });
+
     const openn = Boolean(this.state.anchorEl);
     const id = openn ? "simple-popover" : undefined;
     return (
       <div className="container">
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          open={this.state.snackbaropen}
+          autoHideDuration={2000}
+          onClose={this.snackbarClose}
+          message={<span id="message-id"> {this.state.snackbarmsg} </span>}
+          action={[
+            <IconButton
+              key="close"
+              color="inherit"
+              onClick={this.snackbarClose}
+            >
+              x
+            </IconButton>,
+          ]}
+        ></Snackbar>
+
         <Modal
           {...this.props}
           size="lg"
@@ -227,7 +299,13 @@ class GetREByIdModal extends Component {
                         this.props.datech === "" ? (
                           <p style={{ color: "black" }}>--</p>
                         ) : (
-                          <p style={{ color: "black" }}>{this.props.datech}</p>
+                          <p style={{ color: "black" }}>
+                            {" "}
+                            {new Date(this.props.datech).toLocaleDateString(
+                              "fr",
+                              DATE_OPTIONSS
+                            )}
+                          </p>
                         )}
                       </Col>
                     </Row>
@@ -406,11 +484,8 @@ class GetREByIdModal extends Component {
                             tooltipTitle={action.name}
                             onClick={() => {
                               this.handleClose();
-                              // action.name == "Mail" && this.openMail();
                               action.name == "Modifier" && this.openModifier();
-                              action.name == "Supprimer" &&
-                                this.deletearticle(this.props.codearticle) &&
-                                this.props.onHide();
+                              action.name == "Supprimer" && this.supprimer();
                             }}
                           />
                         ))}
@@ -452,30 +527,166 @@ class GetREByIdModal extends Component {
                     </div>
                   </Col>
                 </Row>
-                <Row style={{ marginBottom: "-12px" }}>
-                  <Col sm={6}>
-                    {/* {this.props.note === "" ||
-                    this.props.note === null ? null : (
-                      <div>
-                        <Row>
-                          <Col sm={3}>
-                            <p style={{ color: "#17a2b8" }}>Note</p>
-                          </Col>
-                          <Col sm={9}>
-                            <p style={{ color: "black", fontSize: "12px" }}>
-                              {this.props.note}
-                            </p>
-                          </Col>
-                        </Row>
-                      </div>
-                    )} */}
-                  </Col>
-                </Row>
               </Card.Body>
             </Card>
           </Modal.Body>
           <Modal.Footer></Modal.Footer>
+
+          <ModifierReg
+            show={this.state.openModifierModal}
+            onHide={ModifierModalClose}
+            regid={this.props.regid}
+            raisonsocial={this.props.raisonsociale}
+            codeclient={this.props.client}
+            datreg={this.props.datereg}
+            codmodreg={this.props.modreg}
+            // libmodreg={this.props.}
+            bqclient={this.props.matban}
+            montant={this.props.monreg}
+            codbqclient={this.props.matban}
+            // libbqclient={this.props.}
+            codagence={this.props.agence}
+            // libagence={this.props.}
+            codcaisse={this.props.numcais}
+            // libcaisse={this.props.}
+            codsituation={this.props.verser}
+            // libsituation={this.props.}
+            codbqvers={this.props.bqescompte}
+            // libbqvers={this.props.}
+            codccb={this.props.codccb}
+            titulaire={this.props.titulaire}
+            datech={this.props.datech}
+            numchq={this.props.numchq}
+            note={this.props.note}
+            // libccb={this.props.}
+            // chdec={this.props.}
+          />
         </Modal>
+
+        {/* ///////////////// Imprimer /////////// */}
+        <div style={{ display: "none" }}>
+          <div
+            ref={(el) => (this.componentRef = el)}
+            style={{ margin: "15px", height: "98%" }}
+          >
+            <h3>Société POLYSOFT & CO</h3>
+            <p>
+              Logiciels, Servie informatique et conseil <br />
+              Adresse : Avenue Majida Boulila Imm Loulou 3000 Sfax - Tunisie{" "}
+              <br />
+              Tél: 74 443 620 / Gsm: 20 413 577 / Email: gm@polysoftco.tn <br />
+              Code TVA: 1609013R A/M/000 <br />
+              RIB: 08 804 0003410007877 51 BIAT H.Thameur Sfax
+            </p>
+
+            <div
+              style={{ borderTopStyle: "solid", marginBottom: "20px" }}
+            ></div>
+            <h1
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+                textAlign: "center",
+                marginTop: "10px",
+              }}
+            >
+              Reçu №: {this.props.regid}{" "}
+            </h1>
+            <Row>
+              <Col></Col>
+              <Col>
+                <h4 style={{ marginLeft: "230px" }}>
+                  Le:{" "}
+                  {new Date(this.state.todaydate).toLocaleDateString(
+                    "fr",
+                    DATE_OPTIONSS
+                  )}
+                </h4>
+
+                {/* {this.state.clientimp.map((t) =>
+                  t.codtva === "" ? (
+                    <h6>Code TVA : --</h6>
+                  ) : (
+                    <h6>Code TVA : {t.codtva}</h6>
+                  )
+                )} */}
+              </Col>
+            </Row>
+            <br />
+
+            <br />
+
+            {/* <div style={{ borderBottomStyle: "solid" }}> */}
+            <div>
+              <h2 style={{ marginBottom: "15px", marginLeft: "10px" }}>
+                Client : &nbsp;&nbsp;{" "}
+                <span className="imp">
+                  <b>{this.props.client}</b> {this.props.raisonsociale}
+                </span>
+              </h2>
+
+              <h2 style={{ marginBottom: "15px", marginLeft: "10px" }}>
+                Règlement : &nbsp;&nbsp;{" "}
+                <span className="imp">{this.props.modreg}</span>
+              </h2>
+
+              {this.props.numchq === "" || this.props.numchq === null ? null : (
+                <h2 style={{ marginBottom: "15px", marginLeft: "10px" }}>
+                  Pièce : &nbsp;&nbsp;{" "}
+                  <span className="imp">
+                    {this.props.numchq} &nbsp; <b>Au</b>{" "}
+                    {new Date(this.props.datech).toLocaleDateString(
+                      "fr",
+                      DATE_OPTIONSS
+                    )}
+                    &nbsp; <b>Banque</b> &nbsp;
+                    {this.props.matban}
+                  </span>
+                </h2>
+              )}
+
+              <h2 style={{ marginBottom: "15px", marginLeft: "10px" }}>
+                Montant : &nbsp;&nbsp;{" "}
+                <span className="imp">
+                  {Number(this.props.monreg).toFixed(3)}
+                </span>
+              </h2>
+
+              <h2 style={{ marginBottom: "15px", marginLeft: "10px" }}>
+                Date du règlement : &nbsp;&nbsp;{" "}
+                <span className="imp">
+                  {new Date(this.props.datereg).toLocaleDateString(
+                    "fr",
+                    DATE_OPTIONSS
+                  )}
+                </span>
+              </h2>
+            </div>
+            <br />
+            {/* //////////////////////// footer ///////////////////////////// */}
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "row",
+                textAlign: "center",
+                marginTop: "20px",
+                justifyContent: "space-between",
+                marginLeft: "5px",
+              }}
+            >
+              <h3 style={{ marginLeft: "170px" }}> Signature & Cachet </h3>
+              <h3 style={{ marginRight: "200px" }}> Signature Client </h3>
+            </div>
+
+            <br />
+            <br />
+            <br />
+            <div style={{ borderBottomStyle: "dashed" }}></div>
+          </div>
+        </div>
       </div>
     );
   }

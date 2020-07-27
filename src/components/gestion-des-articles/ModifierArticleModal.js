@@ -21,6 +21,7 @@ import { SelectSousFamille } from "../../redux/actions/GetSousFamille";
 import { SelectNome } from "../../redux/actions/GetNome";
 import { connect } from "react-redux";
 import { SelectArticle } from "../../redux/actions/GetArticles";
+import { SelectNomenclature } from "../../redux/actions/GetNomenclature";
 
 const roundTo = require("round-to");
 
@@ -70,6 +71,7 @@ class ModifierArticleModal extends Component {
   componentDidMount() {
     this.props.SelectNome();
     this.props.SelectSousFamille();
+    this.props.SelectNomenclature("TV");
   }
 
   snackbarClose = () => {
@@ -108,14 +110,18 @@ class ModifierArticleModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
+          this.props.onHide();
+          this.props.SelectArticle();
+
           this.setState({ snackbaropen: true, snackbarmsg: result });
+          console.log(result);
+
+          window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
         }
       );
-    this.props.SelectArticle();
-    this.props.onHide();
     //  this.props.onHide01();
   };
 
@@ -196,7 +202,7 @@ class ModifierArticleModal extends Component {
         ></Snackbar>
         <Modal
           {...this.props}
-          size="xl"
+          size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           centered
         >
@@ -315,7 +321,7 @@ class ModifierArticleModal extends Component {
                 {/* <Card style={{ backgroundColor: "white", margin: "10px" }}>
                       <CardContent> */}
                 <Row>
-                  <Col sm={3}>
+                  {/* <Col sm={3}>
                     <Form.Group controlId="tautva">
                       <TextField
                         id="outlined-select-currency"
@@ -335,7 +341,67 @@ class ModifierArticleModal extends Component {
                         ))}
                       </TextField>
                     </Form.Group>
+                  </Col> */}
+
+                  <Col sm={2}>
+                    <Form.Group controlId="codtva">
+                      <Autocomplete
+                        id="include-input-in-list"
+                        includeInputInList
+                        className="ajouter-client-input"
+                        options={this.props.nomenclatures.nomenclatures}
+                        getOptionLabel={(option) => option.code}
+                        onChange={(event, getOptionLabel) => {
+                          getOptionLabel
+                            ? this.setState({
+                                tvaa: getOptionLabel.lib,
+                                pudhttc: roundTo(
+                                  this.state.pudhtt *
+                                    (1 + parseInt(getOptionLabel.lib) / 100),
+                                  3
+                                ),
+                                purttc: roundTo(
+                                  this.state.purnhtnet *
+                                    (1 + parseInt(getOptionLabel.lib) / 100),
+                                  3
+                                ),
+                              })
+                            : this.setState({
+                                tvaa: 0,
+                              });
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="TVA"
+                            margin="dense"
+                            variant="outlined"
+                            fullWidth
+                            //  onChange={this.clientHandlerChange}
+                            // name="tautva"
+                            value={this.state.tvaa}
+                          />
+                        )}
+                      />
+                    </Form.Group>
                   </Col>
+
+                  <Col sm={2}>
+                    <Form.Group controlId="tautva">
+                      <TextField
+                        label="%"
+                        id="outlined-margin-dense"
+                        margin="dense"
+                        variant="outlined"
+                        fullWidth
+                        name="tautva"
+                        disabled
+                        //  onChange={this.tvaaHandler}
+                        value={this.state.tvaa}
+                      />
+                    </Form.Group>
+                  </Col>
+
                   <Col sm={3}>
                     <Form.Group controlId="typfodec">
                       <TextField
@@ -356,7 +422,7 @@ class ModifierArticleModal extends Component {
                       </TextField>
                     </Form.Group>
                   </Col>
-                  <Col sm={3}>
+                  <Col sm={2}>
                     <Form.Group controlId="TDC">
                       <TextField
                         label="Taux D.C"
@@ -398,8 +464,9 @@ class ModifierArticleModal extends Component {
 
                 <Row sm={12}>
                   <Col>
-                    <Card style={{ backgroundColor: "#eeF" }}>
+                    <Card>
                       <CardHeader
+                        style={{ height: "20px" }}
                         avatar={<MonetizationOnIcon />}
                         title="Prix De Revient"
                       />
@@ -411,6 +478,7 @@ class ModifierArticleModal extends Component {
                                 id="outlined-basic"
                                 label="P.U Revient Brut HT"
                                 variant="outlined"
+                                margin="dense"
                                 fullWidth
                                 name="PURBHT"
                                 value={this.state.purbrut}
@@ -423,8 +491,9 @@ class ModifierArticleModal extends Component {
                             <Form.Group controlId="remisefrs">
                               <TextField
                                 id="outlined-basic"
-                                label="Remise Fournisseur (%)"
+                                label="Remise Frs (%)"
                                 variant="outlined"
+                                margin="dense"
                                 fullWidth
                                 name="remisefrs"
                                 value={this.state.remisefrs}
@@ -439,6 +508,7 @@ class ModifierArticleModal extends Component {
                                 id="outlined-basic"
                                 label="P.U Revient Net HT"
                                 variant="outlined"
+                                margin="dense"
                                 fullWidth
                                 name="PURNHT"
                                 value={this.state.purnhtnet}
@@ -451,6 +521,7 @@ class ModifierArticleModal extends Component {
                                 id="outlined-basic"
                                 label="P.U Revient Net TTC"
                                 variant="outlined"
+                                margin="dense"
                                 fullWidth
                                 name="PURNTTC"
                                 value={this.state.purttc}
@@ -467,6 +538,7 @@ class ModifierArticleModal extends Component {
                                 id="outlined-basic"
                                 label="Marge/ P.R Net (%)"
                                 variant="outlined"
+                                margin="dense"
                                 fullWidth
                                 name="margedet"
                                 value={this.state.marged}
@@ -480,6 +552,7 @@ class ModifierArticleModal extends Component {
                                 id="outlined-basic"
                                 label="P.U Vente HT"
                                 variant="outlined"
+                                margin="dense"
                                 fullWidth
                                 name="PUDHT"
                                 value={this.state.pudhtt}
@@ -493,6 +566,7 @@ class ModifierArticleModal extends Component {
                                 id="outlined-basic"
                                 label="P.U Vente TTC"
                                 variant="outlined"
+                                margin="dense"
                                 fullWidth
                                 name="PUDTTC"
                                 // defaultValue={this.state.pudhttc}
@@ -547,6 +621,7 @@ function mapDispatchToProps(dispatch) {
     SelectNome: () => dispatch(SelectNome()),
     SelectSousFamille: () => dispatch(SelectSousFamille()),
     SelectArticle: () => dispatch(SelectArticle()),
+    SelectNomenclature: () => dispatch(SelectNomenclature("TV")),
   };
 }
 
@@ -554,6 +629,7 @@ function mapStateToProps(state) {
   return {
     nomes: state.nomes,
     sousfamilles: state.sousfamilles,
+    nomenclatures: state.nomenclatures,
   };
 }
 

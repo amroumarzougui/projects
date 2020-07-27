@@ -66,7 +66,16 @@ a:focus {
 
 .menu-open {
   /* background: #020f64; */
-  background-image: linear-gradient(-20deg, #0f2535, #08052b) !important;
+  /* background-image: linear-gradient(-20deg, #0f2535, #08052b) !important; */
+  /* background-image: linear-gradient(-20deg, #b8d0e8, #fff) !important; */
+  background-image: linear-gradient(-20deg, #b8d0e8, #08052b) !important;
+
+  /* color: #34b0c8; */
+  color: white;
+}
+
+.itemcolor {
+  background-image: linear-gradient(-20deg, #b8d0e8, #08052b) !important;
 }
 
 .nav-item:hover {
@@ -78,14 +87,15 @@ a:focus {
 .items-menu {
   color: #fff;
   /* background: #020f64; */
-  background-image: linear-gradient(-20deg, #0f2535, #08052b) !important;
+  /* background-image: linear-gradient(-20deg, #0f2535, #08052b) !important; */
+  background-image: linear-gradient(-20deg, #b8d0e8, #08052b) !important;
 }
 
 li a.dropdown-toggle {
   position: relative;
   /* left: 60%;
   top: 10%; */
-  width: 100%;
+  width: 90%;
   display: flex;
   justify-content: space-between;
   display: inline-flex;
@@ -152,7 +162,7 @@ li a.dropdown-toggle {
   li a.dropdown-toggle::after {
     display: inline-block;
     position: relative;
-    left: 68%;
+    left: 20%;
   }
 }
 /*----------------------------
@@ -165,6 +175,15 @@ li a.dropdown-toggle {
   justify-content: flex-end;
   margin-right: 20px;
   margin-bottom: -10px;
+}
+.pagee-icon {
+  display: flex;
+  color: #020f64;
+  font-size: 30px;
+  justify-content: flex-start;
+  margin-right: 20px;
+  margin-bottom: -10px;
+  margin-top: 10px;
 }
 .bl-icon {
   display: flex;

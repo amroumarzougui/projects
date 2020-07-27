@@ -97,7 +97,7 @@ class GetBEByIdModal extends Component {
     // window.alert("annuler");
     this.props.annuler === "0"
       ? fetch(
-          `http://192.168.1.100:81/api/BEREs?idd=${this.props.blid}&typfaccs=BL`,
+          `http://192.168.1.100:81/api/BEREs?idd=${this.props.blid}&typfaccs=BE`,
           {
             method: "PUT",
             header: {
@@ -110,8 +110,10 @@ class GetBEByIdModal extends Component {
           .then((result) => {
             this.props.onHide();
             this.props.SelectBE();
-            console.log(result);
             this.setState({ snackbaropen: true, snackbarmsg: result });
+            console.log(result);
+
+            window.location.reload();
           })
       : window.alert("Bon de livraison déja annulée");
   };
@@ -150,6 +152,7 @@ class GetBEByIdModal extends Component {
           this.props.SelectBE();
           console.log(result);
           this.setState({ snackbaropen: true, snackbarmsg: result });
+          window.location.reload();
         });
     }
   };

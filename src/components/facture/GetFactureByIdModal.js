@@ -173,7 +173,7 @@ class GetFactureByIdModal extends Component {
 
             <Card style={{ marginTop: "10px" }}>
               <Card.Body>
-                <div className="tab28">
+                <div className="tabf28">
                   <table stripped>
                     <thead>
                       <tr style={{ textAlign: "center", fontSize: "12px" }}>

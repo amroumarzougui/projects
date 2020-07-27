@@ -24,8 +24,7 @@ const SideBar = (props) => (
         alt="Contact"
         style={{ width: "100%", height: "100%" }}
       /> */}
-      {/* <h3>SYROS</h3> */}
-      <h3> </h3>
+      <h3>SYROS</h3>
       {/* <img
         src={image}
         alt="Contact"
@@ -50,14 +49,14 @@ const SideBar = (props) => (
               items={el.submenu}
             />
           ))}
-          <Link to={"/bon-entree"} className="title" onClick={props.toggle}>
+          {/* <Link to={"/bon-entree"} className="title" onClick={props.toggle}> 
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i class="fa fa-retweet" aria-hidden="true"></i>
 
               <span style={{ marginLeft: "15px" }}>Bon d'entrée</span>
             </NavItem>
-          </Link>
-          <Link to={"/devis"} className="title" onClick={props.toggle}>
+          </Link> */}
+          {/* <Link to={"/devis"} className="title" onClick={props.toggle}>
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i className="fas fa-tasks"></i>
               <span style={{ marginLeft: "15px" }}>Devis client</span>
@@ -88,44 +87,37 @@ const SideBar = (props) => (
               <i className="fas fa-file-invoice-dollar"></i>
               <span style={{ marginLeft: "17px" }}>Facture</span>
             </NavItem>
-          </Link>
-          <Link to={"/reglement"} className="title" onClick={props.toggle}>
+          </Link> */}
+          {/* <Link to={"/reglement"} className="title" onClick={props.toggle}>
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i className="fab fa-dashcube"></i>
               <span style={{ marginLeft: "17px" }}>Règlement Client</span>
             </NavItem>
-          </Link>
-          <Link to={"/nomenclature"} className="title" onClick={props.toggle}>
+          </Link> */}
+          {/* <Link to={"/nomenclature"} className="title" onClick={props.toggle}>
             <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
               <i class="far fa-plus-square"></i>
               <span style={{ marginLeft: "17px" }}>Nomenclature</span>
             </NavItem>
+          </Link> */}
+          <Link to={"/clicktocall"} className="title" onClick={props.toggle}>
+            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
+              <i class="fas fa-phone-volume"></i>{" "}
+              <span style={{ marginLeft: "17px" }}>Click To Call</span>
+            </NavItem>
           </Link>
-        </div>
-        <div>
+
+          <br />
           <a to="" href="https://polysoftco.tn">
-            <NavItem>
-              {/* <FontAwesomeIcon icon={faImage} className="mr-2" />
-              Notre site web */}
-              <NavItem style={{ fontSize: "16px", paddingLeft: "20px" }}>
-                <i class="fas fa-globe"></i>
-                <span style={{ marginLeft: "17px" }}>Polysoft&CO.tn</span>
-              </NavItem>
+            <NavItem style={{ fontSize: "16px", paddingLeft: "20px" }}>
+              <i class="fas fa-globe"></i>
+              <span style={{ marginLeft: "17px" }}>Polysoft&CO.tn</span>
             </NavItem>
           </a>
 
-          {/* <Link to={"/faq"}>
-            <NavItem>
-              <NavItem style={{ fontSize: "16px", paddingLeft: "20px" }}>
-                <i class="far fa-question-circle"></i>
-                <span style={{ marginLeft: "17px" }}>FAQ</span>
-              </NavItem>
-            </NavItem>
-          </Link> */}
-
           <Link to={"/contact"} onClick={props.toggle}>
             <NavItem>
-              <NavItem style={{ fontSize: "16px", paddingLeft: "20px" }}>
+              <NavItem style={{ fontSize: "16px", paddingLeft: "12px" }}>
                 <i class="far fa-comment-alt"></i>
                 <span style={{ marginLeft: "17px" }}>Contact</span>
               </NavItem>

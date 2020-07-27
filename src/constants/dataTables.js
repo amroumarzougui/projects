@@ -24,33 +24,114 @@ export const fournisseursHeader = [
 ];
 
 export const sidebarContent = [
+  // {
+  //   id: 0,
+  //   title: "CAF",
+  //   submenu: [
+  //     {
+  //       id: 0,
+  //       title: "Fiche client",
+  //       icon: <i className="fas fa-user"></i>,
+  //     },
+  //     {
+  //       id: 1,
+  //       title: "Fiche article",
+  //       icon: <i className="fas fa-cube"></i>,
+  //     },
+  //     {
+  //       id: 2,
+  //       title: "Fiche fournisseur",
+  //       icon: <i className="fas fa-shopping-cart"></i>,
+  //     },
+  //     // {
+  //     //   title: "Commande client et devis"
+  //     // }
+  //   ],
+  //   icon: <i class="fas fa-money-check-alt"></i>,
+  //   isOpen: false,
+  //   tabsData: [],
+  // },
+
   {
     id: 0,
-    title: "CAF",
+    title: "Vente",
     submenu: [
       {
         id: 0,
-        title: "Fiche client",
-        icon: <i className="fas fa-user"></i>,
+        title: "Devis",
+        icon: <i className="fas fa-tasks"></i>,
       },
       {
         id: 1,
-        title: "Fiche article",
-        icon: <i className="fas fa-cube"></i>,
+        title: "Bon de commande",
+        icon: <i className="fas fa-clipboard-list"></i>,
       },
       {
         id: 2,
-        title: "Fiche fournisseur",
-        icon: <i className="fas fa-shopping-cart"></i>,
+        title: "Bon de Livraison",
+        icon: <i className="fas fa-list-alt"></i>,
       },
-      // {
-      //   title: "Commande client et devis"
-      // }
+      {
+        id: 3,
+        title: "Facture",
+        icon: <i className="fas fa-file-invoice-dollar"></i>,
+      },
     ],
     icon: <i class="fas fa-money-check-alt"></i>,
     isOpen: false,
     tabsData: [],
   },
+
+  {
+    id: 1,
+    title: "Stock",
+    submenu: [
+      {
+        id: 0,
+        title: "Fiche Article",
+        icon: <i className="fas fa-cube"></i>,
+      },
+      {
+        id: 1,
+        title: "Bon entree",
+        icon: <i class="fa fa-retweet" aria-hidden="true"></i>,
+      },
+    ],
+    icon: <i class="fas fa-money-check-alt"></i>,
+    isOpen: false,
+    tabsData: [],
+  },
+
+  {
+    id: 2,
+    title: "Suivi Banque",
+    submenu: [
+      {
+        id: 0,
+        title: "Reglement",
+        icon: <i className="fab fa-dashcube"></i>,
+      },
+    ],
+    icon: <i class="fas fa-money-check-alt"></i>,
+    isOpen: false,
+    tabsData: [],
+  },
+
+  {
+    id: 3,
+    title: "Parametres",
+    submenu: [
+      {
+        id: 0,
+        title: "Nomenclature",
+        icon: <i class="far fa-plus-square"></i>,
+      },
+    ],
+    icon: <i class="far fa-plus-square"></i>,
+    isOpen: false,
+    tabsData: [],
+  },
+
   // {
   //   id: 1,
   //   title: "Gestion des stocks",

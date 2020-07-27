@@ -76,15 +76,17 @@ class GetFournisseurByID extends Component {
         .then((res) => res.json())
         .then(
           (result) => {
+            this.props.onHide();
+
             this.setState({ snackbaropenn: true, snackbarmsg: result });
             console.log(result);
+            window.location.reload();
           },
           (error) => {
             this.setState({ snackbaropenn: true, snackbarmsg: "failed" });
           }
         );
       //  this.props.SelectArticle();
-      this.props.onHide();
     }
   }
 

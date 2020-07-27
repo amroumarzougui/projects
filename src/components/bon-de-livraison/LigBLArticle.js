@@ -52,8 +52,10 @@ class LigBLArticle extends Component {
       btnEnabled: false,
       gilad: true,
       rechs: [],
+      stkfin: 0,
 
       snackbarmsg: ",",
+      yesno: "",
     };
   }
 
@@ -87,6 +89,10 @@ class LigBLArticle extends Component {
         this.state.puht *
         ((100 - this.state.remisea) / 100),
     });
+
+    this.state.stkfin >= parseInt(event.target.value)
+      ? this.setState({ yesno: "yes" })
+      : this.setState({ yesno: "no" });
   };
 
   remiseHandler = (event) => {
@@ -290,7 +296,7 @@ class LigBLArticle extends Component {
                   <Card.Body>
                     <form onSubmit={this.submitHandlers}>
                       <Row form style={{ marginBottom: "-20px" }}>
-                        <Col sm={8}>
+                        <Col sm={7}>
                           <FormGroup>
                             <Typography component="div">
                               <Grid
@@ -329,7 +335,19 @@ class LigBLArticle extends Component {
                             ) : null}
                           </FormGroup>
                         </Col>
+
+                        <Col sm={2}>
+                          <FormGroup
+                            style={{ marginTop: "10px", marginLeft: "10px" }}
+                          >
+                            <p style={{ color: "grey" }}>
+                              Stock: {this.state.stkfin}{" "}
+                            </p>
+                          </FormGroup>
+                        </Col>
                       </Row>
+
+                      {/* {this.state.yesno} */}
 
                       <Row form>
                         <Col sm={5}>
@@ -352,6 +370,7 @@ class LigBLArticle extends Component {
                                         remisea: getOptionLabel.remise,
                                         tva: getOptionLabel.tautva,
                                         faudec: getOptionLabel.typfodec,
+                                        stkfin: getOptionLabel.stkfin,
                                       })
                                     : this.setState({
                                         codearticle: "",
@@ -362,6 +381,8 @@ class LigBLArticle extends Component {
                                         remisea: 0,
                                         tva: 0,
                                         faudec: "N",
+                                        stkfin: 0,
+                                        qte: "",
                                       });
                                 }}
                                 renderInput={(params) => (
@@ -392,6 +413,7 @@ class LigBLArticle extends Component {
                                         remisea: getOptionLabel.remise,
                                         tva: getOptionLabel.tautva,
                                         faudec: getOptionLabel.typfodec,
+                                        stkfin: getOptionLabel.stkfin,
                                       })
                                     : this.setState({
                                         codearticle: "",
@@ -402,6 +424,9 @@ class LigBLArticle extends Component {
                                         remisea: 0,
                                         tva: 0,
                                         faudec: "N",
+                                        stkfin: 0,
+                                        qte: "",
+                                        puttcnet: 0,
                                       });
                                 }}
                                 renderInput={(params) => (
@@ -563,7 +588,11 @@ class LigBLArticle extends Component {
                         </Col>
                       </Row>
 
-                      {this.state.des === "" ? (
+                      {this.state.des === "" ||
+                      this.state.yesno === "no" ||
+                      this.state.qte === "" ||
+                      this.state.stkfin <= 0 ||
+                      parseInt(this.state.qte) <= 0 ? (
                         <Center>
                           <Button
                             disabled

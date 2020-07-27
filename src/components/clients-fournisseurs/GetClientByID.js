@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Modal, Card, Row, Col, Alert } from "react-bootstrap";
+import { Modal, Card, Row, Col, Alert, Button } from "react-bootstrap";
 import "../styling/Styles.css";
 import PhoneIcon from "@material-ui/icons/Phone";
 import EmailIcon from "@material-ui/icons/Email";
@@ -81,16 +81,48 @@ class GetClientByID extends Component {
         .then(
           (result) => {
             this.setState({ snackbaropenn: true, snackbarmsg: result });
+            this.props.onHide();
+
             console.log(result);
+
+            window.location.reload();
           },
           (error) => {
             this.setState({ snackbaropenn: true, snackbarmsg: "failed" });
           }
         );
       //  this.props.SelectArticle();
-      this.props.onHide();
     }
   }
+
+  call1 = () => {
+    fetch(
+      `http://localhost/couplagetel/calling.php?exten=${this.props.tel1}&number=${this.props.tel1}`,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) =>
+        //console.log(data)
+        window.alert(data)
+      );
+  };
+
+  call2 = () => {
+    fetch(
+      `http://localhost/couplagetel/calling.php?exten=${this.props.tel2}&number=${this.props.tel2}`,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) =>
+        //console.log(data)
+        window.alert(data)
+      );
+  };
+
   render() {
     let ModifierModalClose = () => this.setState({ openModifierModal: false });
     let MailModalClose = () => this.setState({ openMailModal: false });
@@ -181,9 +213,11 @@ class GetClientByID extends Component {
                   </p>
                 ) : (
                   <p>
-                    <PhoneIcon />{" "}
-                    <a href={`tel:${this.props.tel1}`}>{this.props.tel1}</a> /{" "}
-                    <a href={`tel:${this.props.tel2}`}>{this.props.tel2}</a>
+                    {/* <PhoneIcon />{" "} */}
+                    <a href={`tel:${this.props.tel1}`}>
+                      {this.props.tel1}
+                    </a> /{" "}
+                    <a href={`tel:${this.props.tel2}`}>{this.props.tel2}</a>{" "}
                   </p>
                 )}
                 {this.props.email === "" ? (

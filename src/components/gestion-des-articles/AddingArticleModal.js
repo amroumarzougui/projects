@@ -128,16 +128,19 @@ class AddingArticleModal extends Component {
       .then((res) => res.json())
       .then(
         (result) => {
+          this.props.onHide();
+          this.props.SelectArticle();
+
           this.setState({ snackbaropen: true, snackbarmsg: result });
+          this.props.GetCodart();
           console.log(result);
+
+          window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
         }
       );
-    this.props.SelectArticle();
-    this.props.onHide();
-    this.props.GetCodart();
   };
 
   tvaaHandler = (event) => {
@@ -258,7 +261,7 @@ class AddingArticleModal extends Component {
                                   variant="outlined"
                                   fullWidth
                                   name="codart"
-                                  value={cod.Column1 + 1}
+                                  value={parseInt(cod.Column1) + 1}
                                   disabled
                                 />
                               ))}
@@ -418,6 +421,20 @@ class AddingArticleModal extends Component {
                                   getOptionLabel
                                     ? this.setState({
                                         tvaa: getOptionLabel.lib,
+                                        pudhttc: roundTo(
+                                          this.state.pudhtt *
+                                            (1 +
+                                              parseInt(getOptionLabel.lib) /
+                                                100),
+                                          3
+                                        ),
+                                        purttc: roundTo(
+                                          this.state.purnhtnet *
+                                            (1 +
+                                              parseInt(getOptionLabel.lib) /
+                                                100),
+                                          3
+                                        ),
                                       })
                                     : this.setState({
                                         tvaa: 0,
@@ -431,7 +448,7 @@ class AddingArticleModal extends Component {
                                     variant="outlined"
                                     fullWidth
                                     //  onChange={this.clientHandlerChange}
-                                    name="tautva"
+                                    // name="tautva"
                                   />
                                 )}
                               />
@@ -472,7 +489,6 @@ class AddingArticleModal extends Component {
                                 fullWidth
                                 name="tautva"
                                 disabled
-                                onChange={this.tvaaHandler}
                                 value={this.state.tvaa}
                               />
                             </Form.Group>

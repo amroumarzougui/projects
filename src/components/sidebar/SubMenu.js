@@ -16,6 +16,7 @@ const SubMenu = (props) => {
       >
         <NavLink className="dropdown-toggle">
           {/* <FontAwesomeIcon icon={icon} className="mr-2" /> */}
+          {/* {icon} */}
 
           {title}
         </NavLink>
@@ -35,7 +36,7 @@ const SubMenu = (props) => {
               }
               // onClick={toggleNavbar}
             >
-              <NavItem style={{ marginLeft: "30px" }} className="pl-4">
+              <NavItem style={{ marginLeft: "20px" }} className="pl-4">
                 {item.icon}&nbsp;&nbsp;{item.title}
               </NavItem>
             </Link>

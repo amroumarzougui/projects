@@ -146,15 +146,17 @@ class GetArticleByIdModal extends Component {
         .then((res) => res.json())
         .then(
           (result) => {
+            this.props.onHide();
+            this.props.SelectArticle();
+
             this.setState({ snackbaropen: true, snackbarmsg: result });
             console.log(result);
+            window.location.reload();
           },
           (error) => {
             this.setState({ snackbaropen: true, snackbarmsg: "failed" });
           }
         );
-      this.props.SelectArticle();
-      this.props.onHide();
     }
   }
 
@@ -616,7 +618,7 @@ class GetArticleByIdModal extends Component {
                           }}
                         />
                       ))}
-                      {!this.state.open ? (
+                      {/* {!this.state.open ? (
                         <ReactToPrint
                           trigger={() => (
                             <Fab
@@ -649,7 +651,7 @@ class GetArticleByIdModal extends Component {
                           )}
                           content={() => this.componentRef}
                         />
-                      )}
+                      )} */}
                     </SpeedDial>
                     <ModifierArticleModal
                       show={this.state.openModifierModal}

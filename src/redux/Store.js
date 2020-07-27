@@ -44,6 +44,8 @@ import GetNomeAGReducer from "./reducers/GetNomeAG";
 import GetNomeCSReducer from "./reducers/GetNomeCS";
 import GetNomeSCReducer from "./reducers/GetNomeSituation";
 import GetNomeCCBReducer from "./reducers/GetNomeCCB";
+import GetAllNomeReducer from "./reducers/GetAllNome";
+import GetCatNomeReducer from "./reducers/GetCatNome";
 
 const middleware = [thunkMiddlewar];
 const composeEnhancers =
@@ -94,6 +96,8 @@ const myStore = createStore(
     css: GetNomeCSReducer,
     scs: GetNomeSCReducer,
     ccbs: GetNomeCCBReducer,
+    allnomes: GetAllNomeReducer,
+    catnomes: GetCatNomeReducer,
   }),
   enhancer
 );

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Modal, Card } from "react-bootstrap";
 import "../styling/Styles.css";
-import { Row, Col, FormGroup } from "reactstrap";
+import { Row, Col, FormGroup, Label, Input } from "reactstrap";
 import { connect } from "react-redux";
 import { SelectClient } from "../../redux/actions/GetClients";
 import {
@@ -42,7 +42,13 @@ var curr = new Date();
 curr.setDate(curr.getDate());
 var date = curr.toISOString().substr(0, 10);
 
-class AddReModal extends Component {
+const DATE_OPTIONSS = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+};
+
+class ModifierReg extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -71,12 +77,14 @@ class AddReModal extends Component {
       chdec: "",
       snackbaropen: false,
       snackbarmsg: ",",
+      numchq: "",
+      titulaire: "",
+      note: "",
     };
   }
 
   componentDidMount() {
     this.props.SelectClient();
-    this.props.GetRECod();
     this.props.SelectNomenclature();
     this.props.SelectNomenclatureBQ();
     this.props.SelectNomenclatureAG();
@@ -84,15 +92,44 @@ class AddReModal extends Component {
     this.props.SelectNomenclatureSC();
     this.props.SelectNomenclatureCCB();
     this.props.SelectReglement();
+    this.setState({
+      codmodreg: this.props.codmodreg,
+      codbqclient: this.props.codbqclient,
+      codagence: this.props.codagence,
+      codcaisse: this.props.codcaisse,
+      codsituation: this.props.codsituation,
+      codbqvers: this.props.codbqvers,
+      codccb: this.props.codccb,
+      montant: this.props.montant,
+      numchq: this.props.numchq,
+      titulaire: this.props.titulaire,
+      note: this.props.note,
+    });
   }
+
+  montantHandler = (event) => {
+    this.setState({ montant: event.target.value });
+  };
+
+  numchqHandler = (event) => {
+    this.setState({ numchq: event.target.value });
+  };
+
+  titulaireHandler = (event) => {
+    this.setState({ titulaire: event.target.value });
+  };
+
+  noteHandler = (event) => {
+    this.setState({ note: event.target.value });
+  };
 
   enregistrer = (event) => {
     event.preventDefault();
 
     fetch(
-      `http://192.168.1.100:81/api/REGCLIs?numreg=${event.target.codre.value}&datreg=${event.target.datreg.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&modreg=${this.state.codmodreg}&numcais=${this.state.codcaisse}&matban=${this.state.codbqclient}&monreg=${event.target.montant.value}&numchq=${event.target.numpiece.value}&titulaire=${event.target.titulaire.value}&datech=${event.target.echeance.value}&mntreg=${event.target.montant.value}&verser=${this.state.codsituation}&lib_reg=${event.target.note.value}&BqEscompte=${this.state.codbqvers}&codccb=${this.state.codccb}&agence=${this.state.codagence}`,
+      `http://192.168.1.100:81/api/REGCLIs?numreg=${event.target.codre.value}&datreg=${event.target.datreg.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raisonsocial.value}&modreg=${this.state.codmodreg}&numcais=${this.state.codcaisse}&matban=${this.state.codbqclient}&monreg=${this.state.montant}&numchq=${event.target.numchq.value}&titulaire=${this.state.titulaire}&datech=${event.target.echeance.value}&mntreg=${this.state.montant}&verser=${this.state.codsituation}&lib_reg=${this.state.note}&BqEscompte=${this.state.codbqvers}&codccb=${this.state.codccb}&agence=${this.state.codagence}`,
       {
-        method: "POST",
+        method: "PUT",
         header: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -107,33 +144,8 @@ class AddReModal extends Component {
           this.props.SelectReglement();
 
           this.setState({ snackbaropen: true, snackbarmsg: result });
-          this.props.GetRECod();
           console.log(result);
           window.location.reload();
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
-      );
-
-    //////////// switch update ////////////////
-
-    fetch(
-      `http://192.168.1.100:81/api/Switch?code=REGC&valeur=${
-        parseInt(event.target.codre.value) + 1
-      }`,
-      {
-        method: "PUT",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log(result);
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -186,7 +198,7 @@ class AddReModal extends Component {
             style={{ backgroundColor: "white", color: "#020F64" }}
           >
             <Modal.Title id="contained-modal-title-vcenter">
-              <b>Ajouter Règlement client</b>
+              <b>Modifier Règlement client</b>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -196,17 +208,15 @@ class AddReModal extends Component {
                   <Row style={{ marginBottom: "-30px", marginTop: "-20px" }}>
                     <Col sm={4}>
                       <FormGroup>
-                        {this.props.codres.codres.map((t) => (
-                          <TextField
-                            id="standard-basic"
-                            label="№ Règlement"
-                            margin="normal"
-                            value={parseInt(t.valeur)}
-                            fullWidth
-                            name="codre"
-                            disabled
-                          />
-                        ))}
+                        <TextField
+                          id="standard-basic"
+                          label="№ Règlement"
+                          margin="normal"
+                          value={this.props.regid}
+                          fullWidth
+                          name="codre"
+                          disabled
+                        />
                       </FormGroup>
                     </Col>
 
@@ -218,7 +228,12 @@ class AddReModal extends Component {
                         margin="normal"
                         type="date"
                         fullWidth
-                        defaultValue={this.state.defaultdate}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        defaultValue={new Date(this.props.datreg)
+                          .toISOString()
+                          .substr(0, 10)}
                       />
                     </Col>
 
@@ -231,141 +246,40 @@ class AddReModal extends Component {
                           defaultValue={Number(this.state.montant).toFixed(3)}
                           fullWidth
                           name="montant"
+                          onChange={this.montantHandler}
                         />
                       </FormGroup>
                     </Col>
                   </Row>
 
                   <Row style={{ marginBottom: "-30px" }}>
-                    <Col sm={4}>
-                      <FormGroup style={{ marginTop: "25px" }}>
-                        <Typography component="div">
-                          <Grid
-                            component="label"
-                            container
-                            alignItems="center"
-                            spacing={1}
-                          >
-                            <Grid item style={{ color: "grey" }}>
-                              Raison sociale
-                            </Grid>
-                            <Grid item>
-                              <Switch
-                                checked={this.state.gilad}
-                                onChange={this.handleChange("gilad")}
-                                value="gilad"
-                                color="primary"
-                              />
-                            </Grid>
-                            <Grid item style={{ color: "#3f51b5" }}>
-                              Code
-                            </Grid>
-                          </Grid>
-                        </Typography>
+                    <Col sm={6}>
+                      <FormGroup>
+                        <TextField
+                          id="standard-basic"
+                          label="Code client"
+                          margin="normal"
+                          fullWidth
+                          name="codcli"
+                          value={this.props.codeclient}
+                          disabled
+                        />
                       </FormGroup>
                     </Col>
-                    {this.state.gilad ? (
-                      <Col sm={3}>
-                        <FormGroup>
-                          <Autocomplete
-                            id="include-input-in-list"
-                            includeInputInList
-                            className="ajouter-client-input"
-                            options={this.state.rechs}
-                            getOptionLabel={(option) => option.codcli}
-                            onChange={(event, getOptionLabel) => {
-                              getOptionLabel
-                                ? this.setState({
-                                    raisonsocial: getOptionLabel.raisoc,
-                                    codeclient: getOptionLabel.codcli,
-                                    soldfacbl: getOptionLabel.soldfacbl,
-                                    btnEnable: true,
-                                  })
-                                : this.setState({
-                                    raisonsocial: "",
-                                    codeclient: "",
-                                    btnEnable: false,
-                                  });
-                            }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Code client"
-                                margin="normal"
-                                fullWidth
-                                onChange={this.clientHandlerChange}
-                                name="codcli"
-                              />
-                            )}
-                          />
-                        </FormGroup>
-                      </Col>
-                    ) : (
-                      <Col sm={5}>
-                        <FormGroup>
-                          <Autocomplete
-                            id="include-input-in-list"
-                            includeInputInList
-                            className="ajouter-client-input"
-                            options={this.state.rechs}
-                            getOptionLabel={(option) => option.raisoc}
-                            onChange={(event, getOptionLabel) => {
-                              getOptionLabel
-                                ? this.setState({
-                                    raisonsocial: getOptionLabel.raisoc,
-                                    codeclient: getOptionLabel.codcli,
-                                    soldfacbl: getOptionLabel.soldfacbl,
-                                    btnEnable: true,
-                                  })
-                                : this.setState({
-                                    raisonsocial: "",
-                                    codeclient: "",
-                                    btnEnable: false,
-                                  });
-                            }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Raison sociale"
-                                margin="normal"
-                                fullWidth
-                                onChange={this.clientHandlerChange}
-                                name="raissoc"
-                              />
-                            )}
-                          />
-                        </FormGroup>
-                      </Col>
-                    )}
-                    {this.state.gilad ? (
-                      <Col sm={5}>
-                        <FormGroup>
-                          <TextField
-                            id="standard-basic"
-                            label="Raison sociale"
-                            margin="normal"
-                            value={this.state.raisonsocial}
-                            fullWidth
-                            name="raissoc"
-                            disabled
-                          />
-                        </FormGroup>
-                      </Col>
-                    ) : (
-                      <Col sm={3}>
-                        <FormGroup>
-                          <TextField
-                            id="standard-basic"
-                            label="Code client"
-                            margin="normal"
-                            value={this.state.codeclient}
-                            fullWidth
-                            name="codcli"
-                            disabled
-                          />
-                        </FormGroup>
-                      </Col>
-                    )}
+
+                    <Col sm={6}>
+                      <FormGroup>
+                        <TextField
+                          id="standard-basic"
+                          label="Raison Social"
+                          margin="normal"
+                          fullWidth
+                          name="raisonsocial"
+                          value={this.props.raisonsocial}
+                          disabled
+                        />
+                      </FormGroup>
+                    </Col>
                   </Row>
                 </Card.Body>
               </Card>
@@ -416,7 +330,7 @@ class AddReModal extends Component {
                             }}
                           >
                             {" "}
-                            {this.state.libmodreg}{" "}
+                            {this.state.codmodreg}{" "}
                           </p>
                         </Col>
                       </Row>
@@ -429,7 +343,9 @@ class AddReModal extends Component {
                               label="№ Pièce"
                               margin="normal"
                               fullWidth
-                              name="numpiece"
+                              name="numchq"
+                              defaultValue={this.state.numchq}
+                              onChange={this.numchHandler}
                             />
                           </FormGroup>
                         </Col>
@@ -448,6 +364,9 @@ class AddReModal extends Component {
                               InputLabelProps={{
                                 shrink: true,
                               }}
+                              defaultValue={new Date(this.props.datech)
+                                .toISOString()
+                                .substr(0, 10)}
                             />
                           </FormGroup>
                         </Col>
@@ -462,6 +381,8 @@ class AddReModal extends Component {
                               margin="normal"
                               fullWidth
                               name="titulaire"
+                              defaultValue={this.state.titulaire}
+                              onChange={this.titulaireHandler}
                             />
                           </FormGroup>
                         </Col>
@@ -478,6 +399,8 @@ class AddReModal extends Component {
                               name="note"
                               rows={2}
                               multiline
+                              defaultValue={this.state.note}
+                              onChange={this.noteHandler}
                             />
                           </FormGroup>
                         </Col>
@@ -533,7 +456,7 @@ class AddReModal extends Component {
                             }}
                           >
                             {" "}
-                            {this.state.libbqclient}{" "}
+                            {this.state.codbqclient}{" "}
                           </p>
                         </Col>
                       </Row>
@@ -580,7 +503,7 @@ class AddReModal extends Component {
                             }}
                           >
                             {" "}
-                            {this.state.libagence}{" "}
+                            {this.state.codagence}{" "}
                           </p>
                         </Col>
                       </Row>
@@ -627,7 +550,7 @@ class AddReModal extends Component {
                             }}
                           >
                             {" "}
-                            {this.state.libcaisse}{" "}
+                            {this.state.codcaisse}{" "}
                           </p>
                         </Col>
                       </Row>
@@ -674,7 +597,7 @@ class AddReModal extends Component {
                             }}
                           >
                             {" "}
-                            {this.state.libsituation}{" "}
+                            {this.state.codsituation}{" "}
                           </p>
                         </Col>
                       </Row>
@@ -721,7 +644,7 @@ class AddReModal extends Component {
                             }}
                           >
                             {" "}
-                            {this.state.libbqvers}{" "}
+                            {this.state.codbqvers}{" "}
                           </p>
                         </Col>
                       </Row>
@@ -774,7 +697,7 @@ class AddReModal extends Component {
                             }}
                           >
                             {" "}
-                            {this.state.libccb}{" "}
+                            {this.state.codccb}{" "}
                           </p>
                         </Col>
                       </Row>
@@ -786,12 +709,12 @@ class AddReModal extends Component {
               <br />
               <Row>
                 <Col sm={6}>
-                  <h3 style={{ color: "rgb(23, 162, 184)" }}>
+                  {/* <h3 style={{ color: "rgb(23, 162, 184)" }}>
                     &nbsp; Solde:{"  "}
                     <span style={{ color: "black" }}>
                       {Number(this.state.soldfacbl).toFixed(3)}
                     </span>
-                  </h3>
+                  </h3> */}
                 </Col>
                 <Col sm={2}></Col>
                 <Col sm={4}>
@@ -822,7 +745,6 @@ class AddReModal extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectClient: () => dispatch(SelectClient()),
-    GetRECod: () => dispatch(GetRECod()),
     SelectNomenclature: () => dispatch(SelectNomenclature("MR")),
     SelectNomenclatureBQ: () => dispatch(SelectNomenclatureBQ()),
     SelectNomenclatureAG: () => dispatch(SelectNomenclatureAG()),
@@ -836,7 +758,6 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     clients: state.clients,
-    codres: state.codres,
     nomenclatures: state.nomenclatures,
     bqs: state.bqs,
     ags: state.ags,
@@ -846,4 +767,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddReModal);
+export default connect(mapStateToProps, mapDispatchToProps)(ModifierReg);
