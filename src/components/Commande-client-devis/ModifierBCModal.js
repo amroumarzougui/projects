@@ -384,6 +384,7 @@ class ModifierBCModal extends Component {
       remiseglobal: SumRemiseGlobale,
       netapayer: SumNetAPayer,
       snackbarfail: true,
+      btnEnabled: true,
     });
   };
 

@@ -20,6 +20,7 @@ import Nomenclature from "../Nomenclatures/Nomenclature";
 import BonEntree from "../bon-entree/BonEntree";
 import Reglement from "../reglement/Reglement";
 import ClickToCall from "../clicktocall/ClickToCall";
+import Personnel from "../personnels/Personnel";
 // import Logout from "./Logout";
 export default (props) => (
   <Container
@@ -70,6 +71,7 @@ export default (props) => (
       <Route exact path="/nomenclature" component={Nomenclature} />
       <Route exact path="/reglement" component={Reglement} />
       <Route exact path="/clicktocall" component={ClickToCall} />
+      <Route exact path="/personnel" component={Personnel} />
     </Switch>
   </Container>
 );

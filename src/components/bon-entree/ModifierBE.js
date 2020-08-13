@@ -27,6 +27,10 @@ import Editable from "react-x-editable";
 import { SelectBL } from "../../redux/actions/GetBL";
 import { Redirect } from "react-router-dom";
 
+var curr = new Date();
+curr.setDate(curr.getDate());
+var date = curr.toISOString().substr(0, 10);
+
 class ModifierBE extends Component {
   constructor(props) {
     super(props);
@@ -64,12 +68,27 @@ class ModifierBE extends Component {
       changeButton: false,
       idel: 0,
       reload: false,
+
+      defaultdate: date,
+      ffs: [],
+      numfacfacfrs: "",
     };
   }
 
   componentDidMount() {
     this.props.SelectArticle();
     this.sameTable();
+
+    //////// get numfac  whene type= FF in table facfrs /////////
+    if (this.props.typach === "F") {
+      fetch(
+        `http://192.168.1.100:81/api/FacFrs?typpe=FF&numbee=${this.props.blid}`
+      )
+        .then((response) => response.json())
+        .then((data) =>
+          this.setState({ ffs: data, numfacfacfrs: data.map((t) => t.numfac) })
+        );
+    }
   }
 
   articleHandlerChange = (event) => {
@@ -384,7 +403,7 @@ class ModifierBE extends Component {
     });
   };
 
-  enregistrer = () => {
+  enregistrer = (event) => {
     ////////// first part delete ///////////////////
     fetch(
       `http://192.168.1.100:81/api/LigBEREs/${this.props.blid}?typfacc=BE`,
@@ -455,53 +474,40 @@ class ModifierBE extends Component {
           }
         });
 
-        //// third part calcul with vue/////////////
-        // fetch(
-        //   `http://192.168.1.100:81/api/LigBLBRs?FAC=${this.props.blid}&typfacc=BL`,
-        //   {
-        //     method: "POST",
-        //     header: {
-        //       Accept: "application/json",
-        //       "Content-Type": "application/json",
-        //     },
-        //   }
-        // )
-        //   .then((res) => res.json())
-        //   .then(
-        //     (result) => {
-        //       // this.setState({ snackbaropen: true, snackbarmsg: result });
+        ////// update facfrs ///////////////////
+        if (this.props.typach === "L") {
+          fetch(
+            `http://192.168.1.100:81/api/FacFrs?numfac=${this.props.blid}&typfac=BF&datfac=${this.state.defaultdate}&smhtb=${this.state.totalhtbrut}&smremart=${this.state.sumremisearticle}&smremglo=${this.state.remiseglobal}&smhtn=${this.state.totalhtnet}&smtva=${this.state.totaltva}&mntbon=${this.state.netapayer}&reste=${this.state.netapayer}&numbe=${this.props.blid}&codfrs=${this.props.client}&raisoc=${this.props.raisonsociale}`,
+            {
+              method: "PUT",
+              header: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+            }
+          )
+            .then((res) => res.json())
+            .then((result) => {
+              console.log(result);
+            });
+        }
 
-        //       console.log(result);
-        //       // window.alert(result);
-        //     },
-        //     (error) => {
-        //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        //     }
-        //   );
-
-        ///////////// 4th part tva total calcul ///////////////
-        //     fetch(
-        //       `http://192.168.1.100:81/api/LigBLBRs?FAC=${this.props.blid}&Typfacc=bl&CODDEPP=`,
-        //       {
-        //         method: "POST",
-        //         header: {
-        //           Accept: "application/json",
-        //           "Content-Type": "application/json",
-        //         },
-        //       }
-        //     )
-        //       .then((res) => res.json())
-        //       .then(
-        //         (result) => {
-        //           //  this.setState({ snackbaropen: true, snackbarmsg: result });
-
-        //           console.log(result);
-        //           // window.alert(result);
-        //         },
-        //         (error) => {
-        //           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        //         }
-        //       );
+        if (this.props.typach === "F") {
+          fetch(
+            `http://192.168.1.100:81/api/FacFrs?numfac=${this.state.numfacfacfrs}&typfac=FF&datfac=${this.state.defaultdate}&smhtb=${this.state.totalhtbrut}&smremart=${this.state.sumremisearticle}&smremglo=${this.state.remiseglobal}&smhtn=${this.state.totalhtnet}&smtva=${this.state.totaltva}&mntbon=${this.state.netapayer}&reste=${this.state.netapayer}&numbe=${this.props.blid}&codfrs=${this.props.client}&raisoc=${this.props.raisonsociale}`,
+            {
+              method: "PUT",
+              header: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+            }
+          )
+            .then((res) => res.json())
+            .then((result) => {
+              console.log(result);
+            });
+        }
       });
   };
 

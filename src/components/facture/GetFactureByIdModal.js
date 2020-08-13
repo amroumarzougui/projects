@@ -40,6 +40,7 @@ const DATE_OPTIONS = {
 class GetFactureByIdModal extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       open: false,
       hidden: false,
@@ -707,8 +708,8 @@ class GetFactureByIdModal extends Component {
                         ).toFixed(2)}{" "}
                         %
                       </td>
-                      <td>{this.props.totalhtnet}</td>
-                      <td>{this.props.totaltva}</td>
+                      <td>{Number(this.props.totalhtnet).toFixed(3)}</td>
+                      <td>{Number(this.props.totaltva).toFixed(3)}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -739,14 +740,14 @@ class GetFactureByIdModal extends Component {
                   <td style={{ fontWeight: "bold" }}>
                     &nbsp;&nbsp;&nbsp;Total.H.T Net:
                   </td>
-                  <td>{this.props.totalhtnet}</td>
+                  <td>{Number(this.props.totalhtnet).toFixed(3)}</td>
                 </tr>
                 <tr style={{ height: "50px" }}>
                   <td style={{ fontWeight: "bold" }}>
                     {" "}
                     &nbsp;&nbsp;&nbsp;Total TVA:
                   </td>
-                  <td>{this.props.totaltva}</td>
+                  <td>{Number(this.props.totaltva).toFixed(3)}</td>
                 </tr>
                 <tr style={{ height: "50px" }}>
                   <td style={{ fontWeight: "bold" }}>

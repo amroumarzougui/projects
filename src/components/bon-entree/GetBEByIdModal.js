@@ -139,6 +139,44 @@ class GetBEByIdModal extends Component {
           console.log(result);
         });
 
+      /// delete on FacFrs /////////////
+
+      if (this.props.typach === "L") {
+        fetch(
+          `http://192.168.1.100:81/api/FacFrs/${this.props.blid}?typfacc=BF`,
+          {
+            method: "DELETE",
+            header: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then((result) => {
+            console.log(result);
+          });
+      }
+
+      if (this.props.typach === "F") {
+        fetch(
+          `http://192.168.1.100:81/api/FacFrs/${this.props.blid}?typfacc=FF`,
+          {
+            method: "DELETE",
+            header: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then((result) => {
+            console.log(result);
+          });
+      }
+
+      //////////////////////////////////////////
+
       fetch(`http://192.168.1.100:81/api/BEREs/${this.props.blid}?typfacc=BE`, {
         method: "DELETE",
         header: {
@@ -574,6 +612,10 @@ class GetBEByIdModal extends Component {
             blid={this.props.blid}
             datebl={this.props.datebl}
             onHide01={this.props.onHide}
+            typach={this.props.typach}
+            pj={this.props.pj}
+            client={this.props.client}
+            raisonsociale={this.props.raisonsociale}
           />
           <Modal.Footer></Modal.Footer>
         </Modal>
@@ -796,8 +838,8 @@ class GetBEByIdModal extends Component {
                         ).toFixed(2)}{" "}
                         %
                       </td>
-                      <td>{this.props.totalhtnet}</td>
-                      <td>{this.props.totaltva}</td>
+                      <td>{Number(this.props.totalhtnet).toFixed(3)}</td>
+                      <td>{Number(this.props.totaltva).toFixed(3)}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -828,14 +870,14 @@ class GetBEByIdModal extends Component {
                   <td style={{ fontWeight: "bold" }}>
                     &nbsp;&nbsp;&nbsp;Total.H.T Net:
                   </td>
-                  <td>{this.props.totalhtnet}</td>
+                  <td>{Number(this.props.totalhtnet).toFixed(3)}</td>
                 </tr>
                 <tr style={{ height: "50px" }}>
                   <td style={{ fontWeight: "bold" }}>
                     {" "}
                     &nbsp;&nbsp;&nbsp;Total TVA:
                   </td>
-                  <td>{this.props.totaltva}</td>
+                  <td>{Number(this.props.totaltva).toFixed(3)}</td>
                 </tr>
                 <tr style={{ height: "50px" }}>
                   <td style={{ fontWeight: "bold" }}>

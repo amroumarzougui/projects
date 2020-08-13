@@ -73,6 +73,7 @@ class FicheClient extends Component {
       acontacter,
       impot,
       comptable,
+      categoriefiscale,
     } = this.state;
     if (this.state.loggedIn === false) {
       return <Redirect to="/" />;
@@ -162,7 +163,7 @@ class FicheClient extends Component {
                           cin: test.cin,
                           ville: test.ville,
                           codepostal: test.cp,
-                          identifiant: test.fax,
+                          identifiant: test.codtva,
                           tauxfodec: test.compte,
                           timbre: test.timbre,
                           soustraitant: test.NAR,
@@ -170,6 +171,7 @@ class FicheClient extends Component {
                           acontacter: test.RC,
                           impot: test.CodDep,
                           comptable: test.RIB2,
+                          categoriefiscale: test.catfisc,
                         });
                       }}
                     >
@@ -232,7 +234,7 @@ class FicheClient extends Component {
                           cin: test.cin,
                           ville: test.ville,
                           codepostal: test.cp,
-                          identifiant: test.fax,
+                          identifiant: test.codtva,
                           tauxfodec: test.compte,
                           timbre: test.timbre,
                           soustraitant: test.NAR,
@@ -240,6 +242,7 @@ class FicheClient extends Component {
                           acontacter: test.RC,
                           impot: test.CodDep,
                           comptable: test.RIB2,
+                          categoriefiscale: test.catfisc,
                         });
                       }}
                     >
@@ -296,6 +299,7 @@ class FicheClient extends Component {
             acontacter={acontacter}
             impot={impot}
             comptable={comptable}
+            categoriefiscale={categoriefiscale}
           />
         </main>
       </div>

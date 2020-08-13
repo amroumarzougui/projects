@@ -8,6 +8,7 @@ import {
   Grid,
   Snackbar,
   IconButton,
+  MenuItem,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { GetCodcli } from "../../../redux/actions/GetCodcli";
@@ -22,6 +23,18 @@ class AddCModal extends Component {
       soustraitant: 0,
       snackbaropen: false,
       snackbarmsg: ",",
+
+      tablecat: [
+        { code: "0" },
+        { code: "1" },
+        { code: "2" },
+        { code: "3" },
+        { code: "4" },
+        { code: "5" },
+        { code: "6" },
+      ],
+
+      categoriefiscale: "",
     };
   }
 
@@ -37,11 +50,15 @@ class AddCModal extends Component {
     this.setState({ [name]: event.target.checked });
   };
 
+  catHandler = (event) => {
+    this.setState({ categoriefiscale: event.target.value });
+  };
+
   submitHandler = (event) => {
     event.preventDefault();
 
     fetch(
-      `http://192.168.1.100:81/api/CLIENTs?codcli=${event.target.codcli.value}&raisoc=${event.target.raisoc.value}&tel1=${event.target.tel1.value}&tel2=${event.target.tel2.value}&passager=${event.target.passager.value}&email=${event.target.emailcli.value}&adr=${event.target.adressecli.value}&sitweb=${event.target.sitewebcli.value}&cin=${event.target.cincli.value}&ville=${event.target.villecli.value}&cp=${event.target.cp.value}&fax=${event.target.identcli.value}&compte=${event.target.fodeccli.value}&timbre=${event.target.timbre.value}&NAR=${event.target.soustraitant.value}&RC=${event.target.contactcli.value}&CodDep=${event.target.impotcli.value}&RIB2=${event.target.comptable.value}`,
+      `http://192.168.1.100:81/api/CLIENTs?codcli=${event.target.codcli.value}&raisoc=${event.target.raisoc.value}&tel1=${event.target.tel1.value}&tel2=${event.target.tel2.value}&passager=${event.target.passager.value}&email=${event.target.emailcli.value}&adr=${event.target.adressecli.value}&sitweb=${event.target.sitewebcli.value}&cin=${event.target.cincli.value}&ville=${event.target.villecli.value}&cp=${event.target.cp.value}&codtva=${event.target.identcli.value}&compte=${event.target.fodeccli.value}&timbre=${event.target.timbre.value}&NAR=${event.target.soustraitant.value}&RC=${event.target.contactcli.value}&CodDep=${event.target.impotcli.value}&catfisc=${event.target.catfisc.value}&RIB2=${event.target.comptable.value}`,
       {
         method: "POST",
         header: {
@@ -331,6 +348,7 @@ class AddCModal extends Component {
                               variant="outlined"
                               fullWidth
                               name="identcli"
+                              required
                             />
                           </FormGroup>
                         </Col>
@@ -369,11 +387,7 @@ class AddCModal extends Component {
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
 
-                      {/* ////////////////////////////////////////////////// */}
-
-                      <Row form>
                         <Col>
                           <FormGroup>
                             <TextField
@@ -386,6 +400,116 @@ class AddCModal extends Component {
                               name="comptable"
                             />
                           </FormGroup>
+                        </Col>
+                      </Row>
+
+                      {/* ////////////////////////////////////////////////// */}
+
+                      <Row form>
+                        <Col>
+                          <FormGroup controlId="catfisc">
+                            <TextField
+                              id="outlined-select-currency"
+                              select
+                              label="Categorie Fisc"
+                              margin="dense"
+                              variant="outlined"
+                              fullWidth
+                              name="catfisc"
+                              required
+                              onChange={this.catHandler}
+                            >
+                              {this.state.tablecat.map((option) => (
+                                <MenuItem key={option.code} value={option.code}>
+                                  {option.code}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                          </FormGroup>
+                        </Col>
+
+                        <Col>
+                          {this.state.categoriefiscale === "0" ? (
+                            <p
+                              style={{
+                                fontSize: "13px",
+                                marginTop: "20px",
+                                color: "#007bff",
+                              }}
+                            >
+                              Assujiti{" "}
+                            </p>
+                          ) : this.state.categoriefiscale === "1" ? (
+                            <p
+                              style={{
+                                fontSize: "13px",
+                                marginTop: "20px",
+                                color: "#007bff",
+                              }}
+                            >
+                              Non Assujiti{" "}
+                            </p>
+                          ) : this.state.categoriefiscale === "2" ? (
+                            <p
+                              style={{
+                                fontSize: "13px",
+                                marginTop: "20px",
+                                color: "#007bff",
+                              }}
+                            >
+                              Exonéré TVA/FODEC{" "}
+                            </p>
+                          ) : this.state.categoriefiscale === "3" ? (
+                            <p
+                              style={{
+                                fontSize: "13px",
+                                marginTop: "20px",
+                                color: "#007bff",
+                              }}
+                            >
+                              Exonéré TVA{" "}
+                            </p>
+                          ) : this.state.categoriefiscale === "4" ? (
+                            <p
+                              style={{
+                                fontSize: "13px",
+                                marginTop: "20px",
+                                color: "#007bff",
+                              }}
+                            >
+                              Suspenssion{" "}
+                            </p>
+                          ) : this.state.categoriefiscale === "5" ? (
+                            <p
+                              style={{
+                                fontSize: "13px",
+                                marginTop: "20px",
+                                color: "#007bff",
+                              }}
+                            >
+                              Cession à Quai{" "}
+                            </p>
+                          ) : this.state.categoriefiscale === "6" ? (
+                            <p
+                              style={{
+                                fontSize: "13px",
+                                marginTop: "20px",
+                                color: "#007bff",
+                              }}
+                            >
+                              Réduction TVA{" "}
+                            </p>
+                          ) : (
+                            <p
+                              style={{
+                                fontSize: "13px",
+                                marginTop: "20px",
+                                color: "#007bff",
+                              }}
+                            >
+                              Cat Fiscale{" "}
+                            </p>
+                          )}
                         </Col>
                       </Row>
 

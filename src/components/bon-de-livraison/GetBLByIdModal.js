@@ -21,6 +21,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import PhoneIcon from "@material-ui/icons/Phone";
 import { SelectBL } from "../../redux/actions/GetBL";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
+import { SelectFacCod } from "../../redux/actions/GetCodFac";
 
 const roundTo = require("round-to");
 
@@ -46,6 +47,8 @@ var date = curr.toISOString().substr(0, 10);
 class GetBLByIdModal extends Component {
   constructor(props) {
     super(props);
+    const username = localStorage.getItem("username");
+
     this.state = {
       open: false,
       hidden: false,
@@ -73,11 +76,13 @@ class GetBLByIdModal extends Component {
       clientimp: [],
       snackbaropen: false,
       snackbarmsg: "",
+      username: username,
     };
   }
 
   componentDidMount() {
     this.props.SelectBLLig(this.props.blid);
+    this.props.SelectFacCod();
   }
 
   handleOpen = () => {
@@ -156,7 +161,17 @@ class GetBLByIdModal extends Component {
             this.props.tabtab.map((k, index) => {
               for (var i = 0; i < this.props.tabtab.length; i++) {
                 fetch(
-                  `http://192.168.1.100:81/api/LigFACCLIs/{ID}?numfac=${this.props.blid}&typfac=FT&numlig=${k.numlig}&codart=${k.codart}&quantite=${k.quantite}&fodart=0&desart=${k.desart}&datfac=${this.state.todaydate}&priuni=${k.priuni}&remise=${k.remise}&unite${k.unite}&codtva=${k.codtva}&tautva=${k.tautva}&montht=${k.montht}&ttclig=${k.ttclig}`,
+                  `http://192.168.1.100:81/api/LigFACCLIs/{ID}?numfac=${this.props.codfacs.codfacs.map(
+                    (t) => t.valeur
+                  )}&typfac=FT&numlig=${k.numlig}&codart=${k.codart}&quantite=${
+                    k.quantite
+                  }&fodart=0&desart=${k.desart}&datfac=${
+                    this.state.todaydate
+                  }&priuni=${k.priuni}&remise=${k.remise}&unite${
+                    k.unite
+                  }&codtva=${k.codtva}&tautva=${k.tautva}&montht=${
+                    k.montht
+                  }&ttclig=${k.ttclig}`,
                   {
                     method: "POST",
                     header: {
@@ -187,9 +202,9 @@ class GetBLByIdModal extends Component {
             });
             ////////////// 2nd part post data in factable //////////
             fetch(
-              `http://192.168.1.100:81/api/FACCLIs?numfac=${
-                this.props.blid
-              }&typfac=FT&codcli=${this.props.client}&raisoc=${
+              `http://192.168.1.100:81/api/FACCLIs?numfac=${this.props.codfacs.codfacs.map(
+                (t) => t.valeur
+              )}&typfac=FT&codcli=${this.props.client}&raisoc=${
                 this.props.raisonsociale
               }&catfisc=${this.props.catfisc}&datfac=${
                 this.state.todaydate
@@ -199,7 +214,9 @@ class GetBLByIdModal extends Component {
                 this.props.remiseglobale
               }&smhtn=${this.props.totalhtnet}&smtva=${
                 this.props.totaltva
-              }&mntbon=${this.props.totalttc}&valtimbre=${Number(0.5)}`,
+              }&mntbon=${this.props.totalttc}&valtimbre=${Number(
+                0.5
+              )}&Vendeur=${this.state.username}`,
               {
                 method: "POST",
                 header: {
@@ -220,6 +237,20 @@ class GetBLByIdModal extends Component {
                   this.setState({ snackbaropen: true, snackbarmsg: "failed" });
                 }
               );
+
+            ////////// update switch /////////////
+            fetch(
+              `http://192.168.1.100:81/api/Switch?code=FC2&valeur=${this.props.codfacs.codfacs.map(
+                (t) => parseInt(t.valeur) + 1
+              )}`,
+              {
+                method: "PUT",
+                header: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              }
+            );
 
             this.setState({ snackbaropen: true, snackbarmsg: result });
           })
@@ -911,8 +942,8 @@ class GetBLByIdModal extends Component {
                         ).toFixed(2)}{" "}
                         %
                       </td>
-                      <td>{this.props.totalhtnet}</td>
-                      <td>{this.props.totaltva}</td>
+                      <td>{Number(this.props.totalhtnet).toFixed(3)}</td>
+                      <td>{Number(this.props.totaltva).toFixed(3)}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -943,14 +974,14 @@ class GetBLByIdModal extends Component {
                   <td style={{ fontWeight: "bold" }}>
                     &nbsp;&nbsp;&nbsp;Total.H.T Net:
                   </td>
-                  <td>{this.props.totalhtnet}</td>
+                  <td>{Number(this.props.totalhtnet).toFixed(3)}</td>
                 </tr>
                 <tr style={{ height: "50px" }}>
                   <td style={{ fontWeight: "bold" }}>
                     {" "}
                     &nbsp;&nbsp;&nbsp;Total TVA:
                   </td>
-                  <td>{this.props.totaltva}</td>
+                  <td>{Number(this.props.totaltva).toFixed(3)}</td>
                 </tr>
                 <tr style={{ height: "50px" }}>
                   <td style={{ fontWeight: "bold" }}>
@@ -1038,12 +1069,14 @@ function mapDispatchToProps(dispatch) {
   return {
     SelectBLLig: () => dispatch(SelectBLLig()),
     SelectBL: () => dispatch(SelectBL()),
+    SelectFacCod: () => dispatch(SelectFacCod()),
   };
 }
 
 function mapStateToProps(state) {
   return {
     blligs: state.blligs,
+    codfacs: state.codfacs,
   };
 }
 

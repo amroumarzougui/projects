@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPaperPlane,
@@ -13,121 +13,100 @@ import { connect } from "react-redux";
 import "./SideBar.scss";
 // import image from "./p3.png";
 
-const SideBar = (props) => (
-  <div className={classNames("sidebar", { "is-open": props.isOpen })}>
-    <div className="sidebar-header">
-      <span color="info" onClick={props.toggle} style={{ color: "#fff" }}>
-        &times;
-      </span>
-      {/* <img
-        src={image}
-        alt="Contact"
-        style={{ width: "100%", height: "100%" }}
-      /> */}
-      <h3>SYROS</h3>
-      {/* <img
-        src={image}
-        alt="Contact"
-        style={{ width: "100px", height: "80px", padding: "10px", marginLeft: "50px" }}
-      /> */}
-    </div>
-    <div className="side-menu">
-      <Nav vertical className="list-unstyled pb-3">
-        <div>
-          <Link to={"/homepage"} className="title" onClick={props.toggle}>
-            <NavItem style={{ paddingLeft: "27px" }}>
-              <i class="fas fa-chart-bar"> DashBoard</i>
-            </NavItem>
-          </Link>
+//window.location.reload();
 
-          {props.SideBarTitles.sidebar.map((el, index) => (
-            // <SubMenu title={el.name} icon={faHome} items={el.submenu} />
-            <SubMenu
-              key={index}
-              title={el.title}
-              icon={el.icon}
-              items={el.submenu}
-            />
-          ))}
-          {/* <Link to={"/bon-entree"} className="title" onClick={props.toggle}> 
-            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
-              <i class="fa fa-retweet" aria-hidden="true"></i>
+const SideBar = (props) =>
+  // React.useEffect(() => {
+  //   localStorage.setItem('myValueInLocalStorage', value);
+  // }, [value]);
+  {
+    const fctt = localStorage.getItem("fct");
+    const tokenn = localStorage.getItem("token");
+    const [fct, setfct] = useState(fctt);
+    const [token, settoken] = useState(tokenn);
 
-              <span style={{ marginLeft: "15px" }}>Bon d'entrée</span>
-            </NavItem>
-          </Link> */}
-          {/* <Link to={"/devis"} className="title" onClick={props.toggle}>
-            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
-              <i className="fas fa-tasks"></i>
-              <span style={{ marginLeft: "15px" }}>Devis client</span>
-            </NavItem>
-          </Link>
-          <Link
-            to={"/bon-de-commande"}
-            className="title"
-            onClick={props.toggle}
-          >
-            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
-              <i className="fas fa-clipboard-list"></i>
-              <span style={{ marginLeft: "17px" }}>Bon de commande</span>
-            </NavItem>
-          </Link>
-          <Link
-            to={"/bon-de-livraison"}
-            className="title"
-            onClick={props.toggle}
-          >
-            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
-              <i className="fas fa-list-alt"></i>
-              <span style={{ marginLeft: "15px" }}>Bon de Livraison</span>{" "}
-            </NavItem>
-          </Link>
-          <Link to={"/facture"} className="title" onClick={props.toggle}>
-            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
-              <i className="fas fa-file-invoice-dollar"></i>
-              <span style={{ marginLeft: "17px" }}>Facture</span>
-            </NavItem>
-          </Link> */}
-          {/* <Link to={"/reglement"} className="title" onClick={props.toggle}>
-            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
-              <i className="fab fa-dashcube"></i>
-              <span style={{ marginLeft: "17px" }}>Règlement Client</span>
-            </NavItem>
-          </Link> */}
-          {/* <Link to={"/nomenclature"} className="title" onClick={props.toggle}>
-            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
-              <i class="far fa-plus-square"></i>
-              <span style={{ marginLeft: "17px" }}>Nomenclature</span>
-            </NavItem>
-          </Link> */}
-          <Link to={"/clicktocall"} className="title" onClick={props.toggle}>
-            <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
-              <i class="fas fa-phone-volume"></i>{" "}
-              <span style={{ marginLeft: "17px" }}>Click To Call</span>
-            </NavItem>
-          </Link>
+    return (
+      <div className={classNames("sidebar", { "is-open": props.isOpen })}>
+        <div className="sidebar-header">
+          <span color="info" onClick={props.toggle} style={{ color: "#fff" }}>
+            &times;
+          </span>
 
-          <br />
-          <a to="" href="https://polysoftco.tn">
-            <NavItem style={{ fontSize: "16px", paddingLeft: "20px" }}>
-              <i class="fas fa-globe"></i>
-              <span style={{ marginLeft: "17px" }}>Polysoft&CO.tn</span>
-            </NavItem>
-          </a>
-
-          <Link to={"/contact"} onClick={props.toggle}>
-            <NavItem>
-              <NavItem style={{ fontSize: "16px", paddingLeft: "12px" }}>
-                <i class="far fa-comment-alt"></i>
-                <span style={{ marginLeft: "17px" }}>Contact</span>
-              </NavItem>
-            </NavItem>
-          </Link>
+          <h3>SYROS</h3>
+          {/* <h3> {fct} </h3>
+          <h3> {token} </h3> */}
         </div>
-      </Nav>
-    </div>
-  </div>
-);
+        <div className="side-menu">
+          <Nav vertical className="list-unstyled pb-3">
+            <div>
+              {fct === "100" ? (
+                <Link to={"/homepage"} className="title" onClick={props.toggle}>
+                  <NavItem style={{ paddingLeft: "27px" }}>
+                    <i class="fas fa-chart-bar"> DashBoard</i>
+                  </NavItem>
+                </Link>
+              ) : null}
+
+              {props.SideBarTitles.sidebar.map((el, index) => (
+                // <SubMenu title={el.name} icon={faHome} items={el.submenu} />
+                <SubMenu
+                  key={index}
+                  title={el.title}
+                  icon={el.icon}
+                  items={el.submenu}
+                />
+              ))}
+
+              {fct === "100" ? (
+                <Link
+                  to={"/clicktocall"}
+                  className="title"
+                  onClick={props.toggle}
+                >
+                  <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
+                    <i class="fas fa-phone-volume"></i>{" "}
+                    <span style={{ marginLeft: "17px" }}>Click To Call</span>
+                  </NavItem>
+                </Link>
+              ) : null}
+
+              {fct === "100" ? (
+                <Link
+                  to={"/personnel"}
+                  className="title"
+                  onClick={props.toggle}
+                >
+                  <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
+                    <i class="fas fa-users"></i>{" "}
+                    <span style={{ marginLeft: "17px" }}>Vendeurs</span>
+                  </NavItem>
+                </Link>
+              ) : (
+                <h3></h3>
+              )}
+
+              <br />
+              <a to="" href="https://polysoftco.tn">
+                <NavItem style={{ fontSize: "16px", paddingLeft: "20px" }}>
+                  <i class="fas fa-globe"></i>
+                  <span style={{ marginLeft: "17px" }}>Polysoft&CO.tn</span>
+                </NavItem>
+              </a>
+
+              <Link to={"/contact"} onClick={props.toggle}>
+                <NavItem>
+                  <NavItem style={{ fontSize: "16px", paddingLeft: "12px" }}>
+                    <i class="far fa-comment-alt"></i>
+                    <span style={{ marginLeft: "17px" }}>Contact</span>
+                  </NavItem>
+                </NavItem>
+              </Link>
+            </div>
+          </Nav>
+        </div>
+      </div>
+    );
+  };
 
 // const mapDispatchToProps = dispatch => ({
 //   changeSubmenuList: index => {
@@ -142,3 +121,133 @@ const mapStateToProps = (state) => {
 const ConnectedSideBar = connect(mapStateToProps)(SideBar);
 
 export default ConnectedSideBar;
+
+// import React, { Component } from "react";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import {
+//   faPaperPlane,
+//   faQuestion,
+//   faImage,
+// } from "@fortawesome/free-solid-svg-icons";
+// import SubMenu from "./SubMenu";
+// import { NavItem, Nav } from "reactstrap";
+// import classNames from "classnames";
+// import { Link } from "react-router-dom";
+// import { connect } from "react-redux";
+// import "./SideBar.scss";
+
+// class SideBar extends Component {
+//   constructor(props) {
+//     super(props);
+//     const fct = localStorage.getItem("fct");
+//     const token = localStorage.getItem("token");
+
+//     this.state = {
+//       fct: fct,
+//       token: token,
+//     };
+//   }
+//   render() {
+//     return (
+//       <div>
+//         <div
+//           className={classNames("sidebar", { "is-open": this.props.isOpen })}
+//         >
+//           <div className="sidebar-header">
+//             <span
+//               color="info"
+//               onClick={this.props.toggle}
+//               style={{ color: "#fff" }}
+//             >
+//               &times;
+//             </span>
+
+//             <h3>SYROS</h3>
+//             {/* <h3> {this.state.fct} </h3>
+//             <h3> {this.state.token} </h3> */}
+//           </div>
+//           <div className="side-menu">
+//             <Nav vertical className="list-unstyled pb-3">
+//               <div>
+//                 {this.state.fct === "100" ? (
+//                   <Link
+//                     to={"/homepage"}
+//                     className="title"
+//                     onClick={this.props.toggle}
+//                   >
+//                     <NavItem style={{ paddingLeft: "27px" }}>
+//                       <i class="fas fa-chart-bar"> DashBoard</i>
+//                     </NavItem>
+//                   </Link>
+//                 ) : null}
+
+//                 {this.props.SideBarTitles.sidebar.map((el, index) => (
+//                   <SubMenu
+//                     key={index}
+//                     title={el.title}
+//                     icon={el.icon}
+//                     items={el.submenu}
+//                   />
+//                 ))}
+
+//                 {this.state.fct === "100" ? (
+//                   <Link
+//                     to={"/clicktocall"}
+//                     className="title"
+//                     onClick={this.props.toggle}
+//                   >
+//                     <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
+//                       <i class="fas fa-phone-volume"></i>{" "}
+//                       <span style={{ marginLeft: "17px" }}>Click To Call</span>
+//                     </NavItem>
+//                   </Link>
+//                 ) : null}
+
+//                 {this.state.fct === "100" ? (
+//                   <Link
+//                     to={"/personnel"}
+//                     className="title"
+//                     onClick={this.props.toggle}
+//                   >
+//                     <NavItem style={{ fontSize: "16px", paddingLeft: "27px" }}>
+//                       <i class="fas fa-users"></i>{" "}
+//                       <span style={{ marginLeft: "17px" }}>Vendeurs</span>
+//                     </NavItem>
+//                   </Link>
+//                 ) : (
+//                   <h3></h3>
+//                 )}
+
+//                 <br />
+//                 <a to="" href="https://polysoftco.tn">
+//                   <NavItem style={{ fontSize: "16px", paddingLeft: "20px" }}>
+//                     <i class="fas fa-globe"></i>
+//                     <span style={{ marginLeft: "17px" }}>Polysoft&CO.tn</span>
+//                   </NavItem>
+//                 </a>
+
+//                 <Link to={"/contact"} onClick={this.props.toggle}>
+//                   <NavItem>
+//                     <NavItem style={{ fontSize: "16px", paddingLeft: "12px" }}>
+//                       <i class="far fa-comment-alt"></i>
+//                       <span style={{ marginLeft: "17px" }}>Contact</span>
+//                     </NavItem>
+//                   </NavItem>
+//                 </Link>
+//               </div>
+//             </Nav>
+//           </div>
+//         </div>
+//       </div>
+//     );
+//   }
+// }
+
+// const mapStateToProps = (state) => {
+//   return {
+//     SideBarTitles: state.SideBarTitles,
+//   };
+// };
+// const ConnectedSideBar = connect(mapStateToProps)(SideBar);
+
+// export default ConnectedSideBar;

@@ -318,6 +318,7 @@ class ModifierLigDevis extends Component {
       remiseglobal: SumRemiseGlobale,
       netapayer: SumNetAPayer,
       snackbarfail: true,
+      btnEnabled: true,
     });
   };
 

@@ -21,6 +21,7 @@ class AddFmodal extends Component {
       soustraitant: 0,
       snackbaropen: false,
       snackbarmsg: ",",
+      fod: 0,
     };
   }
 
@@ -339,6 +340,7 @@ class AddFmodal extends Component {
                               variant="outlined"
                               fullWidth
                               name="tauxfodec"
+                              defaultValue={this.state.fod}
                             />
                           </FormGroup>
                         </Col>

@@ -1,0 +1,190 @@
+.tabper {
+  tr {
+    display: flex;
+  }
+  tr:nth-of-type(even) {
+    background: #fff;
+  }
+
+  td,
+  th {
+    display: flex;
+    width: 50%;
+    justify-content: center;
+    align-items: center;
+    padding: 7px;
+    text-align: center;
+
+    span {
+      font-size: 13px;
+    }
+  }
+  th {
+    background: white;
+    color: #000000;
+  }
+  table {
+    height: fit-content;
+
+    thead {
+      display: table;
+      background: floralwhite;
+      color: #000000;
+      table-layout: fixed;
+      width: 100%;
+    }
+    tbody {
+      overflow-y: auto;
+      display: block;
+      max-height: 14em;
+
+      tr:hover {
+        animation: tdanimation 1s infinite;
+        animation-direction: alternate;
+        animation-delay: 0s;
+        background-color: #6c757d75;
+        span:hover {
+          color: #17a2b8;
+        }
+      }
+    }
+  }
+}
+/* 
+        Max width before this PARTICULAR table gets nasty
+        This query will take effect for any screen smaller than 760px
+        and also iPads specifically.
+        */
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
+  .tabper {
+    /* Force table to not be like tables anymore */
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+      display: block;
+    }
+
+    /* Hide table headers (but not display: none;, for accessibility) */
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    tr {
+      border: 1px solid #ccc;
+    }
+    tr:nth-of-type(even) {
+      background: #eee;
+    }
+
+    td {
+      /* Behave  like a "row" */
+      border: none;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      padding-left: 50%;
+      width: auto;
+    }
+
+    td:before {
+      /* Now like a table header */
+      position: absolute;
+      /* Top/left values mimic padding */
+      top: 6px;
+      left: 6px;
+      width: 45%;
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    /*
+            Label the data
+            */
+    td:nth-of-type(1):before {
+      content: "Code";
+    }
+    td:nth-of-type(2):before {
+      content: "Libellé";
+    }
+  }
+}
+
+.p111 {
+  font-size: 16px;
+  //   color: #0f2535;
+  color: rgb(23, 162, 184);
+  font-weight: bold;
+}
+
+.kard1 {
+  background-image: linear-gradient(
+    -20deg,
+    #1fccaf 0%,
+    #036650 100%
+  ) !important;
+  transition: all 0.2s;
+  border-radius: 5px;
+  box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03),
+    0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03),
+    0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05),
+    0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+}
+
+.kard2 {
+  background-image: linear-gradient(
+    -20deg,
+    #ffffff 0%,
+    #007bff 100%
+  ) !important;
+  transition: all 0.2s;
+  border-radius: 5px;
+  box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03),
+    0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03),
+    0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05),
+    0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+}
+
+.kard3 {
+  background-image: linear-gradient(
+    -20deg,
+    #2b5876 0%,
+    #4e4376 100%
+  ) !important;
+  transition: all 0.2s;
+  border-radius: 5px;
+  box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03),
+    0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03),
+    0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05),
+    0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+}
+
+.kard4 {
+  // background-image: linear-gradient(
+  //   to top,
+  //   #0ba360 0%,
+  //   #3cba92 100%
+  // ) !important;
+  background-image: linear-gradient(to right, #34b0c8, #00d4ff);
+  transition: all 0.2s;
+  border-radius: 5px;
+  box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03),
+    0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03),
+    0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05),
+    0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+}
+
+.scrolll {
+  margin: 4px, 4px;
+  padding: 4px;
+  // background-color: green;
+  //width: 200px;
+  max-height: 550px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: justify;
+}

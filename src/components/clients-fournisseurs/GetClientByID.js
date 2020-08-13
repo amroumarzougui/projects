@@ -17,7 +17,7 @@ import ModifierClientModal from "./ModifierClientModal";
 import MailModal from "./MailModal";
 
 const actions = [
-  { icon: <MailOutlineIcon />, name: "Mail" },
+  // { icon: <MailOutlineIcon />, name: "Mail" },
   { icon: <EditIcon />, name: "Modifier" },
   { icon: <DeleteOutlineIcon />, name: "Supprimer" },
 ];
@@ -290,7 +290,7 @@ class GetClientByID extends Component {
               <Card.Body>
                 <Row style={{ marginLeft: "10px" }}>
                   <Col sm={2}>
-                    <b>CIN</b>
+                    <p style={{ fontSize: "14px", fontWeight: "bold" }}>CIN</p>
                   </Col>
                   <Col sm={3}>
                     {this.props.cin === "" ? (
@@ -299,21 +299,27 @@ class GetClientByID extends Component {
                       <p style={{ color: "gray" }}>{this.props.cin}</p>
                     )}
                   </Col>
-                  <Col sm={4}>
-                    <b>Identifiant</b>
-                  </Col>
                   <Col sm={3}>
+                    <p style={{ fontSize: "14px", fontWeight: "bold" }}>
+                      Identifiant
+                    </p>
+                  </Col>
+                  <Col sm={4}>
                     {this.props.identifiant === "" ? (
                       <p style={{ color: "gray" }}>--</p>
                     ) : (
-                      <p style={{ color: "gray" }}>{this.props.identifiant}</p>
+                      <p style={{ color: "gray", fontSize: "12px" }}>
+                        {this.props.identifiant}
+                      </p>
                     )}
                   </Col>
                 </Row>
 
                 <Row style={{ marginLeft: "10px" }}>
                   <Col sm={2}>
-                    <b>Ville</b>
+                    <p style={{ fontSize: "14px", fontWeight: "bold" }}>
+                      Ville
+                    </p>
                   </Col>
                   <Col sm={3}>
                     {this.props.ville === "" ? (
@@ -323,7 +329,9 @@ class GetClientByID extends Component {
                     )}
                   </Col>
                   <Col sm={4}>
-                    <b>Code Postal</b>
+                    <p style={{ fontSize: "14px", fontWeight: "bold" }}>
+                      Code Postal
+                    </p>
                   </Col>
                   <Col sm={3}>
                     {this.props.codepostal === "" ? (
@@ -395,6 +403,7 @@ class GetClientByID extends Component {
               acontacter={this.props.acontacter}
               impot={this.props.impot}
               comptable={this.props.comptable}
+              categoriefiscale={this.props.categoriefiscale}
             />
 
             <MailModal

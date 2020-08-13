@@ -23,7 +23,7 @@ class AppelModalClient extends Component {
 
   call1 = () => {
     fetch(
-      `http://192.168.1.14/couplagetel/calling.php?exten=${this.props.tel1}&number=${this.props.tel1}`,
+      `http://192.168.1.14/couplagetel/cal.php?from=1001&target=${this.props.tel1}`,
       {
         headers: { "Content-Type": "application/json" },
       }
@@ -36,20 +36,20 @@ class AppelModalClient extends Component {
       );
   };
 
-  call2 = () => {
-    fetch(
-      `http://192.168.1.14/couplagetel/calling.php?exten=${this.props.tel2}&number=${this.props.tel2}`,
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) =>
-        //console.log(data)
-        // window.alert(data)
-        this.setState({ snackbaropen2: true, snackbarmsg2: data })
-      );
-  };
+  // call2 = () => {
+  //   fetch(
+  //     `http://192.168.1.14/couplagetel/cal.php?from=1001&target=${this.props.tel2}`,
+  //     {
+  //       headers: { "Content-Type": "application/json" },
+  //     }
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) =>
+  //       //console.log(data)
+  //       // window.alert(data)
+  //       this.setState({ snackbaropen2: true, snackbarmsg2: data })
+  //     );
+  // };
 
   snackbarClose = () => {
     this.setState({ snackbaropen: false });
@@ -224,7 +224,7 @@ class AppelModalClient extends Component {
                     outline
                     color="success"
                     size="sm"
-                    onClick={this.call2}
+                    //  onClick={this.call2}
                   >
                     <PhoneIcon /> Appeler
                   </Button>

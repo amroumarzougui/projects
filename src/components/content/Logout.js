@@ -18,6 +18,9 @@ class Logout extends Component {
   constructor(props) {
     super(props);
     localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("fct");
+
     this.state = {};
   }
   render() {
@@ -31,6 +34,7 @@ class Logout extends Component {
           </Center>
           <Center>
             <Link to="/">
+              {/* <a href="/"> */}
               <Button
                 style={{
                   height: "200px",
@@ -44,6 +48,7 @@ class Logout extends Component {
               >
                 Login ...
               </Button>
+              {/* </a> */}
             </Link>
           </Center>
         </div>

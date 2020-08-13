@@ -1,6 +1,12 @@
 import React, { Component } from "react";
-import { TextField, InputAdornment } from "@material-ui/core";
-import { Col, Row } from "reactstrap";
+import {
+  TextField,
+  InputAdornment,
+  Typography,
+  Grid,
+  Switch,
+} from "@material-ui/core";
+import { Col, Row, FormGroup } from "reactstrap";
 import SearchIcon from "@material-ui/icons/Search";
 import { Redirect } from "react-router-dom";
 import AddReModal from "./AddReModal";
@@ -14,6 +20,10 @@ const DATE_OPTIONS = {
   month: "numeric",
   day: "numeric",
 };
+
+var curr = new Date();
+curr.setDate(curr.getDate());
+var date = curr.toISOString().substr(0, 10);
 
 class Reglement extends Component {
   constructor(props) {
@@ -32,12 +42,28 @@ class Reglement extends Component {
       icon: false,
       rechercheclicked: false,
       tabtab: [],
+
+      defaultdate: date,
+      firstdate: date,
+      seconddate: date,
+      rechdats: [],
+      showrechbydate: false,
+
+      gilad: true,
     };
   }
 
   componentDidMount() {
     this.props.SelectReglement();
   }
+
+  handleChange = (name) => (event) => {
+    this.setState({ [name]: event.target.checked });
+
+    this.state.gilad
+      ? this.setState({ showrechbydate: false })
+      : this.setState({ rechercheclicked: false });
+  };
 
   rechercheHandler = (event) => {
     fetch(`http://192.168.1.100:81/api/REGCLIs/${event.target.value}`)
@@ -46,6 +72,38 @@ class Reglement extends Component {
   };
 
   toggle = () => this.setState({ modal: !this.state.modal });
+
+  firstrechdatHandler = (event) => {
+    this.setState({ firstdate: event.target.value });
+
+    fetch(
+      `http://192.168.1.100:81/api/REGCLIs?datt=${event.target.value}&dattt=${this.state.seconddate}`
+    )
+      .then((response) => response.json())
+      .then((data) =>
+        this.setState({
+          rechdats: data,
+          showrechbydate: true,
+          rechercheclicked: false,
+        })
+      );
+  };
+
+  secondrechdatHandler = (event) => {
+    this.setState({ seconddate: event.target.value });
+
+    fetch(
+      `http://192.168.1.100:81/api/REGCLIs?datt=${this.state.firstdate}&dattt=${event.target.value}`
+    )
+      .then((response) => response.json())
+      .then((data) =>
+        this.setState({
+          rechdats: data,
+          showrechbydate: true,
+          rechercheclicked: false,
+        })
+      );
+  };
 
   render() {
     if (this.state.loggedIn === false) {
@@ -82,29 +140,98 @@ class Reglement extends Component {
         </div>
         <br />
         <div>
-          <Row>
-            <Col sm="9">
-              {/* Recherche */}
-              {/* <ConnectedSearchBar /> */}
-              <div className="search-bar">
-                <TextField
-                  placeholder="Recherche..."
-                  id="input-with-icon-textfield"
-                  className="input-search"
-                  onChange={this.rechercheHandler}
-                  onClick={this.toggle}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon className="search-icon" />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </div>
+          <Row style={{ marginTop: "-30px" }}>
+            <Col sm={12}>
+              <FormGroup style={{ marginTop: "25px" }}>
+                <Typography component="div">
+                  <Grid
+                    component="label"
+                    container
+                    alignItems="center"
+                    spacing={1}
+                  >
+                    <Grid item style={{ color: "grey" }}>
+                      Recherche par date
+                    </Grid>
+                    <Grid item>
+                      <Switch
+                        checked={this.state.gilad}
+                        onChange={this.handleChange("gilad")}
+                        value="gilad"
+                        color="primary"
+                      />
+                    </Grid>
+                    <Grid item style={{ color: "#3f51b5" }}>
+                      Recherche par № Règlement / Client
+                    </Grid>
+                  </Grid>
+                </Typography>
+              </FormGroup>
             </Col>
-            <Col sm="3">
-              {/* Add second part tests // Ligs */}
+          </Row>
+          <Row>
+            {/* Recherche */}
+            {/* <ConnectedSearchBar /> */}
+            {this.state.gilad ? (
+              <Col sm="4">
+                <div className="search-bar">
+                  <TextField
+                    placeholder="Recherche..."
+                    id="input-with-icon-textfield"
+                    className="input-search"
+                    onChange={this.rechercheHandler}
+                    onClick={this.toggle}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon className="search-icon" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </div>
+              </Col>
+            ) : (
+              <Row style={{ marginTop: "-25px", marginLeft: "10px" }}>
+                <Col sm={6}>
+                  <TextField
+                    id="standard-basic"
+                    label="Date Début"
+                    margin="normal"
+                    type="date"
+                    fullWidth
+                    name="firstdate"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    onChange={this.firstrechdatHandler}
+                    value={this.state.firstdate}
+                    defaultValue={this.state.defaultdate}
+                  />
+                </Col>
+
+                <Col sm={6}>
+                  <TextField
+                    id="standard-basic"
+                    label="Date Fin"
+                    margin="normal"
+                    type="date"
+                    fullWidth
+                    name="seconddate"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    defaultValue={this.state.defaultdate}
+                    onChange={this.secondrechdatHandler}
+                    value={this.state.seconddate}
+                  />
+                </Col>
+              </Row>
+            )}
+
+            <Col sm="2">
+              {/* Add second part devis // Ligs */}
+              {/* <AddDevis /> */}
               <div id="" style={{ textAlign: "center" }}>
                 <button
                   className="icon-btn add-btn"
@@ -133,6 +260,77 @@ class Reglement extends Component {
               </thead>
               <tbody>
                 {this.state.rechs.map((test) => (
+                  <tr
+                    key={test.numreg}
+                    onClick={() =>
+                      this.setState({
+                        getREByIdModalShow: true,
+                        regid: test.numreg,
+                        datereg: test.datreg,
+                        client: test.codcli,
+                        raisonsociale: test.raisoc,
+                        modreg: test.modreg,
+                        numcais: test.numcais,
+                        numchq: test.numchq,
+                        titulaire: test.titulaire,
+                        datech: test.datech,
+                        mntreg: test.mntreg,
+                        bqescompte: test.BqEscompte,
+                        codccb: test.codccb,
+                        agence: test.agence,
+                        monreg: test.monreg,
+                        verser: test.verser,
+                        matban: test.matban,
+                        note: test.lib_reg,
+                      })
+                    }
+                  >
+                    <td>
+                      <span>{test.numreg}</span>
+                    </td>
+
+                    <td>
+                      <span>
+                        {new Date(test.datreg).toLocaleDateString(
+                          "fr",
+                          DATE_OPTIONS
+                        )}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span>{test.codcli}</span>
+                    </td>
+
+                    <td style={{ width: "40%" }}>
+                      <span>{test.raisoc}</span>
+                    </td>
+                    <td>
+                      <span> {Number(test.mntreg).toFixed(3)} </span>
+                    </td>
+                    <td>
+                      <span>{Number(test.Reste).toFixed(3)}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : this.state.showrechbydate ? (
+          <div className="tabre">
+            <table>
+              <thead>
+                <tr>
+                  <th>№ REG</th>
+                  <th>Date</th>
+                  <th>Code client</th>
+                  <th style={{ width: "40%" }}>Raison Sociale</th>
+                  <th>Montant</th>
+                  <th>Solde</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.rechdats.map((test) => (
                   <tr
                     key={test.numreg}
                     onClick={() =>

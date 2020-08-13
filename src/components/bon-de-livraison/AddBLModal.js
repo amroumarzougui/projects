@@ -47,6 +47,8 @@ var date = curr.toISOString().substr(0, 10);
 class AddBLModal extends Component {
   constructor(props) {
     super(props);
+    const username = localStorage.getItem("username");
+
     this.state = {
       gilad: true,
       defaultdate: date,
@@ -78,6 +80,7 @@ class AddBLModal extends Component {
 
       snackbaropen: false,
       snackbarmsg: ",",
+      username: username,
     };
   }
 
@@ -156,7 +159,7 @@ class AddBLModal extends Component {
     });
 
     fetch(
-      `http://192.168.1.100:81/api/BLBRs?numfac=${event.target.codbl.value}&typfac=BL&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}&taurem=${this.state.remiseg}`,
+      `http://192.168.1.100:81/api/BLBRs?numfac=${event.target.codbl.value}&typfac=BL&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}&taurem=${this.state.remiseg}&VENDEUR=${this.state.username}`,
       {
         method: "POST",
         header: {
@@ -480,10 +483,10 @@ class AddBLModal extends Component {
                   </Row>
 
                   <Row>
-                    <Col sm={3}>
+                    <Col sm={2}>
                       <TextField
                         id="standard-basic"
-                        label="Categorie Fiscale"
+                        label="Cat Fiscale"
                         margin="normal"
                         //variant="outlined"
                         fullWidth
@@ -491,6 +494,90 @@ class AddBLModal extends Component {
                         value={this.state.categoriefiscale}
                         disabled
                       />
+                    </Col>
+
+                    <Col sm={2}>
+                      {this.state.categoriefiscale === "0" ? (
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            marginTop: "40px",
+                            color: "#007bff",
+                          }}
+                        >
+                          Assujiti{" "}
+                        </p>
+                      ) : this.state.categoriefiscale === "1" ? (
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            marginTop: "40px",
+                            color: "#007bff",
+                          }}
+                        >
+                          Non Assujiti{" "}
+                        </p>
+                      ) : this.state.categoriefiscale === "2" ? (
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            marginTop: "40px",
+                            color: "#007bff",
+                          }}
+                        >
+                          Exonéré TVA/FODEC{" "}
+                        </p>
+                      ) : this.state.categoriefiscale === "3" ? (
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            marginTop: "40px",
+                            color: "#007bff",
+                          }}
+                        >
+                          Exonéré TVA{" "}
+                        </p>
+                      ) : this.state.categoriefiscale === "4" ? (
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            marginTop: "40px",
+                            color: "#007bff",
+                          }}
+                        >
+                          Suspenssion{" "}
+                        </p>
+                      ) : this.state.categoriefiscale === "5" ? (
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            marginTop: "40px",
+                            color: "#007bff",
+                          }}
+                        >
+                          Cession à Quai{" "}
+                        </p>
+                      ) : this.state.categoriefiscale === "6" ? (
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            marginTop: "40px",
+                            color: "#007bff",
+                          }}
+                        >
+                          Réduction TVA{" "}
+                        </p>
+                      ) : (
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            marginTop: "40px",
+                            color: "#007bff",
+                          }}
+                        >
+                          Cat Fiscale{" "}
+                        </p>
+                      )}
                     </Col>
 
                     <Col sm={3}>

@@ -39,6 +39,7 @@ const divStylee = {
 class Login extends Component {
   constructor(props) {
     const token = localStorage.getItem("token");
+    const fct = localStorage.getItem("fct");
 
     let loggedIn = true;
     if (token == null) {
@@ -50,11 +51,23 @@ class Login extends Component {
       password: "",
       loggedIn,
       snackbaropen: false,
+      coddeps: [],
+      fct: "",
     };
   }
 
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
+  };
+
+  UserHandler = (event) => {
+    this.setState({ username: event.target.value });
+
+    fetch(`http://192.168.1.100:81/api/Vendeur?nomm=${event.target.value}`)
+      .then((response) => response.json())
+      .then((data) =>
+        this.setState({ coddeps: data, fct: data.map((t) => t.grp) })
+      );
   };
 
   componentDidMount() {
@@ -74,7 +87,7 @@ class Login extends Component {
     event.preventDefault(event);
 
     fetch(
-      `http://192.168.1.100:81/api/Auth?nom=${event.target.username.value}&mp=${event.target.password.value}`,
+      `http://192.168.1.100:81/api/Auth?nom=${event.target.username.value}&mp=${event.target.password.value}&grp=${this.state.fct}`,
       {
         method: "POST",
         header: {
@@ -93,6 +106,8 @@ class Login extends Component {
               `abcd${this.state.username}1234ghqsd`
             );
           localStorage.setItem("username", `${this.state.username}`);
+          localStorage.setItem("fct", `${result.fct}`);
+
           this.setState({ loggedIn: true });
         },
         (error) => {
@@ -109,6 +124,7 @@ class Login extends Component {
     if (this.state.loggedIn) {
       return <Redirect to="/homepage" />;
     }
+
     return (
       <div>
         <Snackbar
@@ -245,7 +261,7 @@ class Login extends Component {
                         variant="outlined"
                         name="username"
                         value={this.state.username}
-                        onChange={this.onChange}
+                        onChange={this.UserHandler}
                         required
                         fullWidth
                       />
@@ -285,6 +301,8 @@ class Login extends Component {
                       >
                         Login
                       </Button>
+
+                      {/* {this.state.fct} */}
                     </form>
                     {/* </Card.Body>
                 </Card> */}

@@ -334,6 +334,7 @@ class GetFournisseurByID extends Component {
               acontacter={this.props.acontacter}
               impot={this.props.impot}
               comptable={this.props.comptable}
+              nom={this.props.nom}
             />
 
             <MailModal

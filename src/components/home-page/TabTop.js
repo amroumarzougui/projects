@@ -28,50 +28,53 @@ class TabTop extends Component {
             <p className="p1" style={{ marginTop: "20px" }}>
               Top 5 clients
             </p>
-            <Table striped hover size="sm">
-              <thead style={{ background: "#454d55", color: "white" }}>
-                <tr>
-                  <th>Code</th>
-                  <th>Raison Social</th>
-                  <th>Montant</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.props.tops.tops.map((t) =>
-                  t.raisoc === "CLIENT PASSAGER" ? null : (
-                    <tr key={t.codcli}>
-                      <td> {t.codcli} </td>
-                      <td> {t.raisoc} </td>
-                      <td> {Number(t.sommemntbn).toFixed(3)} </td>
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </Table>
+            <div className="tabtopp">
+              <Table striped hover size="sm">
+                <thead style={{ background: "#454d55", color: "white" }}>
+                  <tr>
+                    <th>Code</th>
+                    <th>Raison Social</th>
+                    <th>Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.props.tops.tops.map((t) =>
+                    t.raisoc === "CLIENT PASSAGER" ? null : (
+                      <tr key={t.codcli}>
+                        <td> {t.codcli} </td>
+                        <td> {t.raisoc} </td>
+                        <td> {Number(t.sommemntbn).toFixed(3)} </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </Table>
+            </div>
           </Tab>
           <Tab eventKey="profile" title="Fournisseurs">
             <p className="p1" style={{ marginTop: "20px" }}>
               Top 5 Fournisseurs
             </p>
-
-            <Table striped hover size="sm">
-              <thead style={{ background: "#454d55", color: "white" }}>
-                <tr>
-                  <th>Code</th>
-                  <th>Raison Social</th>
-                  <th>Montant</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.props.topfrss.topfrss.map((t) => (
-                  <tr key={t.codfrs}>
-                    <td> {t.codfrs} </td>
-                    <td> {t.raisoc} </td>
-                    <td> {Number(t.sommemntbn).toFixed(3)} </td>
+            <div className="tabtopp">
+              <Table striped hover size="sm">
+                <thead style={{ background: "#454d55", color: "white" }}>
+                  <tr>
+                    <th>Code</th>
+                    <th>Raison Social</th>
+                    <th>Montant</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {this.props.topfrss.topfrss.map((t) => (
+                    <tr key={t.codfrs}>
+                      <td> {t.codfrs} </td>
+                      <td> {t.raisoc} </td>
+                      <td> {Number(t.sommemntbn).toFixed(3)} </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           </Tab>
         </Tabs>
       </div>

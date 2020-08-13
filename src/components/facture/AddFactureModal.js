@@ -46,6 +46,7 @@ var date = curr.toISOString().substr(0, 10);
 class AddBLModal extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       gilad: true,
       defaultdate: date,

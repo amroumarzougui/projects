@@ -261,7 +261,7 @@ class AddingArticleModal extends Component {
                                   variant="outlined"
                                   fullWidth
                                   name="codart"
-                                  value={parseInt(cod.Column1) + 1}
+                                  value={parseInt(cod.Column1)}
                                   disabled
                                 />
                               ))}
