@@ -56,6 +56,8 @@ class LigBLArticle extends Component {
 
       snackbarmsg: ",",
       yesno: "",
+      netnetapayer: 0,
+      clicked: false,
     };
   }
 
@@ -66,7 +68,7 @@ class LigBLArticle extends Component {
   articleHandlerChange = (event) => {
     fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
       .then((response) => response.json())
-      .then((data) => this.setState({ rechs: data }));
+      .then((data) => this.setState({ rechs: data, clicked: true }));
   };
 
   snackbarClose = (event) => {
@@ -83,7 +85,9 @@ class LigBLArticle extends Component {
 
     this.setState({
       qte: event.target.value,
-      puttcnet: this.state.puht + this.state.puht * (this.state.tva / 100),
+      puttcnet:
+        parseInt(this.state.puht) +
+        parseInt(this.state.puht) * (this.state.tva / 100),
       totalht:
         event.target.value *
         this.state.puht *
@@ -100,6 +104,19 @@ class LigBLArticle extends Component {
       remisea: event.target.value,
       totalht:
         this.state.qte * this.state.puht * ((100 - event.target.value) / 100),
+    });
+  };
+
+  puhtHandler = (event) => {
+    this.setState({
+      puht: event.target.value,
+      totalht:
+        this.state.qte *
+        event.target.value *
+        ((100 - this.state.remisea) / 100),
+      puttcnet:
+        parseInt(event.target.value) +
+        parseInt(event.target.value) * (parseInt(this.state.tva) / 100),
     });
   };
 
@@ -145,6 +162,7 @@ class LigBLArticle extends Component {
               (v.tva / 100)),
         0
       );
+    const SumNetNetAPayer = SumNetAPayer + parseFloat(this.props.valtimbre);
 
     this.setState({
       tab,
@@ -156,6 +174,7 @@ class LigBLArticle extends Component {
       remiseglobal: SumRemiseGlobale,
       netapayer: SumNetAPayer,
       snackbarfail: true,
+      netnetapayer: SumNetNetAPayer,
     });
   };
 
@@ -209,6 +228,7 @@ class LigBLArticle extends Component {
             v.qte * v.puht * ((100 - v.remisea) / 100) * (v.tva / 100)),
         0
       );
+    const SumNetNetAPayer = SumNetAPayer + parseFloat(this.props.valtimbre);
 
     this.setState({
       tab: newtab,
@@ -222,6 +242,7 @@ class LigBLArticle extends Component {
       netapayer: SumNetAPayer,
       snackbaropen: true,
       btnEnabled: true,
+      netnetapayer: SumNetNetAPayer,
     });
 
     this.setState({
@@ -358,7 +379,12 @@ class LigBLArticle extends Component {
                                 includeInputInList
                                 className="ajouter-client-input"
                                 //   options={this.props.articles.articles}
-                                options={this.state.rechs}
+                                // options={this.state.rechs}
+                                options={
+                                  this.state.clicked
+                                    ? this.state.rechs
+                                    : this.props.articles.articles
+                                }
                                 getOptionLabel={(option) => option.codart}
                                 onChange={(event, getOptionLabel) => {
                                   getOptionLabel
@@ -401,7 +427,12 @@ class LigBLArticle extends Component {
                                 includeInputInList
                                 className="ajouter-client-input"
                                 //   options={this.props.articles.articles}
-                                options={this.state.rechs}
+                                // options={this.state.rechs}
+                                options={
+                                  this.state.clicked
+                                    ? this.state.rechs
+                                    : this.props.articles.articles
+                                }
                                 getOptionLabel={(option) => option.desart}
                                 onChange={(event, getOptionLabel) => {
                                   getOptionLabel
@@ -533,7 +564,8 @@ class LigBLArticle extends Component {
                               label="PU HT"
                               value={this.state.puht}
                               fullWidth
-                              disabled
+                              name="puht"
+                              onChange={this.puhtHandler}
                             />
                           </FormGroup>
                         </Col>
@@ -543,7 +575,7 @@ class LigBLArticle extends Component {
                             <TextField
                               id="standard-basic"
                               label="Remise %"
-                              defaultValue={this.state.remisea}
+                              value={this.state.remisea}
                               fullWidth
                               name="remisea"
                               // disabled
@@ -568,7 +600,7 @@ class LigBLArticle extends Component {
                             <TextField
                               id="standard-basic"
                               label="PU TTC Net"
-                              value={roundTo(this.state.puttcnet, 3)}
+                              value={Number(this.state.puttcnet).toFixed(3)}
                               fullWidth
                               disabled
                             />
@@ -580,7 +612,7 @@ class LigBLArticle extends Component {
                             <TextField
                               id="standard-basic"
                               label="Total HT"
-                              value={roundTo(this.state.totalht, 3)}
+                              value={Number(this.state.totalht).toFixed(3)}
                               fullWidth
                               disabled
                             />
@@ -718,7 +750,8 @@ class LigBLArticle extends Component {
                   this.state.totalhtnet,
                   this.state.remiseglobal,
                   this.state.netapayer,
-                  this.state.btnEnabled
+                  this.state.btnEnabled,
+                  this.state.netnetapayer
                 );
                 // this.enregistrer();
                 this.props.onHide();

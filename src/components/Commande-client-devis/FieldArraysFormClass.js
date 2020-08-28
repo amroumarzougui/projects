@@ -26,6 +26,7 @@ import Typography from "@material-ui/core/Typography";
 import "./Styling.css";
 import "./ss.scss";
 import { SelectUser } from "../../redux/actions/DevisClient";
+import { SelectValTimbre } from "../../redux/actions/GetValTimbre";
 const roundTo = require("round-to");
 
 var curr = new Date();
@@ -79,12 +80,24 @@ class FieldArraysFormClass extends Component {
       artligs: [],
       rechs: [],
       username: username,
+      valtimbre: 0,
+      netnetapayer: 0,
+      propsvaltimbre: 0,
+
+      clicked: false,
     };
   }
 
   componentDidMount() {
     this.props.SelectClient();
     this.props.GetNumFacDevis();
+    this.props.SelectValTimbre();
+
+    this.setState({
+      propsvaltimbre: this.props.valtimbres.valtimbres.map((t) =>
+        parseFloat(t.valtimbre)
+      ),
+    });
   }
 
   submitHandler = (
@@ -96,7 +109,8 @@ class FieldArraysFormClass extends Component {
     totalhtnet,
     remiseglobal,
     netapayer,
-    btnEnabled
+    btnEnabled,
+    netnetapayer
   ) => {
     this.setState({
       tab: tab,
@@ -108,6 +122,7 @@ class FieldArraysFormClass extends Component {
       remiseglobal: remiseglobal,
       netapayer: netapayer,
       btnEnabled: btnEnabled,
+      netnetapayer: netnetapayer,
     });
   };
 
@@ -131,7 +146,11 @@ class FieldArraysFormClass extends Component {
   clientHandlerChange = (event) => {
     fetch(`http://192.168.1.100:81/api/CLIENTs?codclii=${event.target.value}`)
       .then((response) => response.json())
-      .then((data) => this.setState({ rechs: data }));
+      .then((data) => this.setState({ rechs: data, clicked: true }));
+  };
+
+  raisocHandler = (event) => {
+    this.setState({ raisonsocial: event.target.value });
   };
 
   enregistrer = (event) => {
@@ -164,7 +183,7 @@ class FieldArraysFormClass extends Component {
 
     //////////// post BCDV /////////////////////////////
     fetch(
-      `http://192.168.1.100:81/api/BCDVCLIs?numfac=${event.target.numfac.value}&typfac=DV&taurem=${event.target.remise.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${event.target.datfac.value}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}&vendeur=${this.state.username}`,
+      `http://192.168.1.100:81/api/BCDVCLIs?numfac=${event.target.numfac.value}&typfac=DV&taurem=${event.target.remise.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${event.target.datfac.value}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}&vendeur=${this.state.username}&valtimbre=${this.state.valtimbre}`,
       {
         method: "POST",
         header: {
@@ -253,7 +272,7 @@ class FieldArraysFormClass extends Component {
           <Card>
             <Card.Body>
               <Row style={{ marginBottom: "-20px", marginTop: "-20px" }}>
-                <Col sm={3}>
+                <Col sm={4}>
                   {this.props.numfac.numfac.map((num) => (
                     <FormGroup>
                       <TextField
@@ -268,7 +287,7 @@ class FieldArraysFormClass extends Component {
                     </FormGroup>
                   ))}
                 </Col>
-                <Col sm={5}>
+                <Col sm={3}>
                   <TextField
                     id="standard-basic"
                     label="Date"
@@ -317,7 +336,12 @@ class FieldArraysFormClass extends Component {
                         includeInputInList
                         className="ajouter-client-input"
                         // options={this.props.clients.clients}
-                        options={this.state.rechs}
+                        // options={this.state.rechs}
+                        options={
+                          this.state.clicked
+                            ? this.state.rechs
+                            : this.props.clients.clients
+                        }
                         getOptionLabel={(option) => option.codcli}
                         onChange={(event, getOptionLabel) => {
                           getOptionLabel
@@ -332,6 +356,9 @@ class FieldArraysFormClass extends Component {
                                 showButtonModalPassager:
                                   getOptionLabel.passager,
                                 cemail: getOptionLabel.email,
+                                valtimbre: getOptionLabel.timbre
+                                  ? this.state.propsvaltimbre
+                                  : 0,
                               })
                             : this.setState({
                                 raisonsocial: "",
@@ -342,6 +369,7 @@ class FieldArraysFormClass extends Component {
                                 showTimbre: false,
                                 showForfitaire: 0,
                                 showButtonModalPassager: false,
+                                valtimbre: 0,
                               });
                         }}
                         renderInput={(params) => (
@@ -366,7 +394,12 @@ class FieldArraysFormClass extends Component {
                         includeInputInList
                         className="ajouter-client-input"
                         // options={this.props.clients.clients}
-                        options={this.state.rechs}
+                        // options={this.state.rechs}
+                        options={
+                          this.state.clicked
+                            ? this.state.rechs
+                            : this.props.clients.clients
+                        }
                         getOptionLabel={(option) => option.raisoc}
                         onChange={(event, getOptionLabel) => {
                           getOptionLabel
@@ -381,6 +414,9 @@ class FieldArraysFormClass extends Component {
                                 showButtonModalPassager:
                                   getOptionLabel.passager,
                                 cemail: getOptionLabel.email,
+                                valtimbre: getOptionLabel.timbre
+                                  ? this.state.propsvaltimbre
+                                  : 0,
                               })
                             : this.setState({
                                 raisonsocial: "",
@@ -391,6 +427,7 @@ class FieldArraysFormClass extends Component {
                                 showTimbre: false,
                                 showForfitaire: 0,
                                 showButtonModalPassager: false,
+                                valtimbre: 0,
                               });
                         }}
                         renderInput={(params) => (
@@ -419,7 +456,10 @@ class FieldArraysFormClass extends Component {
                         value={this.state.raisonsocial}
                         fullWidth
                         name="raissoc"
-                        disabled
+                        disabled={
+                          this.state.codeclient === "100" ? false : true
+                        }
+                        onChange={this.raisocHandler}
                       />
                     </FormGroup>
                   </Col>
@@ -464,7 +504,7 @@ class FieldArraysFormClass extends Component {
                         color: "#007bff",
                       }}
                     >
-                      Assujiti{" "}
+                      Assujetti{" "}
                     </p>
                   ) : this.state.categoriefiscale === "1" ? (
                     <p
@@ -474,7 +514,7 @@ class FieldArraysFormClass extends Component {
                         color: "#007bff",
                       }}
                     >
-                      Non Assujiti{" "}
+                      Non Assujetti{" "}
                     </p>
                   ) : this.state.categoriefiscale === "2" ? (
                     <p
@@ -552,7 +592,7 @@ class FieldArraysFormClass extends Component {
                   />
                 </Col>
 
-                <Col sm={2}>
+                {/* <Col sm={2}>
                   <FormGroup style={{ marginTop: "40px" }}>
                     {this.state.showTimbre ? (
                       <p style={{ color: "grey" }}>Timbre: ✔</p>
@@ -566,7 +606,7 @@ class FieldArraysFormClass extends Component {
                       <p style={{ color: "grey" }}>Forfitaire: ✔</p>
                     ) : null}
                   </FormGroup>
-                </Col>
+                </Col> */}
               </Row>
             </Card.Body>
           </Card>
@@ -771,10 +811,16 @@ class FieldArraysFormClass extends Component {
                     textAlign: "center",
                   }}
                 >
-                  <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
+                  {/* <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
                     Total Quantité
                   </p>
-                  <p style={{ color: "black" }}>{this.state.totalqte}</p>
+                  <p style={{ color: "black" }}>{this.state.totalqte}</p> */}
+                  <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
+                    valeur de timbre
+                  </p>
+                  <p style={{ color: "black" }}>
+                    {Number(this.state.valtimbre).toFixed(3)}
+                  </p>
                 </Col>
               </Row>
 
@@ -849,10 +895,10 @@ class FieldArraysFormClass extends Component {
                   }}
                 >
                   <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
-                    Total TVA
+                    Total TTC
                   </p>
                   <p style={{ color: "black" }}>
-                    {Number(this.state.totaltva).toFixed(3)}
+                    {Number(this.state.netapayer).toFixed(3)}
                   </p>
                 </Col>
 
@@ -876,7 +922,7 @@ class FieldArraysFormClass extends Component {
                     Net à Payer
                   </p>
                   <p style={{ color: "black", fontWeight: "bold" }}>
-                    {Number(this.state.netapayer).toFixed(3)}
+                    {Number(this.state.netnetapayer).toFixed(3)}
                   </p>
                 </Col>
               </Row>
@@ -919,6 +965,7 @@ class FieldArraysFormClass extends Component {
           numfaccc={this.props.numfac.numfac.map((nu) => parseInt(nu.valeur))}
           dateee={this.state.defaultdate}
           rem={rem}
+          valtimbre={this.state.valtimbre}
         />
       </div>
     );
@@ -931,6 +978,7 @@ function mapDispatchToProps(dispatch) {
     GetNumFacDevis: () => dispatch(GetNumFacDevis()),
     SelectArticle: () => dispatch(SelectArticle()),
     SelectUser: () => dispatch(SelectUser()),
+    SelectValTimbre: () => dispatch(SelectValTimbre()),
   };
 }
 
@@ -939,6 +987,7 @@ function mapStateToProps(state) {
     clients: state.clients,
     numfac: state.numfac,
     articles: state.articles,
+    valtimbres: state.valtimbres,
   };
 }
 

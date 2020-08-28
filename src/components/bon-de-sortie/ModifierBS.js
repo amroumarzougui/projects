@@ -1,28 +1,29 @@
 import React, { Component } from "react";
 import { Modal, Card } from "react-bootstrap";
 import "../styling/Styles.css";
-import { Input, Label, FormGroup, Col, Row } from "reactstrap";
-import Button from "@material-ui/core/Button";
+import "./bs.scss";
+import { Input, Label, FormGroup, Col, Row, Table } from "reactstrap";
 import { connect } from "react-redux";
+import Button from "@material-ui/core/Button";
+
 import { SelectArticle } from "../../redux/actions/GetArticles";
 import { TextField, Fab, IconButton } from "@material-ui/core";
-import "./ss.scss";
+import "../styling/Styling.scss";
 import Center from "react-center";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
-import EditArticleModal from "./EditArticleModal";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
-import Checkbox from "@material-ui/core/Checkbox";
 import EditIcon from "@material-ui/icons/Edit";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { SelectBC } from "../../redux/actions/GetBC";
+
+import { SelectBS } from "../../redux/actions/GetBS";
 import { SelectClient } from "../../redux/actions/GetClients";
 
-class ModifierBCModal extends Component {
+class ModifierBS extends Component {
   constructor(props) {
     super(props);
     const username = localStorage.getItem("username");
@@ -52,6 +53,14 @@ class ModifierBCModal extends Component {
       qtte: 0,
       btnEnabled: false,
       gilad: true,
+      snackbarmsg: "",
+      enrsnackbaropen: false,
+      fsnackbaropen: false,
+
+      openEditModal: false,
+      idel: 0,
+      reload: false,
+
       giladd: true,
 
       rechs: [],
@@ -69,6 +78,9 @@ class ModifierBCModal extends Component {
       username: username,
       clicked: false,
       clickeda: false,
+
+      stkfin: 0,
+      yesno: "",
     };
   }
 
@@ -82,7 +94,7 @@ class ModifierBCModal extends Component {
       raisonsocial: this.props.raisonsociale,
       codeclient: this.props.client,
       categoriefiscale: this.props.catfisc,
-      datebcc: new Date(this.props.datebl).toISOString().substr(0, 10),
+      datebcc: new Date(this.props.datebs).toISOString().substr(0, 10),
     });
   }
 
@@ -98,6 +110,14 @@ class ModifierBCModal extends Component {
     this.setState({ remiseg: event.target.value });
   };
 
+  remiseHandler = (event) => {
+    this.setState({
+      remisea: event.target.value,
+      totalht:
+        this.state.qte * this.state.puht * ((100 - event.target.value) / 100),
+    });
+  };
+
   puhtHandler = (event) => {
     this.setState({
       puht: event.target.value,
@@ -111,14 +131,48 @@ class ModifierBCModal extends Component {
     });
   };
 
-  remiseHandler = (event) => {
-    this.setState({
-      remisea: event.target.value,
-      totalht:
-        this.state.qte * this.state.puht * ((100 - event.target.value) / 100),
-    });
+  articleHandlerChange = (event) => {
+    fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
+      .then((response) => response.json())
+      .then((data) => this.setState({ rechs: data, clickeda: true }));
   };
 
+  clientHandlerChange = (event) => {
+    fetch(`http://192.168.1.100:81/api/CLIENTs?codclii=${event.target.value}`)
+      .then((response) => response.json())
+      .then((data) => this.setState({ rechsc: data, clicked: true }));
+  };
+
+  sameTable = () => {
+    fetch(
+      `http://192.168.1.100:81/Api/LigBSRS?type=BS&numfac=${this.props.bsid}`
+    )
+      .then((response) => response.json())
+      .then((data) =>
+        this.setState({
+          tab: data,
+          //    sumqt: data && data.reduce((a, v) => a + parseInt(v.quantite), 0),
+        })
+      );
+  };
+
+  snackbarClose = (event) => {
+    this.setState({ snackbaropen: false });
+  };
+
+  snackbarFailClose = (event) => {
+    this.setState({ snackbarfail: false });
+  };
+
+  enrsnackbarClose = (event) => {
+    this.setState({ enrsnackbaropen: false });
+  };
+
+  fsnackbarClose = (event) => {
+    this.setState({ fsnackbaropen: false });
+  };
+
+  /////// modiifier les modifications /////////////
   modifiermodification = (event) => {
     // event.preventDefault();
 
@@ -195,146 +249,11 @@ class ModifierBCModal extends Component {
       tva: 0,
       puttcnet: 0,
       faudec: "N",
+      stkfin: 0,
     });
   };
 
-  sameTable = () => {
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV?type=BC&numfac=${this.props.bcidd}`
-    )
-      .then((response) => response.json())
-      .then((data) =>
-        this.setState({
-          tab: data,
-        })
-      );
-  };
-
-  snackbarClose = (event) => {
-    this.setState({ snackbaropen: false });
-  };
-
-  snackbarFailClose = (event) => {
-    this.setState({ snackbarfail: false });
-  };
-
-  articleHandlerChange = (event) => {
-    fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
-      .then((response) => response.json())
-      .then((data) => this.setState({ rechs: data, clickeda: true }));
-  };
-
-  clientHandlerChange = (event) => {
-    fetch(`http://192.168.1.100:81/api/CLIENTs?codclii=${event.target.value}`)
-      .then((response) => response.json())
-      .then((data) => this.setState({ rechsc: data, clicked: true }));
-  };
-
-  qteHandler = (event) => {
-    console.log(typeof parseInt(event.target.value));
-    console.log(typeof this.state.totalqte);
-
-    this.setState({
-      qte: event.target.value,
-      puttcnet: this.state.puht + this.state.puht * (this.state.tva / 100),
-      totalht: event.target.value * this.state.puht,
-    });
-  };
-
-  enregistrer = () => {
-    /////////////// Update bcdv //////////////////////
-
-    fetch(
-      `http://192.168.1.100:81/api/BCDVCLIs?numfac=${this.props.bcidd}&typfac=BC&datfac=${this.state.datebcc}&codcli=${this.state.codeclient}&raisoc=${this.state.raisonsocial}&taurem=${this.state.remiseg}&catfisc=${this.state.categoriefiscale}&timbre=${this.props.droitdetimbre}&valtimbre=0&ForfaitCli=${this.props.avanceimpot}&vendeur=${this.state.username}`,
-      {
-        method: "PUT",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    ////////// first part delete ///////////////////
-    fetch(
-      `http://192.168.1.100:81/api/LigBCDV/${this.props.bcidd}?typfacc=BC`,
-      {
-        method: "DELETE",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((result) => {
-        console.log(result);
-        // this.setState({ enrsnackbaropen: true, snackbarmsg: result });
-
-        ///////////// second part add new table to database //////////////
-
-        this.state.tab.map((k, index) => {
-          for (var i = 0; i < this.state.tab.length; i++) {
-            fetch(
-              `http://192.168.1.100:81/api/LigBCDV/{ID}?numfac=${
-                this.props.bcidd
-              }&typfac=BC&numlig=${index + 10}&codart=${k.codart}&quantite=${
-                k.quantite
-              }&fodart=0&desart=${k.desart}&datfac=${
-                this.props.datebl
-              }&priuni=${k.priuni}&remise=${k.remise}&unite${
-                k.unite
-              }&codtva=3&tautva=${k.tautva}`,
-              {
-                method: "POST",
-                header: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then(
-                (result) => {
-                  //  this.setState({ enrsnackbaropen: true, snackbarmsg: result });
-
-                  console.log(result);
-                  // window.alert(result);
-                },
-                (error) => {
-                  this.setState({
-                    enrsnackbaropen: true,
-                    snackbarmsg: "failed",
-                  });
-                }
-              );
-          }
-        });
-
-        //////////////////// third party calcul /////////////////
-
-        fetch(
-          `http://192.168.1.100:81/api/LigBCDV?FAC=${this.props.bcidd}&typfacc=BC`,
-          {
-            method: "POST",
-            header: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        )
-          .then((res) => res.json())
-          .then(
-            (result) => {
-              console.log(result);
-              window.location.reload();
-            },
-            (error) => {
-              this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-            }
-          );
-      });
-  };
+  /////// submit pour le bouton ajouter /////////////
 
   submitHandler = (event) => {
     event.preventDefault();
@@ -412,6 +331,10 @@ class ModifierBCModal extends Component {
       puttcnet: 0,
       faudec: "N",
     });
+  };
+
+  onCellChange = (event) => {
+    this.setState({ codearticle: event.target.value });
   };
 
   handleChange = (name) => (event) => {
@@ -516,12 +439,137 @@ class ModifierBCModal extends Component {
     });
   };
 
-  render() {
-    console.log(
-      this.state.totalqte,
-      `remise article =${this.state.sumremisearticle}`
-    );
+  qteHandler = (event) => {
+    console.log(typeof parseInt(event.target.value));
+    console.log(typeof this.state.totalqte);
 
+    this.setState({
+      qte: event.target.value,
+      puttcnet:
+        parseInt(this.state.puht) +
+        parseInt(this.state.puht) * (this.state.tva / 100),
+      totalht:
+        event.target.value *
+        this.state.puht *
+        ((100 - this.state.remisea) / 100),
+    });
+
+    this.state.stkfin >= parseInt(event.target.value)
+      ? this.setState({ yesno: "yes" })
+      : this.setState({ yesno: "no" });
+  };
+
+  enregistrer = () => {
+    ///////////////// Update blbrs ////////////
+    fetch(
+      `http://192.168.1.100:81/api/BSRS?numfac=${this.props.bsid}&typfac=BS&datfac=${this.state.datebcc}&codcli=${this.state.codeclient}&raisoc=${this.state.raisonsocial}&taurem=${this.state.remiseg}&catfisc=${this.state.categoriefiscale}`,
+      {
+        method: "PUT",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    ////////// first part delete ///////////////////
+    fetch(`http://192.168.1.100:81/api/LigBSRS/${this.props.bsid}?typfacc=BS`, {
+      method: "DELETE",
+      header: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        // this.setState({ enrsnackbaropen: true, snackbarmsg: result });
+
+        ///////////// second part add new table to database //////////////
+
+        this.state.tab.map((k, index) => {
+          for (var i = 0; i < this.state.tab.length; i++) {
+            fetch(
+              `http://192.168.1.100:81/api/LigBSRS/{ID}?numfac=${
+                this.props.bsid
+              }&typfac=BS&numlig=${index + 10}&codart=${k.codart}&quantite=${
+                k.quantite
+              }&fodart=0&desart=${k.desart}&datfac=${
+                this.props.datebs
+              }&priuni=${k.priuni}&remise=${k.remise}&unite${
+                k.unite
+              }&codtva=3&tautva=${k.tautva}`,
+              {
+                method: "POST",
+                header: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              }
+            )
+              .then((res) => res.json())
+              .then(
+                (result) => {
+                  //this.setState({ enrsnackbaropen: true, snackbarmsg: result });
+
+                  console.log(result);
+                  // window.alert(result);
+                },
+                (error) => {
+                  this.setState({
+                    enrsnackbaropen: true,
+                    snackbarmsg: "failed",
+                  });
+                }
+              );
+          }
+        });
+
+        //// third part calcul with vue/////////////
+        // fetch(
+        //   `http://192.168.1.100:81/api/LigBLBRs?FAC=${this.props.bsid}&typfacc=BL`,
+        //   {
+        //     method: "POST",
+        //     header: {
+        //       Accept: "application/json",
+        //       "Content-Type": "application/json",
+        //     },
+        //   }
+        // )
+        //   .then((res) => res.json())
+        //   .then(
+        //     (result) => {
+        //       console.log(result);
+        //     },
+        //     (error) => {
+        //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        //     }
+        //   );
+
+        ///////////// 4th part tva total calcul ///////////////
+        // fetch(
+        //   `http://192.168.1.100:81/api/LigBLBRs?FAC=${this.props.bsid}&Typfacc=bl&CODDEPP=`,
+        //   {
+        //     method: "POST",
+        //     header: {
+        //       Accept: "application/json",
+        //       "Content-Type": "application/json",
+        //     },
+        //   }
+        // )
+        //   .then((res) => res.json())
+        //   .then(
+        //     (result) => {
+        //       console.log(result);
+        //       window.location.reload();
+        //     },
+        //     (error) => {
+        //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        //     }
+        //   );
+      });
+  };
+
+  render() {
     return (
       <div className="container">
         <Snackbar
@@ -579,7 +627,7 @@ class ModifierBCModal extends Component {
         >
           <Modal.Header closeButton style={{ color: "#00087E" }}>
             <Modal.Title id="contained-modal-title-vcenter">
-              <b>Modifier Bon de commande № {this.props.bcidd}</b>
+              <b>Modifier Bon de sortie № {this.props.bsid}</b>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: "#fff" }}>
@@ -627,7 +675,6 @@ class ModifierBCModal extends Component {
                               id="include-input-in-list"
                               includeInputInList
                               className="ajouter-client-input"
-                              // options={this.props.clients.clients}
                               // options={this.state.rechsc}
                               options={
                                 this.state.clicked
@@ -680,7 +727,6 @@ class ModifierBCModal extends Component {
                               id="include-input-in-list"
                               includeInputInList
                               className="ajouter-client-input"
-                              // options={this.props.clients.clients}
                               // options={this.state.rechsc}
                               options={
                                 this.state.clicked
@@ -718,7 +764,6 @@ class ModifierBCModal extends Component {
                                   {...params}
                                   label="Raison sociale"
                                   margin="normal"
-                                  //variant="outlined"
                                   fullWidth
                                   onChange={this.clientHandlerChange}
                                   name="raissoc"
@@ -809,7 +854,7 @@ class ModifierBCModal extends Component {
                   <Card.Body>
                     <form onSubmit={this.submitHandler}>
                       <Row form style={{ marginBottom: "-20px" }}>
-                        <Col sm={8}>
+                        <Col sm={7}>
                           <FormGroup>
                             <Typography component="div">
                               <Grid
@@ -832,7 +877,7 @@ class ModifierBCModal extends Component {
                                   />
                                 </Grid>
                                 <Grid item style={{ color: "#3f51b5" }}>
-                                  Code article
+                                  Code
                                 </Grid>
                               </Grid>
                             </Typography>
@@ -848,7 +893,18 @@ class ModifierBCModal extends Component {
                             ) : null}
                           </FormGroup>
                         </Col>
+
+                        <Col sm={2}>
+                          <FormGroup
+                            style={{ marginTop: "10px", marginLeft: "10px" }}
+                          >
+                            <p style={{ color: "grey" }}>
+                              Stock: {this.state.stkfin}{" "}
+                            </p>
+                          </FormGroup>
+                        </Col>
                       </Row>
+
                       <Row form>
                         <Col sm={5}>
                           <FormGroup>
@@ -884,6 +940,7 @@ class ModifierBCModal extends Component {
                                         remisea: getOptionLabel.remise,
                                         tva: getOptionLabel.tautva,
                                         faudec: getOptionLabel.typfodec,
+                                        stkfin: getOptionLabel.stkfin,
                                       })
                                     : this.setState({
                                         codearticle: "",
@@ -894,6 +951,7 @@ class ModifierBCModal extends Component {
                                         remisea: 0,
                                         tva: 0,
                                         faudec: "N",
+                                        stkfin: 0,
                                       });
                                 }}
                                 renderInput={(params) => (
@@ -929,6 +987,7 @@ class ModifierBCModal extends Component {
                                         remisea: getOptionLabel.remise,
                                         tva: getOptionLabel.tautva,
                                         faudec: getOptionLabel.typfodec,
+                                        stkfin: getOptionLabel.stkfin,
                                       })
                                     : this.setState({
                                         codearticle: "",
@@ -939,6 +998,7 @@ class ModifierBCModal extends Component {
                                         remisea: 0,
                                         tva: 0,
                                         faudec: "N",
+                                        stkfin: 0,
                                       });
                                 }}
                                 renderInput={(params) => (
@@ -1048,7 +1108,7 @@ class ModifierBCModal extends Component {
                             <TextField
                               id="standard-basic"
                               label="Remise %"
-                              defaultValue={this.state.remisea}
+                              value={this.state.remisea}
                               fullWidth
                               name="remisea"
                               // disabled
@@ -1065,7 +1125,6 @@ class ModifierBCModal extends Component {
                               value={this.state.tva}
                               fullWidth
                               disabled
-                              size="small"
                             />
                           </FormGroup>
                         </Col>
@@ -1073,11 +1132,10 @@ class ModifierBCModal extends Component {
                           <FormGroup>
                             <TextField
                               id="standard-basic"
-                              label="Total HT"
-                              value={this.state.totalht}
+                              label="PU TTC Net"
+                              value={Number(this.state.puttcnet).toFixed(3)}
                               fullWidth
                               disabled
-                              size="small"
                             />
                           </FormGroup>
                         </Col>
@@ -1086,11 +1144,10 @@ class ModifierBCModal extends Component {
                           <FormGroup>
                             <TextField
                               id="standard-basic"
-                              label="PU TTC Net"
-                              value={this.state.puttcnet}
+                              label="Total HT"
+                              value={Number(this.state.totalht).toFixed(3)}
                               fullWidth
                               disabled
-                              size="small"
                             />
                           </FormGroup>
                         </Col>
@@ -1099,6 +1156,14 @@ class ModifierBCModal extends Component {
                       {this.state.changeButton ? (
                         <Center>
                           <Button
+                            disabled={
+                              this.state.yesno === "no" ||
+                              this.state.qte === "" ||
+                              this.state.stkfin <= 0 ||
+                              parseInt(this.state.qte) <= 0
+                                ? true
+                                : false
+                            }
                             style={{ width: "320px" }}
                             variant="contained"
                             color="primary"
@@ -1109,7 +1174,11 @@ class ModifierBCModal extends Component {
                             Enregistrer les modifications
                           </Button>
                         </Center>
-                      ) : this.state.des === "" ? (
+                      ) : this.state.des === "" ||
+                        this.state.yesno === "no" ||
+                        this.state.qte === "" ||
+                        this.state.stkfin <= 0 ||
+                        parseInt(this.state.qte) <= 0 ? (
                         <Center>
                           <Button
                             disabled
@@ -1139,20 +1208,20 @@ class ModifierBCModal extends Component {
 
                 <Card style={{ marginTop: "10px" }}>
                   <Card.Body>
-                    {/* <div className="TableArticle"> */}
-                    <div className="tabd28">
+                    <div className="tabbs2">
                       <table style={{ marginTop: "10px" }}>
                         <thead
-                          style={{ fontSize: "12px", textAlign: "center" }}
+                          style={{ textAlign: "center", fontSize: "12px" }}
                         >
                           <tr>
                             <th>Code</th>
-                            <th style={{ width: "40%" }}>Désignation</th>
+                            <th style={{ width: "37%" }}>Désignation</th>
                             <th>Quantité</th>
-                            <th>PUHT</th>
+                            <th>PU HT</th>
                             <th>Remise</th>
                             <th>TVA</th>
                             <th>TotalHT</th>
+                            <th>PUNet</th>
                             <th></th>
                             <th></th>
                           </tr>
@@ -1169,7 +1238,7 @@ class ModifierBCModal extends Component {
                               <td>
                                 <span>{t.codart}</span>
                               </td>
-                              <td style={{ fontSize: "12px", width: "40%" }}>
+                              <td style={{ fontSize: "12px", width: "37%" }}>
                                 {t.desart}
                               </td>
                               <td>
@@ -1185,16 +1254,27 @@ class ModifierBCModal extends Component {
                               <td>
                                 <span>{Number(t.tautva).toFixed(2)}</span>
                               </td>
-
                               <td>
                                 <span>{Number(t.montht).toFixed(3)}</span>
                               </td>
                               <td>
-                                <Tooltip title="Modifier cet article">
+                                <span>{Number(t.PUTTCNET).toFixed(3)}</span>
+                              </td>
+                              <td>
+                                <Tooltip title="Editer cet article">
                                   <Fab size="small">
                                     <EditIcon
                                       style={{}}
                                       onClick={() => {
+                                        fetch(
+                                          `http://192.168.1.100:81/api/ARTICLEs?codartt=${t.codart}`
+                                        )
+                                          .then((response) => response.json())
+                                          .then((data) =>
+                                            this.setState({
+                                              stkfin: data.map((t) => t.stkfin),
+                                            })
+                                          );
                                         this.setState({
                                           codearticle: t.codart,
                                           des: t.desart,
@@ -1204,6 +1284,8 @@ class ModifierBCModal extends Component {
                                           tva: t.tautva,
                                           faudec: t.typfodec,
                                           qte: t.quantite,
+                                          totalht: t.montht,
+                                          puttcnet: t.PUTTCNET,
                                           changeButton: true,
                                         });
                                         this.deleteRowMod(i);
@@ -1234,13 +1316,17 @@ class ModifierBCModal extends Component {
           </Modal.Body>
           <Modal.Footer>
             {!this.state.btnEnabled ? (
-              <Button disabled variant="contained">
+              <Button disabled variant="contained" style={{ width: "30%" }}>
                 Enregistrer
               </Button>
             ) : (
               <Button
                 variant="contained"
-                style={{ backgroundColor: "rgb(0, 8, 126)", color: "white" }}
+                style={{
+                  backgroundColor: "rgb(0, 8, 126)",
+                  color: "white",
+                  width: "30%",
+                }}
                 onClick={() => {
                   // this.props.submitHandler(this.state.tab,
                   //     this.state.totalqte,
@@ -1256,6 +1342,8 @@ class ModifierBCModal extends Component {
                   this.props.onHide();
                   this.props.onHide01();
                   window.alert("Modification enregistrés");
+
+                  this.props.SelectBS();
                 }}
               >
                 Enregistrer
@@ -1271,7 +1359,7 @@ class ModifierBCModal extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectArticle: () => dispatch(SelectArticle()),
-    SelectBC: () => dispatch(SelectBC()),
+    SelectBS: () => dispatch(SelectBS()),
     SelectClient: () => dispatch(SelectClient()),
   };
 }
@@ -1283,4 +1371,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModifierBCModal);
+export default connect(mapStateToProps, mapDispatchToProps)(ModifierBS);

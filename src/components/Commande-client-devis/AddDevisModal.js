@@ -58,7 +58,11 @@ class AddDevisModal extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <FieldArraysFormClass hide={() => this.props.onHide()} />
+            <FieldArraysFormClass
+              valtimbre={this.props.valtimbre}
+              hide={() => this.props.onHide()}
+              valtimbree={this.props.valtimbree}
+            />
           </Modal.Body>
         </Modal>
       </div>

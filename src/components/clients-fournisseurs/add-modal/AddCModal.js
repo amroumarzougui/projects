@@ -157,9 +157,6 @@ class AddCModal extends Component {
                               />
                               Passager
                             </Grid>
-                            {/* <Grid item style={{ color: "#f50057" }}>
-                                                            Code
-                        </Grid> */}
                           </FormGroup>
                         </Col>
                       </Row>
@@ -437,7 +434,7 @@ class AddCModal extends Component {
                                 color: "#007bff",
                               }}
                             >
-                              Assujiti{" "}
+                              Assujetti{" "}
                             </p>
                           ) : this.state.categoriefiscale === "1" ? (
                             <p
@@ -447,7 +444,7 @@ class AddCModal extends Component {
                                 color: "#007bff",
                               }}
                             >
-                              Non Assujiti{" "}
+                              Non Assujetti{" "}
                             </p>
                           ) : this.state.categoriefiscale === "2" ? (
                             <p

@@ -49,6 +49,9 @@ import GetCatNomeReducer from "./reducers/GetCatNome";
 import GetCodFacReducer from "./reducers/GetCodFac";
 import GetVendeurReducer from "./reducers/GetVendeur";
 import getCodVDReducer from "./reducers/GetCodVD";
+import getValTimbreReducer from "./reducers/GetValTimbre";
+import getBSReducer from "./reducers/GetBS";
+import getBSCodReducer from "./reducers/GetBSCod";
 
 const middleware = [thunkMiddlewar];
 const composeEnhancers =
@@ -104,6 +107,9 @@ const myStore = createStore(
     codfacs: GetCodFacReducer,
     vendeurs: GetVendeurReducer,
     codvds: getCodVDReducer,
+    valtimbres: getValTimbreReducer,
+    bsss: getBSReducer,
+    bscods: getBSCodReducer,
   }),
   enhancer
 );

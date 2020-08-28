@@ -1,19 +1,19 @@
 import React, { Component } from "react";
-import { Row, Col, Button, Table, FormGroup } from "reactstrap";
 import { connect } from "react-redux";
-import "./be.scss";
+import { Row, Col, Button, Table, FormGroup } from "reactstrap";
+import "./bs.scss";
 import { Redirect } from "react-router-dom";
 import {
   TextField,
   InputAdornment,
-  Typography,
-  Grid,
   Switch,
+  Grid,
+  Typography,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
-import AddBEModal from "./AddBEModal";
-import GetBEByIdModal from "./GetBEByIdModal";
-import { SelectBE } from "../../redux/actions/GetBE";
+import { SelectBS } from "../../redux/actions/GetBS";
+import GetBSByIdModal from "./GetBSByIdModal";
+import AddBSModal from "./AddBSModal";
 import { SelectValTimbre } from "../../redux/actions/GetValTimbre";
 
 const DATE_OPTIONS = {
@@ -26,7 +26,7 @@ var curr = new Date();
 curr.setDate(curr.getDate());
 var date = curr.toISOString().substr(0, 10);
 
-class BonEntree extends Component {
+class BonDeSortie extends Component {
   constructor(props) {
     super(props);
     const token = localStorage.getItem("token");
@@ -37,7 +37,7 @@ class BonEntree extends Component {
     }
     this.state = {
       addModalShow: false,
-      getBLByIdModalShow: false,
+      GetBSByIdModalShow: false,
       loggedIn,
       rechs: [],
       icon: false,
@@ -49,14 +49,19 @@ class BonEntree extends Component {
       seconddate: date,
       rechdats: [],
       showrechbydate: false,
-
       gilad: true,
+
+      valeurtim: 0,
     };
   }
 
   componentDidMount() {
-    this.props.SelectBE();
+    this.props.SelectBS();
     this.props.SelectValTimbre();
+
+    this.props.valtimbres.valtimbres.map((t) =>
+      this.setState({ valeurtim: t.valtimbre })
+    );
   }
 
   handleChange = (name) => (event) => {
@@ -67,19 +72,19 @@ class BonEntree extends Component {
       : this.setState({ rechercheclicked: false });
   };
 
+  toggle = () => this.setState({ modal: !this.state.modal });
+
   rechercheHandler = (event) => {
-    fetch(`http://192.168.1.100:81/api/BEREs/${event.target.value}?type=BE`)
+    fetch(`http://192.168.1.100:81/api/BSRS/${event.target.value}?type=BS`)
       .then((response) => response.json())
       .then((data) => this.setState({ rechs: data, rechercheclicked: true }));
   };
-
-  toggle = () => this.setState({ modal: !this.state.modal });
 
   firstrechdatHandler = (event) => {
     this.setState({ firstdate: event.target.value });
 
     fetch(
-      `http://192.168.1.100:81/api/BEREs?datt=${event.target.value}&dattt=${this.state.seconddate}&typpe=BE`
+      `http://192.168.1.100:81/api/BSRS?datt=${event.target.value}&dattt=${this.state.seconddate}&typpe=BS`
     )
       .then((response) => response.json())
       .then((data) =>
@@ -95,7 +100,7 @@ class BonEntree extends Component {
     this.setState({ seconddate: event.target.value });
 
     fetch(
-      `http://192.168.1.100:81/api/BEREs?datt=${this.state.firstdate}&dattt=${event.target.value}&typpe=BE`
+      `http://192.168.1.100:81/api/BSRS?datt=${this.state.firstdate}&dattt=${event.target.value}&typpe=BS`
     )
       .then((response) => response.json())
       .then((data) =>
@@ -108,13 +113,12 @@ class BonEntree extends Component {
   };
 
   render() {
-    if (this.state.loggedIn === false) {
-      return <Redirect to="/" />;
-    }
+    let addModalClose1 = () => this.setState({ addModalShow: false });
+    let getModalClose = () => this.setState({ GetBSByIdModalShow: false });
 
     const {
-      blid,
-      datebl,
+      bsid,
+      datebs,
       client,
       raisonsociale,
       totalqteee,
@@ -130,27 +134,26 @@ class BonEntree extends Component {
       avanceimpot,
       rem,
       annuler,
-      sumqt,
-      facture,
       catfisc,
-      typach,
-      pj,
+      sumqt,
       taurem,
       valtimbree,
+      //totalhtbr,
     } = this.state;
 
-    let addModalClose1 = () => this.setState({ addModalShow: false });
-    let getModalClose = () => this.setState({ getBLByIdModalShow: false });
-
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     return (
       <div>
-        <div className="bl-icon">
-          <i class="fa fa-share" aria-hidden="true">
+        <div className="bc-icon">
+          <i class="fa fa-reply" aria-hidden="true">
             {" "}
-            Bon d'Entrée
+            Bon de sortie
           </i>
         </div>
         <br />
+
         <div>
           <Row style={{ marginTop: "-30px" }}>
             <Col sm={5}>
@@ -174,7 +177,7 @@ class BonEntree extends Component {
                       />
                     </Grid>
                     <Grid item style={{ color: "#3f51b5" }}>
-                      Recherche par № BE / Fournisseur
+                      Recherche par № BS / Client
                     </Grid>
                   </Grid>
                 </Typography>
@@ -208,7 +211,7 @@ class BonEntree extends Component {
                     onClick={() => this.setState({ addModalShow: true })}
                   >
                     <div className="add-icon"></div>
-                    <div className="btn-txt">Ajouter BE</div>
+                    <div className="btn-txt">Ajouter BS</div>
                   </button>
                 </div>
               </Col>
@@ -260,7 +263,7 @@ class BonEntree extends Component {
                     onClick={() => this.setState({ addModalShow: true })}
                   >
                     <div className="add-icon"></div>
-                    <div className="btn-txt">Ajouter BE</div>
+                    <div className="btn-txt">Ajouter BC</div>
                   </button>
                 </div>
               </Col>
@@ -270,26 +273,24 @@ class BonEntree extends Component {
         <br />
 
         {this.state.rechercheclicked ? (
-          <div className="tabbe">
-            <table>
+          <div className="tabbs">
+            <table striped>
               <thead>
                 <tr>
-                  <th>№ BE</th>
+                  <th>№ BC</th>
                   <th>Date</th>
-
-                  {/* <th style={{ width: "55%" }}>Fournisseur</th> */}
-                  <th>Code Frs</th>
-                  <th style={{ width: "40%" }}>Raison social</th>
-                  <th>Montant</th>
+                  <th>Code client</th>
+                  <th style={{ width: "40%" }}>Raison Sociale</th>
+                  <th>Montant </th>
                 </tr>
               </thead>
               <tbody>
-                {this.state.rechs.map((test, i) => (
+                {this.state.rechs.map((test) => (
                   <tr
-                    key={i}
+                    key={test.numfac}
                     onClick={() => {
                       fetch(
-                        `http://192.168.1.100:81/api/LIGBEREs?type=BE&numfac=${test.numfac}`
+                        `http://192.168.1.100:81/api/LigBSRS?type=BS&numfac=${test.numfac}`
                       )
                         .then((response) => response.json())
                         .then((data) =>
@@ -303,11 +304,12 @@ class BonEntree extends Component {
                               ),
                           })
                         );
+
                       this.setState({
-                        getBLByIdModalShow: true,
-                        blid: test.numfac,
-                        datebl: test.datfac,
-                        client: test.codfrs,
+                        GetBSByIdModalShow: true,
+                        bsid: test.numfac,
+                        datebs: test.datfac,
+                        client: test.codcli,
                         raisonsociale: test.raisoc,
                         totalhtbrut: test.smhtb,
                         remiselignes: test.smremart,
@@ -320,12 +322,8 @@ class BonEntree extends Component {
                         droitdetimbre: test.timbre,
                         avanceimpot: test.ForfaitCli,
                         annuler: test.annuler,
-                        facture: test.facture,
                         catfisc: test.catfisc,
-                        typach: test.typach,
-                        pj: test.pj,
                         taurem: test.taurem,
-                        valtimbree: test.valtimbre,
                       });
                     }}
                   >
@@ -342,23 +340,15 @@ class BonEntree extends Component {
                       </span>
                     </td>
 
-                    {/* <td style={{ width: "55%" }}>
-                      <span>{test.codfrs}</span> &nbsp;&nbsp;&nbsp;&nbsp;
-                      <span>{test.raisoc}</span>
-                    </td> */}
                     <td>
-                      <span>{test.codfrs}</span>
+                      <span>{test.codcli}</span>
                     </td>
                     <td style={{ width: "40%" }}>
                       <span>{test.raisoc}</span>
                     </td>
 
                     <td>
-                      <span>
-                        {Number(
-                          parseFloat(test.mntbon) + parseFloat(test.valtimbre)
-                        ).toFixed(3)}
-                      </span>{" "}
+                      <span>{Number(parseFloat(test.mntbon)).toFixed(3)}</span>{" "}
                     </td>
                   </tr>
                 ))}
@@ -366,26 +356,24 @@ class BonEntree extends Component {
             </table>
           </div>
         ) : this.state.showrechbydate ? (
-          <div className="tabbe">
-            <table>
+          <div className="tabbs">
+            <table striped>
               <thead>
                 <tr>
-                  <th>№ BE</th>
+                  <th>№ BC</th>
                   <th>Date</th>
-
-                  {/* <th style={{ width: "55%" }}>Fournisseur</th> */}
-                  <th>Code Frs</th>
-                  <th style={{ width: "40%" }}>Raison social</th>
-                  <th>Montant</th>
+                  <th>Code client</th>
+                  <th style={{ width: "40%" }}>Raison Sociale</th>
+                  <th>Montant </th>
                 </tr>
               </thead>
               <tbody>
-                {this.state.rechdats.map((test, i) => (
+                {this.state.rechdats.map((test) => (
                   <tr
-                    key={i}
+                    key={test.numfac}
                     onClick={() => {
                       fetch(
-                        `http://192.168.1.100:81/api/LIGBEREs?type=BE&numfac=${test.numfac}`
+                        `http://192.168.1.100:81/api/LigBSRS?type=BS&numfac=${test.numfac}`
                       )
                         .then((response) => response.json())
                         .then((data) =>
@@ -399,11 +387,12 @@ class BonEntree extends Component {
                               ),
                           })
                         );
+
                       this.setState({
-                        getBLByIdModalShow: true,
-                        blid: test.numfac,
-                        datebl: test.datfac,
-                        client: test.codfrs,
+                        GetBSByIdModalShow: true,
+                        bsid: test.numfac,
+                        datebs: test.datfac,
+                        client: test.codcli,
                         raisonsociale: test.raisoc,
                         totalhtbrut: test.smhtb,
                         remiselignes: test.smremart,
@@ -416,12 +405,8 @@ class BonEntree extends Component {
                         droitdetimbre: test.timbre,
                         avanceimpot: test.ForfaitCli,
                         annuler: test.annuler,
-                        facture: test.facture,
                         catfisc: test.catfisc,
-                        typach: test.typach,
-                        pj: test.pj,
                         taurem: test.taurem,
-                        valtimbree: test.valtimbre,
                       });
                     }}
                   >
@@ -438,12 +423,8 @@ class BonEntree extends Component {
                       </span>
                     </td>
 
-                    {/* <td style={{ width: "55%" }}>
-                      <span>{test.codfrs}</span> &nbsp;&nbsp;&nbsp;&nbsp;
-                      <span>{test.raisoc}</span>
-                    </td> */}
                     <td>
-                      <span>{test.codfrs}</span>
+                      <span>{test.codcli}</span>
                     </td>
                     <td style={{ width: "40%" }}>
                       <span>{test.raisoc}</span>
@@ -452,7 +433,8 @@ class BonEntree extends Component {
                     <td>
                       <span>
                         {Number(
-                          parseFloat(test.mntbon) + parseFloat(test.valtimbre)
+                          parseFloat(test.mntbon) +
+                            parseFloat(this.state.valeurtim)
                         ).toFixed(3)}
                       </span>{" "}
                     </td>
@@ -462,26 +444,24 @@ class BonEntree extends Component {
             </table>
           </div>
         ) : (
-          <div className="tabbe">
-            <table>
+          <div className="tabbs">
+            <table striped>
               <thead>
                 <tr>
-                  <th>№ BE</th>
+                  <th>№ BC</th>
                   <th>Date</th>
-                  <th>Code Frs</th>
-                  <th style={{ width: "40%" }}>Raison social</th>
-                  {/* <th style={{ width: "55%" }}>Fournisseur</th> */}
-
-                  <th>Montant</th>
+                  <th>Code client</th>
+                  <th style={{ width: "40%" }}>Raison Sociale</th>
+                  <th>Montant </th>
                 </tr>
               </thead>
               <tbody>
-                {this.props.bes.bes.map((test, i) => (
+                {this.props.bsss.bsss.map((test) => (
                   <tr
-                    key={i}
+                    key={test.numfac}
                     onClick={() => {
                       fetch(
-                        `http://192.168.1.100:81/api/LIGBEREs?type=BE&numfac=${test.numfac}`
+                        `http://192.168.1.100:81/api/LigBSRS?type=BS&numfac=${test.numfac}`
                       )
                         .then((response) => response.json())
                         .then((data) =>
@@ -495,11 +475,12 @@ class BonEntree extends Component {
                               ),
                           })
                         );
+
                       this.setState({
-                        getBLByIdModalShow: true,
-                        blid: test.numfac,
-                        datebl: test.datfac,
-                        client: test.codfrs,
+                        GetBSByIdModalShow: true,
+                        bsid: test.numfac,
+                        datebs: test.datfac,
+                        client: test.codcli,
                         raisonsociale: test.raisoc,
                         totalhtbrut: test.smhtb,
                         remiselignes: test.smremart,
@@ -511,14 +492,9 @@ class BonEntree extends Component {
                         totaltva: test.smtva,
                         droitdetimbre: test.timbre,
                         avanceimpot: test.ForfaitCli,
-                        //  rem: test.id,
                         annuler: test.annuler,
-                        facture: test.facture,
                         catfisc: test.catfisc,
-                        typach: test.typach,
-                        pj: test.pj,
                         taurem: test.taurem,
-                        valtimbree: test.valtimbre,
                       });
                     }}
                   >
@@ -535,24 +511,15 @@ class BonEntree extends Component {
                       </span>
                     </td>
 
-                    {/* <td style={{ width: "55%" }}>
-                      <span>{test.codfrs}</span> &nbsp;&nbsp;&nbsp;&nbsp;
-                      <span>{test.raisoc}</span>
-                    </td> */}
-
                     <td>
-                      <span>{test.codfrs}</span>
+                      <span>{test.codcli}</span>
                     </td>
                     <td style={{ width: "40%" }}>
                       <span>{test.raisoc}</span>
                     </td>
 
                     <td>
-                      <span>
-                        {Number(
-                          parseFloat(test.mntbon) + parseFloat(test.valtimbre)
-                        ).toFixed(3)}
-                      </span>{" "}
+                      <span>{Number(parseFloat(test.mntbon)).toFixed(3)}</span>
                     </td>
                   </tr>
                 ))}
@@ -561,7 +528,7 @@ class BonEntree extends Component {
           </div>
         )}
 
-        <AddBEModal
+        <AddBSModal
           show={this.state.addModalShow}
           onHide={addModalClose1}
           valtimbre={this.props.valtimbres.valtimbres.map((t) =>
@@ -569,11 +536,11 @@ class BonEntree extends Component {
           )}
         />
 
-        <GetBEByIdModal
-          show={this.state.getBLByIdModalShow}
+        <GetBSByIdModal
+          show={this.state.GetBSByIdModalShow}
           onHide={getModalClose}
-          blid={blid}
-          datebl={datebl}
+          bsid={bsid}
+          datebs={datebs}
           client={client}
           raisonsociale={raisonsociale}
           totalhtbrut={totalhtbrut}
@@ -587,18 +554,17 @@ class BonEntree extends Component {
           droitdetimbre={droitdetimbre}
           avanceimpot={avanceimpot}
           rem={rem}
-          annuler={annuler}
           tabtab={this.state.tabtab}
+          annuler={annuler}
           sumqt={sumqt}
-          facture={facture}
-          catfisc={catfisc}
-          typach={typach}
-          pj={pj}
           taurem={taurem}
+          catfisc={catfisc}
           valtimbre={this.props.valtimbres.valtimbres.map((t) =>
             parseFloat(t.valtimbre)
           )}
-          valtimbree={valtimbree}
+          // valtimbree={valtimbree}
+
+          // totalhtbr={totalhtbr}
         />
       </div>
     );
@@ -607,16 +573,16 @@ class BonEntree extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    SelectBE: () => dispatch(SelectBE()),
+    SelectBS: () => dispatch(SelectBS()),
     SelectValTimbre: () => dispatch(SelectValTimbre()),
   };
 }
 
 function mapStateToProps(state) {
   return {
-    bes: state.bes,
+    bsss: state.bsss,
     valtimbres: state.valtimbres,
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BonEntree);
+export default connect(mapStateToProps, mapDispatchToProps)(BonDeSortie);

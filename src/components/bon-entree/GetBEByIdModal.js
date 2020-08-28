@@ -418,12 +418,14 @@ class GetBEByIdModal extends Component {
                     }}
                   >
                     <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
-                      Total Quantité
+                      {/* Total Quantité */}
+                      Valeur de timbre
                     </p>
                     <p style={{ color: "black" }}>
                       {/* {this.props.totalqte} */}
                       {/* {this.state.totalqte} */}
-                      {this.props.sumqt}
+                      {/* {this.props.sumqt} */}
+                      {Number(this.props.valtimbree).toFixed(3)}
                     </p>
                   </Col>
                 </Row>
@@ -616,6 +618,8 @@ class GetBEByIdModal extends Component {
             pj={this.props.pj}
             client={this.props.client}
             raisonsociale={this.props.raisonsociale}
+            taurem={this.props.taurem}
+            catfisc={this.props.catfisc}
           />
           <Modal.Footer></Modal.Footer>
         </Modal>

@@ -21,6 +21,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import "./ss.scss";
 import { SelectUser } from "../../redux/actions/DevisClient";
+import { SelectClient } from "../../redux/actions/GetClients";
 
 const roundTo = require("round-to");
 
@@ -31,13 +32,15 @@ var date = curr.toISOString().substr(0, 10);
 class ModifierLigDevis extends Component {
   constructor(props) {
     super(props);
+    const username = localStorage.getItem("username");
+
     this.state = {
       codearticle: "",
       qte: "",
       totalht: 0,
       des: "",
       unite: "",
-      puht: "",
+      puht: 0,
       remisea: 0,
       tva: 0,
       puttcnet: 0,
@@ -63,19 +66,82 @@ class ModifierLigDevis extends Component {
       defaultdate: date,
       shown: true,
       openEditModal: false,
+      giladd: true,
+
       rechs: [],
+      rechsc: [],
+
       changeButton: false,
+
+      remiseg: 0,
+      raisonsocial: "",
+      codeclient: "",
+      categoriefiscale: "",
+
+      datebcc: "",
+
+      username: username,
+      clicked: false,
+      clickeda: false,
     };
   }
   componentDidMount() {
     this.props.SelectArticle();
     this.sameTable();
+    this.props.SelectClient();
+
+    this.setState({
+      remiseg: this.props.taurem,
+      raisonsocial: this.props.raisonsociale,
+      codeclient: this.props.client,
+      categoriefiscale: this.props.catfisc,
+      datebcc: new Date(this.props.datfac).toISOString().substr(0, 10),
+    });
   }
+
+  datHandler = (event) => {
+    this.setState({ datebcc: event.target.value });
+  };
+
+  raisocHandler = (event) => {
+    this.setState({ raisonsocial: event.target.value });
+  };
+
+  remiseglobalChange = (event) => {
+    this.setState({ remiseg: event.target.value });
+  };
 
   articleHandlerChange = (event) => {
     fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
       .then((response) => response.json())
-      .then((data) => this.setState({ rechs: data }));
+      .then((data) => this.setState({ rechs: data, clickeda: true }));
+  };
+
+  clientHandlerChange = (event) => {
+    fetch(`http://192.168.1.100:81/api/CLIENTs?codclii=${event.target.value}`)
+      .then((response) => response.json())
+      .then((data) => this.setState({ rechsc: data, clicked: true }));
+  };
+
+  puhtHandler = (event) => {
+    this.setState({
+      puht: event.target.value,
+      totalht:
+        this.state.qte *
+        event.target.value *
+        ((100 - this.state.remisea) / 100),
+      puttcnet:
+        parseInt(event.target.value) +
+        parseInt(event.target.value) * (parseInt(this.state.tva) / 100),
+    });
+  };
+
+  remiseHandler = (event) => {
+    this.setState({
+      remisea: event.target.value,
+      totalht:
+        this.state.qte * this.state.puht * ((100 - event.target.value) / 100),
+    });
   };
 
   modifiermodification = (event) => {
@@ -89,8 +155,8 @@ class ModifierLigDevis extends Component {
       priuni: this.state.puht,
       remise: this.state.remisea,
       tautva: this.state.tva,
-      montht: this.state.puttcnet,
-      PUTTCNET: this.state.totalht,
+      montht: this.state.totalht,
+      PUTTCNET: this.state.puttcnet,
     });
     const SumQte = newtab && newtab.reduce((a, v) => a + parseInt(v.qte), 0);
     const SumRemiseArticle =
@@ -149,7 +215,7 @@ class ModifierLigDevis extends Component {
       totalht: 0,
       des: "",
       unite: "",
-      puht: "",
+      puht: 0,
       remisea: 0,
       tva: 0,
       puttcnet: 0,
@@ -166,10 +232,10 @@ class ModifierLigDevis extends Component {
       quantite: this.state.qte,
       unite: this.state.unite,
       priuni: this.state.puht,
-      remise: event.target.remiseea.value,
+      remise: event.target.remisea.value,
       tautva: this.state.tva,
-      montht: this.state.puttcnet,
-      PUTTCNET: this.state.totalht,
+      montht: this.state.totalht,
+      PUTTCNET: this.state.puttcnet,
     });
     const SumQte = newtab && newtab.reduce((a, v) => a + parseInt(v.qte), 0);
     const SumRemiseArticle =
@@ -227,7 +293,7 @@ class ModifierLigDevis extends Component {
       totalht: 0,
       des: "",
       unite: "",
-      puht: "",
+      puht: 0,
       remisea: 0,
       tva: 0,
       puttcnet: 0,
@@ -248,16 +314,15 @@ class ModifierLigDevis extends Component {
   };
 
   qteHandler = (event) => {
-    const toti = roundTo(event.target.value * this.state.puht, 3);
-
     this.setState({
       qte: event.target.value,
-      puttcnet: roundTo(
-        parseFloat(this.state.puht) +
-          parseFloat(this.state.puht) * (parseFloat(this.state.tva) / 100),
-        3
-      ),
-      totalht: toti,
+      puttcnet:
+        parseInt(this.state.puht) +
+        parseInt(this.state.puht) * (this.state.tva / 100),
+      totalht:
+        event.target.value *
+        this.state.puht *
+        ((100 - this.state.remisea) / 100),
     });
   };
 
@@ -372,6 +437,18 @@ class ModifierLigDevis extends Component {
   };
 
   enregistrer = () => {
+    /////////////// Update bcdv //////////////////////
+
+    fetch(
+      `http://192.168.1.100:81/api/BCDVCLIs?numfac=${this.props.numfacc}&typfac=DV&datfac=${this.state.datebcc}&codcli=${this.state.codeclient}&raisoc=${this.state.raisonsocial}&taurem=${this.state.remiseg}&catfisc=${this.state.categoriefiscale}&timbre=${this.props.droitdetimbre}&valtimbre=0&ForfaitCli=${this.props.avanceimpot}&vendeur=${this.state.username}`,
+      {
+        method: "PUT",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
     ////////// first part delete ///////////////////
     fetch(
       `http://192.168.1.100:81/api/LigBCDV/${this.props.numfacc}?typfacc=DV`,
@@ -525,10 +602,222 @@ class ModifierLigDevis extends Component {
             style={{ backgroundColor: "white", color: "#020F64" }}
           >
             <Modal.Title id="contained-modal-title-vcenter">
-              <b>Modifier table des article</b>
+              <b>Modifier Devis № {this.props.numfacc}</b>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            <Card style={{ marginBottom: "10px" }}>
+              <Card.Body>
+                <Row style={{ marginBottom: "-20px", marginTop: "-20px" }}>
+                  <Col sm={8}>
+                    <FormGroup style={{ marginTop: "25px" }}>
+                      <Typography component="div">
+                        <Grid
+                          component="label"
+                          container
+                          alignItems="center"
+                          spacing={1}
+                        >
+                          <Grid>
+                            <b>Chercher client par :</b>
+                          </Grid>
+                          &nbsp;&nbsp;
+                          <Grid item style={{ color: "grey" }}>
+                            Raison sociale
+                          </Grid>
+                          <Grid item>
+                            <Switch
+                              checked={this.state.giladd}
+                              onChange={this.handleChange("giladd")}
+                              value="giladd"
+                              color="primary"
+                            />
+                          </Grid>
+                          <Grid item style={{ color: "#3f51b5" }}>
+                            Code client
+                          </Grid>
+                        </Grid>
+                      </Typography>
+                    </FormGroup>
+                  </Col>
+
+                  {this.state.giladd ? (
+                    <Col sm={4}>
+                      <FormGroup>
+                        <Autocomplete
+                          id="include-input-in-list"
+                          includeInputInList
+                          className="ajouter-client-input"
+                          // options={this.state.rechsc}
+                          options={
+                            this.state.clicked
+                              ? this.state.rechsc
+                              : this.props.clients.clients
+                          }
+                          getOptionLabel={(option) => option.codcli}
+                          onChange={(event, getOptionLabel) => {
+                            getOptionLabel
+                              ? this.setState({
+                                  raisonsocial: getOptionLabel.raisoc,
+                                  remiseg: getOptionLabel.remise,
+                                  codeclient: getOptionLabel.codcli,
+                                  categoriefiscale: getOptionLabel.catfisc,
+                                  btnEnable: true,
+                                  showTimbre: getOptionLabel.timbre,
+                                  showForfitaire: getOptionLabel.regimecli,
+                                  showButtonModalPassager:
+                                    getOptionLabel.passager,
+                                  cemail: getOptionLabel.email,
+                                })
+                              : this.setState({
+                                  raisonsocial: this.props.raisonsociale,
+                                  remiseg: this.props.taurem,
+                                  codeclient: this.props.client,
+                                  categoriefiscale: this.props.catfisc,
+                                  btnEnable: false,
+                                  showTimbre: false,
+                                  showForfitaire: 0,
+                                  showButtonModalPassager: false,
+                                });
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Code client"
+                              margin="normal"
+                              fullWidth
+                              onChange={this.clientHandlerChange}
+                              name="codcli"
+                            />
+                          )}
+                        />
+                      </FormGroup>
+                    </Col>
+                  ) : (
+                    <Col sm={4}>
+                      <FormGroup>
+                        <Autocomplete
+                          id="include-input-in-list"
+                          includeInputInList
+                          className="ajouter-client-input"
+                          // options={this.props.clients.clients}
+                          // options={this.state.rechsc}
+                          options={
+                            this.state.clicked
+                              ? this.state.rechsc
+                              : this.props.clients.clients
+                          }
+                          getOptionLabel={(option) => option.raisoc}
+                          onChange={(event, getOptionLabel) => {
+                            getOptionLabel
+                              ? this.setState({
+                                  raisonsocial: getOptionLabel.raisoc,
+                                  remiseg: getOptionLabel.remise,
+                                  codeclient: getOptionLabel.codcli,
+                                  categoriefiscale: getOptionLabel.catfisc,
+                                  btnEnable: true,
+                                  showTimbre: getOptionLabel.timbre,
+                                  showForfitaire: getOptionLabel.regimecli,
+                                  showButtonModalPassager:
+                                    getOptionLabel.passager,
+                                  cemail: getOptionLabel.email,
+                                })
+                              : this.setState({
+                                  raisonsocial: this.props.raisonsociale,
+                                  remiseg: this.props.taurem,
+                                  codeclient: this.props.client,
+                                  categoriefiscale: this.props.catfisc,
+                                  btnEnable: false,
+                                  showTimbre: false,
+                                  showForfitaire: 0,
+                                  showButtonModalPassager: false,
+                                });
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Raison sociale"
+                              margin="normal"
+                              fullWidth
+                              onChange={this.clientHandlerChange}
+                              name="raissoc"
+                            />
+                          )}
+                        />
+                      </FormGroup>
+                    </Col>
+                  )}
+                </Row>
+
+                <Row style={{ marginBottom: "-20px" }}>
+                  <Col sm={2}>
+                    <FormGroup>
+                      <TextField
+                        id="standard-basic"
+                        label="Code client"
+                        margin="normal"
+                        value={this.state.codeclient}
+                        fullWidth
+                        name="codcli"
+                        disabled
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                    </FormGroup>
+                  </Col>
+
+                  <Col sm={5}>
+                    <FormGroup>
+                      <TextField
+                        id="standard-basic"
+                        label="Raison sociale"
+                        margin="normal"
+                        value={this.state.raisonsocial}
+                        fullWidth
+                        name="raissoc"
+                        disabled={
+                          this.state.codeclient === "100" ? false : true
+                        }
+                        onChange={this.raisocHandler}
+                      />
+                    </FormGroup>
+                  </Col>
+
+                  <Col sm={2}>
+                    <TextField
+                      id="standard-basic"
+                      label="Remise Globale %"
+                      margin="normal"
+                      fullWidth
+                      name="remise"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      onChange={this.remiseglobalChange}
+                      value={this.state.remiseg}
+                    />
+                  </Col>
+
+                  <Col sm={3}>
+                    <TextField
+                      id="standard-basic"
+                      label="Date"
+                      margin="normal"
+                      type="date"
+                      fullWidth
+                      name="datfac"
+                      onChange={this.datHandler}
+                      value={this.state.datebcc}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+
             <Card>
               <Card.Body>
                 <form onSubmit={this.submitHandler}>
@@ -591,7 +880,12 @@ class ModifierLigDevis extends Component {
                             includeInputInList
                             className="ajouter-client-input"
                             //   options={this.props.articles.articles}
-                            options={this.state.rechs}
+                            // options={this.state.rechs}
+                            options={
+                              this.state.clickeda
+                                ? this.state.rechs
+                                : this.props.articles.articles
+                            }
                             getOptionLabel={(option) => option.codart}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
@@ -609,7 +903,7 @@ class ModifierLigDevis extends Component {
                                     totalht: 0,
                                     des: "",
                                     unite: "",
-                                    puht: "",
+                                    puht: 0,
                                     remisea: 0,
                                     tva: 0,
                                     faudec: "N",
@@ -631,7 +925,12 @@ class ModifierLigDevis extends Component {
                             includeInputInList
                             className="ajouter-client-input"
                             //   options={this.props.articles.articles}
-                            options={this.state.rechs}
+                            // options={this.state.rechs}
+                            options={
+                              this.state.clickeda
+                                ? this.state.rechs
+                                : this.props.articles.articles
+                            }
                             getOptionLabel={(option) => option.desart}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
@@ -649,7 +948,7 @@ class ModifierLigDevis extends Component {
                                     totalht: 0,
                                     des: "",
                                     unite: "",
-                                    puht: "",
+                                    puht: 0,
                                     remisea: 0,
                                     tva: 0,
                                     faudec: "N",
@@ -781,7 +1080,8 @@ class ModifierLigDevis extends Component {
                           label="PU HT"
                           value={this.state.puht}
                           fullWidth
-                          disabled
+                          name="puht"
+                          onChange={this.puhtHandler}
                         />
                       </FormGroup>
                     </Col>
@@ -793,11 +1093,13 @@ class ModifierLigDevis extends Component {
                           label="Remise %"
                           value={this.state.remisea}
                           fullWidth
-                          disabled
-                          name="remiseea"
+                          name="remisea"
+                          // disabled
+                          onChange={this.remiseHandler}
                         />
                       </FormGroup>
                     </Col>
+
                     <Col sm={2}>
                       <FormGroup>
                         <TextField
@@ -809,13 +1111,13 @@ class ModifierLigDevis extends Component {
                         />
                       </FormGroup>
                     </Col>
+
                     <Col sm={2}>
                       <FormGroup>
                         <TextField
                           id="standard-basic"
-                          label="Total HT"
-                          value={this.state.totalht}
-                          name="toti"
+                          label="PU TTC Net"
+                          value={Number(this.state.puttcnet).toFixed(3)}
                           fullWidth
                           disabled
                         />
@@ -826,8 +1128,8 @@ class ModifierLigDevis extends Component {
                       <FormGroup>
                         <TextField
                           id="standard-basic"
-                          label="PU TTC Net"
-                          value={this.state.puttcnet}
+                          label="Total HT"
+                          value={Number(this.state.totalht).toFixed(3)}
                           fullWidth
                           disabled
                         />
@@ -889,6 +1191,7 @@ class ModifierLigDevis extends Component {
                         <th>Remise</th>
                         <th>TVA</th>
                         <th>TotalHT</th>
+                        <th>Puttcnet</th>
                         <th></th>
                         <th></th>
                       </tr>
@@ -924,6 +1227,9 @@ class ModifierLigDevis extends Component {
 
                           <td>
                             <span>{Number(t.montht).toFixed(3)}</span>
+                          </td>
+                          <td>
+                            <span>{Number(t.PUTTCNET).toFixed(3)}</span>
                           </td>
                           <td>
                             <Tooltip title="Modifier cet article">
@@ -1001,12 +1307,14 @@ function mapDispatchToProps(dispatch) {
   return {
     SelectArticle: () => dispatch(SelectArticle()),
     SelectUser: () => dispatch(SelectUser()),
+    SelectClient: () => dispatch(SelectClient()),
   };
 }
 
 function mapStateToProps(state) {
   return {
     articles: state.articles,
+    clients: state.clients,
   };
 }
 

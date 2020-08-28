@@ -16,6 +16,7 @@ import {
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import ModalAjout from "./modalajout";
+import { SelectValTimbre } from "../../redux/actions/GetValTimbre";
 
 const DATE_OPTIONS = {
   year: "numeric",
@@ -57,6 +58,7 @@ class BonDeLivraison extends Component {
 
   componentDidMount() {
     this.props.SelectBL();
+    this.props.SelectValTimbre();
   }
 
   handleChange = (name) => (event) => {
@@ -133,6 +135,7 @@ class BonDeLivraison extends Component {
       facture,
       catfisc,
       SumHtBrut,
+      taurem,
     } = this.state;
 
     if (this.state.loggedIn === false) {
@@ -175,11 +178,11 @@ class BonDeLivraison extends Component {
               </FormGroup>
             </Col>
           </Row>
-          <Row>
-            {/* Recherche */}
-            {/* <ConnectedSearchBar /> */}
-            {this.state.gilad ? (
-              <Col sm="4">
+          {/* Recherche */}
+          {/* <ConnectedSearchBar /> */}
+          {this.state.gilad ? (
+            <Row>
+              <Col sm={10}>
                 <div className="search-bar">
                   <TextField
                     placeholder="Recherche..."
@@ -197,58 +200,71 @@ class BonDeLivraison extends Component {
                   />
                 </div>
               </Col>
-            ) : (
-              <Row style={{ marginTop: "-25px", marginLeft: "10px" }}>
-                <Col sm={6}>
-                  <TextField
-                    id="standard-basic"
-                    label="Date Début"
-                    margin="normal"
-                    type="date"
-                    fullWidth
-                    name="firstdate"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    onChange={this.firstrechdatHandler}
-                    value={this.state.firstdate}
-                    defaultValue={this.state.defaultdate}
-                  />
-                </Col>
+              <Col sm={2} style={{ marginTop: "-15px" }}>
+                <div id="" style={{ textAlign: "center" }}>
+                  <button
+                    className="icon-btn add-btn"
+                    onClick={() => this.setState({ addModalShow: true })}
+                  >
+                    <div className="add-icon"></div>
+                    <div className="btn-txt">Ajouter BL</div>
+                  </button>
+                </div>
+              </Col>
+            </Row>
+          ) : (
+            <Row style={{ marginTop: "-15px" }}>
+              <Col sm={3}>
+                <TextField
+                  id="standard-basic"
+                  label="Date Début"
+                  margin="normal"
+                  type="date"
+                  fullWidth
+                  name="firstdate"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={this.firstrechdatHandler}
+                  value={this.state.firstdate}
+                  defaultValue={this.state.defaultdate}
+                />
+              </Col>
 
-                <Col sm={6}>
-                  <TextField
-                    id="standard-basic"
-                    label="Date Fin"
-                    margin="normal"
-                    type="date"
-                    fullWidth
-                    name="seconddate"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    defaultValue={this.state.defaultdate}
-                    onChange={this.secondrechdatHandler}
-                    value={this.state.seconddate}
-                  />
-                </Col>
-              </Row>
-            )}
+              <Col sm={3}>
+                <TextField
+                  id="standard-basic"
+                  label="Date Fin"
+                  margin="normal"
+                  type="date"
+                  fullWidth
+                  name="seconddate"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  defaultValue={this.state.defaultdate}
+                  onChange={this.secondrechdatHandler}
+                  value={this.state.seconddate}
+                />
+              </Col>
 
-            <Col sm="2">
-              {/* Add second part devis // Ligs */}
-              {/* <AddDevis /> */}
-              <div id="" style={{ textAlign: "center" }}>
-                <button
-                  className="icon-btn add-btn"
-                  onClick={() => this.setState({ addModalShow: true })}
-                >
-                  <div className="add-icon"></div>
-                  <div className="btn-txt">Ajouter BL</div>
-                </button>
-              </div>
-            </Col>
-          </Row>
+              <Col sm={4}></Col>
+
+              <Col sm={2}>
+                {/* Add second part devis // Ligs */}
+                {/* <AddDevis /> */}
+                <div id="" style={{ textAlign: "center" }}>
+                  <button
+                    className="icon-btn add-btn"
+                    onClick={() => this.setState({ addModalShow: true })}
+                  >
+                    <div className="add-icon"></div>
+                    <div className="btn-txt">Ajouter BL</div>
+                  </button>
+                </div>
+              </Col>
+            </Row>
+          )}
         </div>
         <br />
 
@@ -309,6 +325,7 @@ class BonDeLivraison extends Component {
                             annuler: test.annuler,
                             facture: test.facture,
                             catfisc: test.catfisc,
+                            taurem: test.taurem,
                           })
                         );
                       // this.setState({
@@ -431,6 +448,7 @@ class BonDeLivraison extends Component {
                             annuler: test.annuler,
                             facture: test.facture,
                             catfisc: test.catfisc,
+                            taurem: test.taurem,
                           })
                         );
                     }}
@@ -533,6 +551,7 @@ class BonDeLivraison extends Component {
                             annuler: test.annuler,
                             facture: test.facture,
                             catfisc: test.catfisc,
+                            taurem: test.taurem,
                           })
                         );
 
@@ -600,7 +619,13 @@ class BonDeLivraison extends Component {
           </div>
         )}
 
-        <AddBLModal show={this.state.addModalShow} onHide={addModalClose1} />
+        <AddBLModal
+          show={this.state.addModalShow}
+          onHide={addModalClose1}
+          valtimbre={this.props.valtimbres.valtimbres.map((t) =>
+            parseFloat(t.valtimbre)
+          )}
+        />
 
         <GetBLByIdModal
           show={this.state.getBLByIdModalShow}
@@ -626,6 +651,10 @@ class BonDeLivraison extends Component {
           facture={facture}
           catfisc={catfisc}
           SumHtBrut={SumHtBrut}
+          taurem={taurem}
+          valtimbre={this.props.valtimbres.valtimbres.map((t) =>
+            parseFloat(t.valtimbre)
+          )}
         />
       </div>
     );
@@ -635,6 +664,7 @@ class BonDeLivraison extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectBL: () => dispatch(SelectBL()),
+    SelectValTimbre: () => dispatch(SelectValTimbre()),
   };
 }
 
@@ -642,6 +672,7 @@ function mapStateToProps(state) {
   return {
     bls: state.bls,
     SearchingResult: state.SearchingReducer,
+    valtimbres: state.valtimbres,
   };
 }
 

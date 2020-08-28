@@ -26,6 +26,7 @@ import Editable from "react-x-editable";
 // import EditRowModal from "./EditRowModal";
 import { SelectBL } from "../../redux/actions/GetBL";
 import { Redirect } from "react-router-dom";
+import { SelectFournisseur } from "../../redux/actions/GetFournisseur";
 
 var curr = new Date();
 curr.setDate(curr.getDate());
@@ -34,6 +35,8 @@ var date = curr.toISOString().substr(0, 10);
 class ModifierBE extends Component {
   constructor(props) {
     super(props);
+    const username = localStorage.getItem("username");
+
     this.state = {
       codearticle: "",
       qte: "",
@@ -72,12 +75,42 @@ class ModifierBE extends Component {
       defaultdate: date,
       ffs: [],
       numfacfacfrs: "",
+
+      giladd: true,
+
+      rechsc: [],
+
+      remiseg: 0,
+      raisonsocial: "",
+      codeclient: "",
+      categoriefiscale: "",
+
+      datebcc: "",
+
+      username: username,
+      typach: "",
+      pj: "",
+
+      clicked: false,
+      clickeda: false,
+      stkfin: 0,
     };
   }
 
   componentDidMount() {
     this.props.SelectArticle();
     this.sameTable();
+    this.props.SelectFournisseur();
+
+    this.setState({
+      remiseg: this.props.taurem,
+      raisonsocial: this.props.raisonsociale,
+      codeclient: this.props.client,
+      categoriefiscale: this.props.catfisc,
+      datebcc: new Date(this.props.datebl).toISOString().substr(0, 10),
+      typach: this.props.typach,
+      pj: this.props.pj,
+    });
 
     //////// get numfac  whene type= FF in table facfrs /////////
     if (this.props.typach === "F") {
@@ -94,7 +127,27 @@ class ModifierBE extends Component {
   articleHandlerChange = (event) => {
     fetch(`http://192.168.1.100:81/api/ARTICLEs?codartt=${event.target.value}`)
       .then((response) => response.json())
-      .then((data) => this.setState({ rechs: data }));
+      .then((data) => this.setState({ rechs: data, clickeda: true }));
+  };
+
+  clientHandlerChange = (event) => {
+    fetch(
+      `http://192.168.1.100:81/api/fournisseurs?codfrss=${event.target.value}`
+    )
+      .then((response) => response.json())
+      .then((data) => this.setState({ rechsc: data, clicked: true }));
+  };
+
+  datHandler = (event) => {
+    this.setState({ datebcc: event.target.value });
+  };
+
+  raisocHandler = (event) => {
+    this.setState({ raisonsocial: event.target.value });
+  };
+
+  remiseglobalChange = (event) => {
+    this.setState({ remiseg: event.target.value });
   };
 
   sameTable = () => {
@@ -138,8 +191,8 @@ class ModifierBE extends Component {
       priuni: this.state.puht,
       remise: this.state.remisea,
       tautva: this.state.tva,
-      montht: this.state.puttcnet,
-      PUTTCNET: this.state.totalht,
+      montht: this.state.totalht,
+      PUTTCNET: this.state.puttcnet,
     });
     const SumQte = newtab && newtab.reduce((a, v) => a + parseInt(v.qte), 0);
     const SumRemiseArticle =
@@ -203,6 +256,7 @@ class ModifierBE extends Component {
       tva: 0,
       puttcnet: 0,
       faudec: "N",
+      stkfin: 0,
     });
   };
 
@@ -217,10 +271,10 @@ class ModifierBE extends Component {
       quantite: this.state.qte,
       unite: this.state.unite,
       priuni: this.state.puht,
-      remise: event.target.remiseea.value,
+      remise: event.target.remisea.value,
       tautva: this.state.tva,
-      montht: this.state.puttcnet,
-      PUTTCNET: this.state.totalht,
+      montht: this.state.totalht,
+      PUTTCNET: this.state.puttcnet,
     });
     const SumQte = newtab && newtab.reduce((a, v) => a + parseInt(v.qte), 0);
     const SumRemiseArticle =
@@ -393,17 +447,52 @@ class ModifierBE extends Component {
   };
 
   qteHandler = (event) => {
-    console.log(typeof parseInt(event.target.value));
-    console.log(typeof this.state.totalqte);
-
     this.setState({
       qte: event.target.value,
-      puttcnet: this.state.puht + this.state.puht * (this.state.tva / 100),
-      totalht: event.target.value * this.state.puht,
+      puttcnet:
+        parseInt(this.state.puht) +
+        parseInt(this.state.puht) * (this.state.tva / 100),
+      totalht:
+        event.target.value *
+        this.state.puht *
+        ((100 - this.state.remisea) / 100),
+    });
+  };
+
+  remiseHandler = (event) => {
+    this.setState({
+      remisea: event.target.value,
+      totalht:
+        this.state.qte * this.state.puht * ((100 - event.target.value) / 100),
+    });
+  };
+
+  puhtHandler = (event) => {
+    this.setState({
+      puht: event.target.value,
+      totalht:
+        this.state.qte *
+        event.target.value *
+        ((100 - this.state.remisea) / 100),
+      puttcnet:
+        parseInt(event.target.value) +
+        parseInt(event.target.value) * (parseInt(this.state.tva) / 100),
     });
   };
 
   enregistrer = (event) => {
+    ///////// update beres ///////////////////////
+    fetch(
+      `http://192.168.1.100:81/api/BEREs?numfac=${this.props.blid}&typfac=BE&datfac=${this.state.datebcc}&codfrs=${this.state.codeclient}&raisoc=${this.state.raisonsocial}&catfisc=${this.state.categoriefiscale}&taurem=${this.state.remiseg}&pj=${this.state.pj}&typach=${this.state.typach}&Vendeur=${this.state.username}`,
+      {
+        method: "PUT",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
     ////////// first part delete ///////////////////
     fetch(
       `http://192.168.1.100:81/api/LigBEREs/${this.props.blid}?typfacc=BE`,
@@ -591,17 +680,233 @@ class ModifierBE extends Component {
         >
           <Modal.Header closeButton style={{ color: "#00087E" }}>
             <Modal.Title id="contained-modal-title-vcenter">
-              <b>Articles</b>
+              <b>Modifier Bon d'entrée № {this.props.blid}</b>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: "#fff" }}>
             <Row>
               <Col>
+                <Card style={{ marginBottom: "10px" }}>
+                  <Card.Body>
+                    <Row style={{ marginBottom: "-20px", marginTop: "-20px" }}>
+                      <Col sm={8}>
+                        <FormGroup style={{ marginTop: "25px" }}>
+                          <Typography component="div">
+                            <Grid
+                              component="label"
+                              container
+                              alignItems="center"
+                              spacing={1}
+                            >
+                              <Grid>
+                                <b>Chercher client par :</b>
+                              </Grid>
+                              &nbsp;&nbsp;
+                              <Grid item style={{ color: "grey" }}>
+                                Raison sociale
+                              </Grid>
+                              <Grid item>
+                                <Switch
+                                  checked={this.state.giladd}
+                                  onChange={this.handleChange("giladd")}
+                                  value="giladd"
+                                  color="primary"
+                                />
+                              </Grid>
+                              <Grid item style={{ color: "#3f51b5" }}>
+                                Code fournisseur
+                              </Grid>
+                            </Grid>
+                          </Typography>
+                        </FormGroup>
+                      </Col>
+
+                      {this.state.giladd ? (
+                        <Col sm={4}>
+                          <FormGroup>
+                            <Autocomplete
+                              id="include-input-in-list"
+                              includeInputInList
+                              className="ajouter-client-input"
+                              // options={this.state.rechsc}
+                              options={
+                                this.state.clicked
+                                  ? this.state.rechsc
+                                  : this.props.fournisseurs.fournisseurs
+                              }
+                              getOptionLabel={(option) => option.codfrs}
+                              onChange={(event, getOptionLabel) => {
+                                getOptionLabel
+                                  ? this.setState({
+                                      raisonsocial: getOptionLabel.raisoc,
+                                      codeclient: getOptionLabel.codfrs,
+                                      //  categoriefiscale: getOptionLabel.catfisc,
+                                      btnEnable: true,
+                                      // showTimbre: getOptionLabel.timbre,
+                                      // showForfitaire: getOptionLabel.regimecli,
+                                      // showButtonModalPassager:
+                                      //   getOptionLabel.passager,
+                                      // cemail: getOptionLabel.email,
+                                    })
+                                  : this.setState({
+                                      raisonsocial: this.props.raisonsociale,
+                                      // remiseg: this.props.taurem,
+                                      codeclient: this.props.client,
+                                      // categoriefiscale: this.props.catfisc,
+                                      btnEnable: false,
+                                      // showTimbre: false,
+                                      // showForfitaire: 0,
+                                      // showButtonModalPassager: false,
+                                    });
+                              }}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  label="Code Fournisseur"
+                                  margin="normal"
+                                  fullWidth
+                                  onChange={this.clientHandlerChange}
+                                  name="codfrss"
+                                />
+                              )}
+                            />
+                          </FormGroup>
+                        </Col>
+                      ) : (
+                        <Col sm={4}>
+                          <FormGroup>
+                            <Autocomplete
+                              id="include-input-in-list"
+                              includeInputInList
+                              className="ajouter-client-input"
+                              // options={this.state.rechsc}
+                              options={
+                                this.state.clicked
+                                  ? this.state.rechsc
+                                  : this.props.fournisseurs.fournisseurs
+                              }
+                              getOptionLabel={(option) => option.raisoc}
+                              onChange={(event, getOptionLabel) => {
+                                getOptionLabel
+                                  ? this.setState({
+                                      raisonsocial: getOptionLabel.raisoc,
+                                      //     remiseg: getOptionLabel.remise,
+                                      codeclient: getOptionLabel.codfrs,
+                                      // categoriefiscale: getOptionLabel.catfisc,
+                                      btnEnable: true,
+                                      // showTimbre: getOptionLabel.timbre,
+                                      // showForfitaire: getOptionLabel.regimecli,
+                                      // showButtonModalPassager:
+                                      //   getOptionLabel.passager,
+                                      // cemail: getOptionLabel.email,
+                                    })
+                                  : this.setState({
+                                      raisonsocial: this.props.raisonsociale,
+                                      //  remiseg: this.props.taurem,
+                                      codeclient: this.props.client,
+                                      //    categoriefiscale: this.props.catfisc,
+                                      btnEnable: false,
+                                      // showTimbre: false,
+                                      // showForfitaire: 0,
+                                      // showButtonModalPassager: false,
+                                    });
+                              }}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  label="Raison sociale"
+                                  margin="normal"
+                                  fullWidth
+                                  onChange={this.clientHandlerChange}
+                                  name="raissoc"
+                                />
+                              )}
+                            />
+                          </FormGroup>
+                        </Col>
+                      )}
+                    </Row>
+
+                    <Row style={{ marginBottom: "-20px" }}>
+                      <Col sm={2}>
+                        <FormGroup>
+                          <TextField
+                            id="standard-basic"
+                            label="Code Fournisseur"
+                            margin="normal"
+                            //variant="outlined"
+                            value={this.state.codeclient}
+                            fullWidth
+                            name="codfrs"
+                            disabled
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                          />
+                        </FormGroup>
+                      </Col>
+
+                      <Col sm={5}>
+                        <FormGroup>
+                          <TextField
+                            id="standard-basic"
+                            label="Raison sociale"
+                            margin="normal"
+                            //variant="outlined"
+                            value={this.state.raisonsocial}
+                            fullWidth
+                            name="raissoc"
+                            disabled={
+                              this.state.codeclient === "100" ? false : true
+                            }
+                            onChange={this.raisocHandler}
+                          />
+                        </FormGroup>
+                      </Col>
+
+                      <Col sm={2}>
+                        <TextField
+                          id="standard-basic"
+                          label="Remise Globale %"
+                          margin="normal"
+                          //variant="outlined"
+                          fullWidth
+                          name="remise"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          onChange={this.remiseglobalChange}
+                          value={this.state.remiseg}
+                        />
+                      </Col>
+
+                      <Col sm={3}>
+                        <TextField
+                          id="standard-basic"
+                          label="Date"
+                          margin="normal"
+                          type="date"
+                          fullWidth
+                          name="datfac"
+                          onChange={this.datHandler}
+                          value={this.state.datebcc}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          // defaultValue={new Date(this.props.datebl)
+                          //   .toISOString()
+                          //   .substr(0, 10)}
+                        />
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+
                 <Card>
                   <Card.Body>
                     <form onSubmit={this.submitHandler}>
                       <Row form style={{ marginBottom: "-20px" }}>
-                        <Col sm={8}>
+                        <Col sm={7}>
                           <FormGroup>
                             <Typography component="div">
                               <Grid
@@ -640,6 +945,16 @@ class ModifierBE extends Component {
                             ) : null}
                           </FormGroup>
                         </Col>
+
+                        <Col sm={2}>
+                          <FormGroup
+                            style={{ marginTop: "10px", marginLeft: "10px" }}
+                          >
+                            <p style={{ color: "grey" }}>
+                              Stock: {this.state.stkfin}{" "}
+                            </p>
+                          </FormGroup>
+                        </Col>
                       </Row>
 
                       <Row form>
@@ -660,7 +975,12 @@ class ModifierBE extends Component {
                                 includeInputInList
                                 className="ajouter-client-input"
                                 //   options={this.props.articles.articles}
-                                options={this.state.rechs}
+                                // options={this.state.rechs}
+                                options={
+                                  this.state.clickeda
+                                    ? this.state.rechs
+                                    : this.props.articles.articles
+                                }
                                 getOptionLabel={(option) => option.codart}
                                 onChange={(event, getOptionLabel) => {
                                   getOptionLabel
@@ -672,6 +992,7 @@ class ModifierBE extends Component {
                                         remisea: getOptionLabel.remise,
                                         tva: getOptionLabel.tautva,
                                         faudec: getOptionLabel.typfodec,
+                                        stkfin: getOptionLabel.stkfin,
                                       })
                                     : this.setState({
                                         codearticle: "",
@@ -682,6 +1003,7 @@ class ModifierBE extends Component {
                                         remisea: 0,
                                         tva: 0,
                                         faudec: "N",
+                                        stkfin: 0,
                                       });
                                 }}
                                 renderInput={(params) => (
@@ -700,7 +1022,12 @@ class ModifierBE extends Component {
                                 includeInputInList
                                 className="ajouter-client-input"
                                 //   options={this.props.articles.articles}
-                                options={this.state.rechs}
+                                // options={this.state.rechs}
+                                options={
+                                  this.state.clickeda
+                                    ? this.state.rechs
+                                    : this.props.articles.articles
+                                }
                                 getOptionLabel={(option) => option.desart}
                                 onChange={(event, getOptionLabel) => {
                                   getOptionLabel
@@ -712,6 +1039,7 @@ class ModifierBE extends Component {
                                         remisea: getOptionLabel.remise,
                                         tva: getOptionLabel.tautva,
                                         faudec: getOptionLabel.typfodec,
+                                        stkfin: getOptionLabel.stkfin,
                                       })
                                     : this.setState({
                                         codearticle: "",
@@ -722,6 +1050,7 @@ class ModifierBE extends Component {
                                         remisea: 0,
                                         tva: 0,
                                         faudec: "N",
+                                        stkfin: 0,
                                       });
                                 }}
                                 renderInput={(params) => (
@@ -820,8 +1149,8 @@ class ModifierBE extends Component {
                               label="PU HT"
                               value={this.state.puht}
                               fullWidth
-                              disabled
-                              size="small"
+                              name="puht"
+                              onChange={this.puhtHandler}
                             />
                           </FormGroup>
                         </Col>
@@ -831,11 +1160,11 @@ class ModifierBE extends Component {
                             <TextField
                               id="standard-basic"
                               label="Remise %"
-                              //   value={this.state.remisea}
                               defaultValue={this.state.remisea}
                               fullWidth
-                              name="remiseea"
-                              size="small"
+                              name="remisea"
+                              // disabled
+                              onChange={this.remiseHandler}
                             />
                           </FormGroup>
                         </Col>
@@ -848,7 +1177,6 @@ class ModifierBE extends Component {
                               value={this.state.tva}
                               fullWidth
                               disabled
-                              size="small"
                             />
                           </FormGroup>
                         </Col>
@@ -856,11 +1184,10 @@ class ModifierBE extends Component {
                           <FormGroup>
                             <TextField
                               id="standard-basic"
-                              label="Total HT"
-                              value={this.state.totalht}
+                              label="PU TTC Net"
+                              value={Number(this.state.puttcnet).toFixed(3)}
                               fullWidth
                               disabled
-                              size="small"
                             />
                           </FormGroup>
                         </Col>
@@ -869,11 +1196,10 @@ class ModifierBE extends Component {
                           <FormGroup>
                             <TextField
                               id="standard-basic"
-                              label="PU TTC Net"
-                              value={this.state.puttcnet}
+                              label="Total HT"
+                              value={Number(this.state.totalht).toFixed(3)}
                               fullWidth
                               disabled
-                              size="small"
                             />
                           </FormGroup>
                         </Col>
@@ -980,6 +1306,15 @@ class ModifierBE extends Component {
                                     <EditIcon
                                       style={{}}
                                       onClick={() => {
+                                        fetch(
+                                          `http://192.168.1.100:81/api/ARTICLEs?codartt=${t.codart}`
+                                        )
+                                          .then((response) => response.json())
+                                          .then((data) =>
+                                            this.setState({
+                                              stkfin: data.map((t) => t.stkfin),
+                                            })
+                                          );
                                         this.setState({
                                           codearticle: t.codart,
                                           des: t.desart,
@@ -989,6 +1324,8 @@ class ModifierBE extends Component {
                                           tva: t.tautva,
                                           faudec: t.typfodec,
                                           qte: t.quantite,
+                                          totalht: t.montht,
+                                          puttcnet: t.PUTTCNET,
                                           changeButton: true,
                                         });
                                         this.deleteRowMod(i);
@@ -1066,12 +1403,16 @@ function mapDispatchToProps(dispatch) {
   return {
     SelectArticle: () => dispatch(SelectArticle()),
     SelectBL: () => dispatch(SelectBL()),
+    SelectFournisseur: () => {
+      dispatch(SelectFournisseur());
+    },
   };
 }
 
 function mapStateToProps(state) {
   return {
     articles: state.articles,
+    fournisseurs: state.fournisseurs,
   };
 }
 

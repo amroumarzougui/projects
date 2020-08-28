@@ -18,6 +18,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
+import { SelectValTimbre } from "../../redux/actions/GetValTimbre";
 
 const DATE_OPTIONS = {
   year: "numeric",
@@ -59,6 +60,7 @@ class BonDeCommande extends Component {
 
   componentDidMount() {
     this.props.SelectBC();
+    this.props.SelectValTimbre();
   }
 
   handleChange = (name) => (event) => {
@@ -132,6 +134,8 @@ class BonDeCommande extends Component {
       annuler,
       catfisc,
       sumqt,
+      taurem,
+      valtimbree,
       //totalhtbr,
     } = this.state;
 
@@ -147,7 +151,7 @@ class BonDeCommande extends Component {
         <br />
         <div>
           <Row style={{ marginTop: "-30px" }}>
-            <Col sm={12}>
+            <Col sm={5}>
               <FormGroup style={{ marginTop: "25px" }}>
                 <Typography component="div">
                   <Grid
@@ -175,11 +179,9 @@ class BonDeCommande extends Component {
               </FormGroup>
             </Col>
           </Row>
-          <Row>
-            {/* Recherche */}
-            {/* <ConnectedSearchBar /> */}
-            {this.state.gilad ? (
-              <Col sm="4">
+          {this.state.gilad ? (
+            <Row>
+              <Col sm={10}>
                 <div className="search-bar">
                   <TextField
                     placeholder="Recherche..."
@@ -197,58 +199,71 @@ class BonDeCommande extends Component {
                   />
                 </div>
               </Col>
-            ) : (
-              <Row style={{ marginTop: "-25px", marginLeft: "10px" }}>
-                <Col sm={6}>
-                  <TextField
-                    id="standard-basic"
-                    label="Date Début"
-                    margin="normal"
-                    type="date"
-                    fullWidth
-                    name="firstdate"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    onChange={this.firstrechdatHandler}
-                    value={this.state.firstdate}
-                    defaultValue={this.state.defaultdate}
-                  />
-                </Col>
+              <Col sm={2} style={{ marginTop: "-15px" }}>
+                <div id="" style={{ textAlign: "center" }}>
+                  <button
+                    className="icon-btn add-btn"
+                    onClick={() => this.setState({ addModalShow: true })}
+                  >
+                    <div className="add-icon"></div>
+                    <div className="btn-txt">Ajouter BC</div>
+                  </button>
+                </div>
+              </Col>
+            </Row>
+          ) : (
+            <Row style={{ marginTop: "-15px" }}>
+              <Col sm={3}>
+                <TextField
+                  id="standard-basic"
+                  label="Date Début"
+                  margin="normal"
+                  type="date"
+                  fullWidth
+                  name="firstdate"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={this.firstrechdatHandler}
+                  value={this.state.firstdate}
+                  defaultValue={this.state.defaultdate}
+                />
+              </Col>
 
-                <Col sm={6}>
-                  <TextField
-                    id="standard-basic"
-                    label="Date Fin"
-                    margin="normal"
-                    type="date"
-                    fullWidth
-                    name="seconddate"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    defaultValue={this.state.defaultdate}
-                    onChange={this.secondrechdatHandler}
-                    value={this.state.seconddate}
-                  />
-                </Col>
-              </Row>
-            )}
+              <Col sm={3}>
+                <TextField
+                  id="standard-basic"
+                  label="Date Fin"
+                  margin="normal"
+                  type="date"
+                  fullWidth
+                  name="seconddate"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  defaultValue={this.state.defaultdate}
+                  onChange={this.secondrechdatHandler}
+                  value={this.state.seconddate}
+                />
+              </Col>
 
-            <Col sm="2">
-              {/* Add second part devis // Ligs */}
-              {/* <AddDevis /> */}
-              <div id="" style={{ textAlign: "center" }}>
-                <button
-                  className="icon-btn add-btn"
-                  onClick={() => this.setState({ addModalShow: true })}
-                >
-                  <div className="add-icon"></div>
-                  <div className="btn-txt">Ajouter BC</div>
-                </button>
-              </div>
-            </Col>
-          </Row>
+              <Col sm={4}></Col>
+
+              <Col sm={2}>
+                {/* Add second part devis // Ligs */}
+                {/* <AddDevis /> */}
+                <div id="" style={{ textAlign: "center" }}>
+                  <button
+                    className="icon-btn add-btn"
+                    onClick={() => this.setState({ addModalShow: true })}
+                  >
+                    <div className="add-icon"></div>
+                    <div className="btn-txt">Ajouter BC</div>
+                  </button>
+                </div>
+              </Col>
+            </Row>
+          )}
         </div>
         <br />
 
@@ -311,6 +326,8 @@ class BonDeCommande extends Component {
                         avanceimpot: test.ForfaitCli,
                         annuler: test.annuler,
                         catfisc: test.catfisc,
+                        taurem: test.taurem,
+                        valtimbree: test.valtimbre,
                       });
                     }}
                   >
@@ -339,7 +356,11 @@ class BonDeCommande extends Component {
                     </td>
 
                     <td>
-                      <span>{Number(test.mntbon).toFixed(3)}</span>
+                      <span>
+                        {Number(
+                          parseFloat(test.mntbon) + parseFloat(test.valtimbre)
+                        ).toFixed(3)}
+                      </span>{" "}
                     </td>
                   </tr>
                 ))}
@@ -398,6 +419,8 @@ class BonDeCommande extends Component {
                         avanceimpot: test.ForfaitCli,
                         annuler: test.annuler,
                         catfisc: test.catfisc,
+                        taurem: test.taurem,
+                        valtimbree: test.valtimbre,
                       });
                     }}
                   >
@@ -426,7 +449,11 @@ class BonDeCommande extends Component {
                     </td>
 
                     <td>
-                      <span>{Number(test.mntbon).toFixed(3)}</span>
+                      <span>
+                        {Number(
+                          parseFloat(test.mntbon) + parseFloat(test.valtimbre)
+                        ).toFixed(3)}
+                      </span>{" "}
                     </td>
                   </tr>
                 ))}
@@ -491,6 +518,8 @@ class BonDeCommande extends Component {
                         avanceimpot: test.ForfaitCli,
                         annuler: test.annuler,
                         catfisc: test.catfisc,
+                        taurem: test.taurem,
+                        valtimbree: test.valtimbre,
                       });
                     }}
                   >
@@ -519,7 +548,11 @@ class BonDeCommande extends Component {
                     </td>
 
                     <td>
-                      <span>{Number(test.mntbon).toFixed(3)}</span>
+                      <span>
+                        {Number(
+                          parseFloat(test.mntbon) + parseFloat(test.valtimbre)
+                        ).toFixed(3)}
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -528,7 +561,13 @@ class BonDeCommande extends Component {
           </div>
         )}
 
-        <AddBCModal show={this.state.addModalShow} onHide={addModalClose1} />
+        <AddBCModal
+          show={this.state.addModalShow}
+          onHide={addModalClose1}
+          valtimbre={this.props.valtimbres.valtimbres.map((t) =>
+            parseFloat(t.valtimbre)
+          )}
+        />
 
         <GetBCByIdModal
           show={this.state.getBCByIdModalShow}
@@ -551,6 +590,13 @@ class BonDeCommande extends Component {
           tabtab={this.state.tabtab}
           annuler={annuler}
           sumqt={sumqt}
+          taurem={taurem}
+          catfisc={catfisc}
+          valtimbre={this.props.valtimbres.valtimbres.map((t) =>
+            parseFloat(t.valtimbre)
+          )}
+          valtimbree={valtimbree}
+
           // totalhtbr={totalhtbr}
         />
       </div>
@@ -561,6 +607,7 @@ class BonDeCommande extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectBC: () => dispatch(SelectBC()),
+    SelectValTimbre: () => dispatch(SelectValTimbre()),
   };
 }
 
@@ -568,6 +615,7 @@ function mapStateToProps(state) {
   return {
     bcs: state.bcs,
     SearchingResult: state.SearchingReducer,
+    valtimbres: state.valtimbres,
   };
 }
 

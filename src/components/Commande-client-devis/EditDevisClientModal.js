@@ -425,12 +425,16 @@ class EditDevisClientModal extends Component {
                     }}
                   >
                     <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
-                      Total Quantité
+                      {/* Total Quantité */}
+                      Valeur de timbre
                     </p>
                     {/* {this.state.sums.map((sum) => (
                       <p style={{ color: "black" }}>{sum.Column1}
                       </p> */}
-                    <p style={{ color: "black" }}> {this.props.sumqt} </p>
+                    <p style={{ color: "black" }}>
+                      {/* {this.props.sumqt} */}
+                      {Number(this.props.valtimbree).toFixed(3)}
+                    </p>
                   </Col>
                 </Row>
 
@@ -526,7 +530,11 @@ class EditDevisClientModal extends Component {
                       Net à Payer
                     </p>
                     <p style={{ color: "black", fontWeight: "bold" }}>
-                      {Number(this.props.totalttc).toFixed(3)}
+                      {/* {Number(this.props.totalttc).toFixed(3)} */}
+                      {Number(
+                        parseFloat(this.props.totalttc) +
+                          parseFloat(this.props.valtimbree)
+                      ).toFixed(3)}
                     </p>
                   </Col>
                 </Row>
@@ -614,6 +622,12 @@ class EditDevisClientModal extends Component {
               numfacc={this.props.devisid}
               datfac={this.props.datedevis}
               onHide01={this.props.onHide}
+              taurem={this.props.taurem}
+              catfisc={this.props.catfisc}
+              client={this.props.client}
+              raisonsociale={this.props.raisonsociale}
+              droitdetimbre={this.props.droitdetimbre}
+              avanceimpot={this.props.avanceimpot}
             />
           </Modal.Body>
           <Modal.Footer></Modal.Footer>
@@ -883,7 +897,8 @@ class EditDevisClientModal extends Component {
                     {" "}
                     &nbsp;&nbsp;&nbsp;Timbre fiscal:
                   </td>
-                  <td>{this.props.droitdetimbre}</td>
+                  {/* <td>{this.props.droitdetimbre}</td> */}
+                  <td>{Number(this.props.valtimbree).toFixed(3)}</td>
                 </tr>
                 <tr style={{ height: "50px" }}>
                   <td style={{ fontWeight: "bold" }}>
@@ -892,7 +907,11 @@ class EditDevisClientModal extends Component {
                   </td>
                   <td style={{ fontWeight: "bold" }}>
                     {" "}
-                    {Number(this.props.totalttc).toFixed(3)}{" "}
+                    {Number(
+                      parseFloat(this.props.totalttc) +
+                        parseFloat(this.props.valtimbree)
+                    ).toFixed(3)}{" "}
+                    {/* {Number(this.props.totalttc).toFixed(3)}{" "} */}
                   </td>
                 </tr>
               </table>

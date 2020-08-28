@@ -21,6 +21,7 @@ import BonEntree from "../bon-entree/BonEntree";
 import Reglement from "../reglement/Reglement";
 import ClickToCall from "../clicktocall/ClickToCall";
 import Personnel from "../personnels/Personnel";
+import BonDeSortie from "../bon-de-sortie/BonDeSortie";
 // import Logout from "./Logout";
 export default (props) => (
   <Container
@@ -72,6 +73,7 @@ export default (props) => (
       <Route exact path="/reglement" component={Reglement} />
       <Route exact path="/clicktocall" component={ClickToCall} />
       <Route exact path="/personnel" component={Personnel} />
+      <Route exact path="/bon-de-sortie" component={BonDeSortie} />
     </Switch>
   </Container>
 );

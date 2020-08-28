@@ -9,8 +9,7 @@ import {
   Accordion,
 } from "react-bootstrap";
 import "../styling/Styles.css";
-// import "../commande-client-devis/ss.scss";
-import "./bl.scss";
+import "./bs.scss";
 
 import {
   TextField,
@@ -25,7 +24,6 @@ import Typography from "@material-ui/core/Typography";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { connect } from "react-redux";
 import { SelectClient } from "../../redux/actions/GetClients";
-import { GetNumFacDevis } from "../../redux/actions/GetNumfacDevis";
 import { SelectArticle } from "../../redux/actions/GetArticles";
 import Tooltip from "@material-ui/core/Tooltip";
 import AddIcon from "@material-ui/icons/Add";
@@ -34,9 +32,8 @@ import Fab from "@material-ui/core/Fab";
 import { Divider, Chip } from "@material-ui/core";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 
-import LigBLArticle from "./LigBLArticle";
-import { SelectBLCod } from "../../redux/actions/GetBLcod";
-import { SelectBL } from "../../redux/actions/GetBL";
+import LigBSModal from "./LigBSModal";
+import { SelectBSCod } from "../../redux/actions/GetBSCod";
 
 const roundTo = require("round-to");
 
@@ -44,7 +41,7 @@ var curr = new Date();
 curr.setDate(curr.getDate());
 var date = curr.toISOString().substr(0, 10);
 
-class AddBLModal extends Component {
+class AddBSModal extends Component {
   constructor(props) {
     super(props);
     const username = localStorage.getItem("username");
@@ -84,14 +81,15 @@ class AddBLModal extends Component {
 
       valtimbre: 0,
       netnetapayer: 0,
+
       clicked: false,
     };
   }
 
   componentDidMount() {
     this.props.SelectClient();
-    this.props.GetNumFacDevis();
-    this.props.SelectBLCod();
+    this.props.SelectBSCod();
+    // this.setState({ rechs: this.props.clients.clients });
   }
 
   submitHandler = (
@@ -147,7 +145,7 @@ class AddBLModal extends Component {
     this.state.tab.map((k, index) => {
       for (var i = 0; i < this.state.tab.length; i++) {
         fetch(
-          `http://192.168.1.100:81/api/LigBLBRs/{ID}?numfac=${event.target.codbl.value}&typfac=BL&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${this.state.defaultdate}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
+          `http://192.168.1.100:81/api/LigBSRS/{ID}?numfac=${event.target.codbl.value}&typfac=BS&numlig=${index}&codart=${k.codearticle}&quantite=${k.qte}&fodart=0&desart=${k.des}&datfac=${this.state.defaultdate}&priuni=${k.puht}&remise=${k.remisea}&unite${k.unite}&codtva=3&tautva=${k.tva}`,
           {
             method: "POST",
             header: {
@@ -169,7 +167,7 @@ class AddBLModal extends Component {
     });
 
     fetch(
-      `http://192.168.1.100:81/api/BLBRs?numfac=${event.target.codbl.value}&typfac=BL&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}&taurem=${this.state.remiseg}&VENDEUR=${this.state.username}`,
+      `http://192.168.1.100:81/api/BSRS?numfac=${event.target.codbl.value}&typfac=BS&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&taurem=${this.state.remiseg}`,
       {
         method: "POST",
         header: {
@@ -183,23 +181,23 @@ class AddBLModal extends Component {
         (result) => {
           this.props.onHide();
 
-          this.props.SelectBL();
+          //  this.props.SelectBL();
 
-          fetch(
-            `http://192.168.1.100:81/api/LigBLBRs?FAC=${this.props.codbls.codbls.map(
-              (nu) => parseInt(nu.valeur)
-            )}&typfacc=BL`,
-            {
-              method: "POST",
-              header: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          // fetch(
+          //   `http://192.168.1.100:81/api/LigBLBRs?FAC=${this.props.codbls.codbls.map(
+          //     (nu) => parseInt(nu.valeur)
+          //   )}&typfacc=BL`,
+          //   {
+          //     method: "POST",
+          //     header: {
+          //       Accept: "application/json",
+          //       "Content-Type": "application/json",
+          //     },
+          //   }
+          // );
 
           this.setState({ snackbaropen: true, snackbarmsg: result });
-          this.props.SelectBLCod();
+          this.props.SelectBSCod();
           console.log(result);
           window.location.reload();
         },
@@ -208,30 +206,30 @@ class AddBLModal extends Component {
         }
       );
 
-    fetch(
-      `http://192.168.1.100:81/api/LigBLBRs?FAC=${event.target.codbl.value}&Typfacc=bl&CODDEPP=`,
-      {
-        method: "POST",
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-        },
-        (error) => {
-          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
-        }
-      );
+    // fetch(
+    //   `http://192.168.1.100:81/api/LigBLBRs?FAC=${event.target.codbl.value}&Typfacc=bl&CODDEPP=`,
+    //   {
+    //     method: "POST",
+    //     header: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // )
+    //   .then((res) => res.json())
+    //   .then(
+    //     (result) => {
+    //       console.log(result);
+    //     },
+    //     (error) => {
+    //       this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+    //     }
+    //   );
 
     //////////// switch update ////////////////
 
     fetch(
-      `http://192.168.1.100:81/api/Switch?code=BL2&valeur=${
+      `http://192.168.1.100:81/api/Switch?code=BS2&valeur=${
         parseInt(event.target.codbl.value) + 1
       }`,
       {
@@ -259,7 +257,7 @@ class AddBLModal extends Component {
       .then((data) => this.setState({ rechs: data, clicked: true }));
   };
   render() {
-    const { dvnumfac, dvraisoc, rem, clientmail } = this.state;
+    const { dvnumfac, dvraisoc, rem, clientmail, val } = this.state;
 
     let addModalClose1 = () => this.setState({ addModalShow1: false });
     let ligModalClose = () => this.setState({ ligModalShow: false });
@@ -293,37 +291,21 @@ class AddBLModal extends Component {
             style={{ backgroundColor: "white", color: "#020F64" }}
           >
             <Modal.Title id="contained-modal-title-vcenter">
-              <b>Ajouter Bon de livraison</b>
+              <b>Ajouter Bon de sortie</b>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {/* <Row>
-              <Col sm={5}>
-                <Card>
-                  <Card.Body>
-
-                  </Card.Body>
-                </Card>
-              </Col>
-
-              <Col sm={7}>
-                <Card>
-                  <Card.Body></Card.Body>
-                </Card>
-              </Col>
-            </Row> */}
-
             <form onSubmit={this.enregistrer}>
               <Card>
                 <Card.Body>
                   <Row style={{ marginBottom: "-20px", marginTop: "-20px" }}>
                     <Col sm={4}>
                       <FormGroup>
-                        {this.props.codbls.codbls.map((t) => (
+                        {this.props.bscods.bscods.map((t) => (
                           <TextField
                             // className="card add-input"
                             id="standard-basic"
-                            label="№ BL"
+                            label="№ BS"
                             margin="normal"
                             //variant="outlined"
                             value={parseInt(t.valeur)}
@@ -384,7 +366,6 @@ class AddBLModal extends Component {
                             includeInputInList
                             className="ajouter-client-input"
                             // options={this.props.clients.clients}
-                            // options={this.state.rechs}
                             options={
                               this.state.clicked
                                 ? this.state.rechs
@@ -735,7 +716,7 @@ class AddBLModal extends Component {
                   </Card.Header>
                   <Accordion.Collapse eventKey="0">
                     <Card.Body>
-                      <div className="tabbl2">
+                      <div className="tabbs2">
                         <table>
                           <thead
                             style={{ textAlign: "center", fontSize: "12px" }}
@@ -1030,12 +1011,12 @@ class AddBLModal extends Component {
           </Modal.Body>
         </Modal>
 
-        <LigBLArticle
+        <LigBSModal
           submitHandler={this.submitHandler}
           show={this.state.ligModalShow}
           onHide={ligModalClose}
           rem={rem}
-          numfaccc={this.props.codbls.codbls.map((nu) => parseInt(nu.valeur))}
+          numfaccc={this.props.bscods.bscods.map((nu) => parseInt(nu.valeur))}
           datfac={this.state.defaultdate}
           valtimbre={this.state.valtimbre}
         />
@@ -1047,20 +1028,15 @@ class AddBLModal extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectClient: () => dispatch(SelectClient()),
-    GetNumFacDevis: () => dispatch(GetNumFacDevis()),
-    SelectArticle: () => dispatch(SelectArticle()),
-    SelectBLCod: () => dispatch(SelectBLCod()),
-    SelectBL: () => dispatch(SelectBL()),
+    SelectBSCod: () => dispatch(SelectBSCod()),
   };
 }
 
 function mapStateToProps(state) {
   return {
     clients: state.clients,
-    numfac: state.numfac,
-    articles: state.articles,
-    codbls: state.codbls,
+    bscods: state.bscods,
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddBLModal);
+export default connect(mapStateToProps, mapDispatchToProps)(AddBSModal);

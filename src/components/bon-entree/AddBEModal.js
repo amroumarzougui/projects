@@ -25,7 +25,6 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { connect } from "react-redux";
-import { SelectClient } from "../../redux/actions/GetClients";
 
 import Tooltip from "@material-ui/core/Tooltip";
 
@@ -38,6 +37,7 @@ import { SelectBECod } from "../../redux/actions/GetBECode";
 import LigBEArticle from "./LigBEArticle";
 import { SelectBE } from "../../redux/actions/GetBE";
 import { SelectFacFrsCod } from "../../redux/actions/GetFacFrsCod";
+import { SelectFournisseur } from "../../redux/actions/GetFournisseur";
 
 const roundTo = require("round-to");
 var curr = new Date();
@@ -47,6 +47,8 @@ var date = curr.toISOString().substr(0, 10);
 class AddBEModal extends Component {
   constructor(props) {
     super(props);
+    const username = localStorage.getItem("username");
+
     this.state = {
       gilad: true,
       defaultdate: date,
@@ -84,13 +86,20 @@ class AddBEModal extends Component {
       snackbaropen: false,
       snackbarmsg: ",",
       codf: "",
+
+      valtimbre: 0,
+      netnetapayer: 0,
+      catfiscal: "0",
+
+      username: username,
+      clicked: false,
     };
   }
 
   componentDidMount() {
-    this.props.SelectClient();
     this.props.SelectBECod();
     this.props.SelectFacFrsCod();
+    this.props.SelectFournisseur();
   }
 
   typachChange = () => {
@@ -108,7 +117,8 @@ class AddBEModal extends Component {
     totalhtnet,
     remiseglobal,
     netapayer,
-    btnEnabled
+    btnEnabled,
+    netnetapayer
   ) => {
     this.setState({
       tab: tab,
@@ -120,6 +130,7 @@ class AddBEModal extends Component {
       remiseglobal: remiseglobal,
       netapayer: netapayer,
       btnEnabled: btnEnabled,
+      netnetapayer: netnetapayer,
     });
   };
 
@@ -136,7 +147,7 @@ class AddBEModal extends Component {
       `http://192.168.1.100:81/api/fournisseurs?codfrss=${event.target.value}`
     )
       .then((response) => response.json())
-      .then((data) => this.setState({ rechs: data }));
+      .then((data) => this.setState({ rechs: data, clicked: true }));
   };
 
   enregistrer = (event) => {
@@ -170,13 +181,8 @@ class AddBEModal extends Component {
     });
 
     fetch(
-      `http://192.168.1.100:81/api/BEREs?numfac=${
-        event.target.codbe.value
-      }&typfac=BE&datfac=${event.target.datfac.value}&codfrs=${
-        event.target.codcli.value
-      }&raisoc=${event.target.raissoc.value}&catfisc=${"0"}&taurem=${
-        event.target.remise.value
-      }&pj=${event.target.pj.value}&typach=${event.target.typach.value}`,
+      // `http://192.168.1.100:81/api/BEREs?numfac=${event.target.codbe.value}&typfac=BE&datfac=${event.target.datfac.value}&codfrs=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&taurem=${event.target.remise.value}&pj=${event.target.pj.value}&typach=${event.target.typach.value}&Vendeur=${this.state.username}`
+      `http://192.168.1.100:81/api/BEREs?numfac=${event.target.codbe.value}&typfac=BE&datfac=${event.target.datfac.value}&codfrs=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&pj=${event.target.pj.value}&taurem=${event.target.remise.value}&catfisc=0&typach=${event.target.typach.value}&Vendeur=${this.state.username}&valtimbre=${this.state.valtimbre}`,
       {
         method: "POST",
         header: {
@@ -189,20 +195,20 @@ class AddBEModal extends Component {
       .then(
         (result) => {
           this.props.onHide();
-          this.props.SelectBE();
+          //   this.props.SelectBE();
 
           ///////partie calcul be /////////////////
-          fetch(
-            `http://192.168.1.100:81/api/LIGBEREs?FACc=${this.props.codbes.codbes.map(
-              (nu) => parseInt(nu.valeur)
-            )}&typfacc=BE`,
-            {
-              method: "POST",
-              header: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-              },
-            }
+          this.props.codbes.codbes.map((t) =>
+            fetch(
+              `http://192.168.1.100:81/api/LIGBEREs?FACc=${t.valeur}&typfacc=BE`,
+              {
+                method: "POST",
+                header: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              }
+            )
           );
 
           this.setState({ snackbaropen: true, snackbarmsg: result });
@@ -210,18 +216,7 @@ class AddBEModal extends Component {
 
           this.props.SelectBECod();
           console.log(result);
-          // fetch(
-          //   `http://192.168.1.100:81/api/LIGBEREs?FACc=${this.props.codbes.codbes.map(
-          //     (nu) => parseInt(nu.valeur)
-          //   )}&typfacc=BE`,
-          //   {
-          //     method: "POST",
-          //     header: {
-          //       Accept: "application/json",
-          //       "Content-Type": "application/json",
-          //     },
-          //   }
-          // );
+
           window.location.reload();
         },
         (error) => {
@@ -266,7 +261,8 @@ class AddBEModal extends Component {
         .then((result) => {
           fetch(
             `http://192.168.1.100:81/api/Switch?code=BF2&valeur=${
-              parseInt(event.target.codbe.value) + 1
+              // parseInt(event.target.codbe.value) + 1
+              this.props.codbes.codbes.map((nu) => parseInt(nu.valeur, 10) + 1)
             }`,
             {
               method: "PUT",
@@ -350,16 +346,16 @@ class AddBEModal extends Component {
               <Card>
                 <Card.Body>
                   <Row style={{ marginBottom: "-20px", marginTop: "-20px" }}>
-                    <Col sm={3}>
+                    <Col sm={4}>
                       <FormGroup>
                         {this.props.codbes.codbes.map((t) => (
                           <TextField
                             // className="card add-input"
                             id="standard-basic"
-                            label="№ BL"
+                            label="№ BE"
                             margin="normal"
                             //variant="outlined"
-                            value={parseInt(t.valeur)}
+                            value={t.valeur}
                             fullWidth
                             name="codbe"
                             disabled
@@ -368,7 +364,7 @@ class AddBEModal extends Component {
                       </FormGroup>
                     </Col>
                     {/* <Col sm={5}></Col> */}
-                    <Col sm={5}>
+                    <Col sm={3}>
                       <TextField
                         id="standard-basic"
                         label="Date"
@@ -436,7 +432,12 @@ class AddBEModal extends Component {
                             includeInputInList
                             className="ajouter-client-input"
                             // options={this.props.clients.clients}
-                            options={this.state.rechs}
+                            // options={this.state.rechs}
+                            options={
+                              this.state.clicked
+                                ? this.state.rechs
+                                : this.props.fournisseurs.fournisseurs
+                            }
                             getOptionLabel={(option) => option.codfrs}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
@@ -448,6 +449,9 @@ class AddBEModal extends Component {
 
                                     cemail: getOptionLabel.email,
                                     codetva: getOptionLabel.CodeTVA,
+                                    valtimbre: getOptionLabel.timbre
+                                      ? this.props.valtimbre
+                                      : 0,
                                   })
                                 : this.setState({
                                     raisonsocial: "",
@@ -456,6 +460,7 @@ class AddBEModal extends Component {
                                     showTimbre: false,
                                     showButtonModalPassager: false,
                                     codetva: "",
+                                    valtimbre: 0,
                                   });
                             }}
                             renderInput={(params) => (
@@ -466,7 +471,7 @@ class AddBEModal extends Component {
                                 //variant="outlined"
                                 fullWidth
                                 onChange={this.clientHandlerChange}
-                                name="codcli"
+                                name="codcliii"
                               />
                             )}
                           />
@@ -480,7 +485,12 @@ class AddBEModal extends Component {
                             includeInputInList
                             className="ajouter-client-input"
                             // options={this.props.clients.clients}
-                            options={this.state.rechs}
+                            // options={this.state.rechs}
+                            options={
+                              this.state.clicked
+                                ? this.state.rechs
+                                : this.props.fournisseurs.fournisseurs
+                            }
                             getOptionLabel={(option) => option.raisoc}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
@@ -492,6 +502,9 @@ class AddBEModal extends Component {
 
                                     cemail: getOptionLabel.email,
                                     codetva: getOptionLabel.CodeTVA,
+                                    valtimbre: getOptionLabel.timbre
+                                      ? this.props.valtimbre
+                                      : 0,
                                   })
                                 : this.setState({
                                     raisonsocial: "",
@@ -500,6 +513,7 @@ class AddBEModal extends Component {
                                     showTimbre: false,
                                     showButtonModalPassager: false,
                                     codetva: "",
+                                    valtimbre: 0,
                                   });
                             }}
                             renderInput={(params) => (
@@ -510,7 +524,7 @@ class AddBEModal extends Component {
                                 //variant="outlined"
                                 fullWidth
                                 onChange={this.clientHandlerChange}
-                                name="raissoc"
+                                name="raisssoc"
                               />
                             )}
                           />
@@ -527,7 +541,7 @@ class AddBEModal extends Component {
                             //variant="outlined"
                             value={this.state.raisonsocial}
                             fullWidth
-                            name="raissoc"
+                            name="raisssoc"
                             disabled
                           />
                         </FormGroup>
@@ -542,14 +556,33 @@ class AddBEModal extends Component {
                             //variant="outlined"
                             value={this.state.codeclient}
                             fullWidth
-                            name="codcli"
+                            name="codclii"
                             disabled
                           />
                         </FormGroup>
                       </Col>
                     )}
                   </Row>
-
+                  <TextField
+                    id="standard-basic"
+                    label="Raison sociale"
+                    margin="normal"
+                    style={{ display: "none" }}
+                    value={this.state.raisonsocial}
+                    fullWidth
+                    name="raissoc"
+                    disabled
+                  />
+                  <TextField
+                    id="standard-basic"
+                    label="Code Fournisseur"
+                    margin="normal"
+                    style={{ display: "none" }}
+                    value={this.state.codeclient}
+                    fullWidth
+                    name="codcli"
+                    disabled
+                  />
                   <Row>
                     <Col sm={4}>
                       <TextField
@@ -799,12 +832,20 @@ class AddBEModal extends Component {
                         textAlign: "center",
                       }}
                     >
-                      <p
+                      {/* <p
                         style={{ color: "darkslateblue", marginBottom: "-5px" }}
                       >
                         Total Quantité
                       </p>
-                      <p style={{ color: "black" }}>{this.state.totalqte}</p>
+                      <p style={{ color: "black" }}>{this.state.totalqte}</p> */}
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
+                        valeur de timbre
+                      </p>
+                      <p style={{ color: "black" }}>
+                        {Number(this.state.valtimbre).toFixed(3)}
+                      </p>
                     </Col>
                   </Row>
 
@@ -885,10 +926,11 @@ class AddBEModal extends Component {
                       <p
                         style={{ color: "darkslateblue", marginBottom: "-5px" }}
                       >
-                        Total TVA
+                        Total TTC
                       </p>
                       <p style={{ color: "black" }}>
-                        {Number(this.state.totaltva).toFixed(3)}
+                        {/* {Number(this.state.totaltva).toFixed(3)} */}
+                        {Number(this.state.netapayer).toFixed(3)}
                       </p>
                     </Col>
 
@@ -912,7 +954,8 @@ class AddBEModal extends Component {
                         Net à Payer
                       </p>
                       <p style={{ color: "black", fontWeight: "bold" }}>
-                        {Number(this.state.netapayer).toFixed(3)}
+                        {/* {Number(this.state.netapayer).toFixed(3)} */}
+                        {Number(this.state.netnetapayer).toFixed(3)}
                       </p>
                     </Col>
                   </Row>
@@ -961,6 +1004,7 @@ class AddBEModal extends Component {
           )}
           datfac={this.state.defaultdate}
           rem={rem}
+          valtimbre={this.state.valtimbre}
         />
       </div>
     );
@@ -969,7 +1013,9 @@ class AddBEModal extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    SelectClient: () => dispatch(SelectClient()),
+    SelectFournisseur: () => {
+      dispatch(SelectFournisseur());
+    },
     SelectBECod: () => dispatch(SelectBECod()),
     SelectBE: () => dispatch(SelectBE()),
     SelectFacFrsCod: () => dispatch(SelectFacFrsCod()),
@@ -978,7 +1024,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
-    clients: state.clients,
+    fournisseurs: state.fournisseurs,
     codbes: state.codbes,
     codfacfrss: state.codfacfrss,
   };

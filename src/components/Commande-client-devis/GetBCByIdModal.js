@@ -390,11 +390,13 @@ class GetBCByIdModal extends Component {
                     }}
                   >
                     <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
-                      Total Quantité
+                      {/* Total Quantité */}
+                      Valeur de timbre
                     </p>
                     <p style={{ color: "black" }}>
                       {/* {this.props.totalqte} */}
-                      {this.props.sumqt}
+                      {/* {this.props.sumqt} */}
+                      {Number(this.props.valtimbree).toFixed(3)}
                     </p>
                   </Col>
                 </Row>
@@ -492,7 +494,10 @@ class GetBCByIdModal extends Component {
                     </p>
                     {/* <p style={{ color: "black" }}>{this.state.netapayer}</p> */}
                     <p style={{ color: "black", fontWeight: "bold" }}>
-                      {Number(this.props.totalttc).toFixed(3)}
+                      {Number(
+                        parseFloat(this.props.totalttc) +
+                          parseFloat(this.props.valtimbree)
+                      ).toFixed(3)}
                     </p>
                   </Col>
                 </Row>
@@ -582,9 +587,15 @@ class GetBCByIdModal extends Component {
               //   blid={this.props.blid}
               datebl={this.props.datebc}
               onHide01={this.props.onHide}
+              taurem={this.props.taurem}
+              catfisc={this.props.catfisc}
+              client={this.props.client}
+              raisonsociale={this.props.raisonsociale}
+              droitdetimbre={this.props.droitdetimbre}
+              avanceimpot={this.props.avanceimpot}
             />
           </Modal.Body>
-          <Modal.Footer></Modal.Footer>
+          <Modal.Footer> </Modal.Footer>
         </Modal>
 
         <div style={{ display: "none" }}>
@@ -851,7 +862,8 @@ class GetBCByIdModal extends Component {
                     {" "}
                     &nbsp;&nbsp;&nbsp;Timbre fiscal:
                   </td>
-                  <td>{this.props.droitdetimbre}</td>
+                  {/* <td>{this.props.droitdetimbre}</td> */}
+                  <td>{Number(this.props.valtimbree).toFixed(3)}</td>
                 </tr>
                 <tr style={{ height: "50px" }}>
                   <td style={{ fontWeight: "bold" }}>
@@ -860,7 +872,10 @@ class GetBCByIdModal extends Component {
                   </td>
                   <td style={{ fontWeight: "bold" }}>
                     {" "}
-                    {Number(this.props.totalttc).toFixed(3)}{" "}
+                    {Number(
+                      parseFloat(this.props.totalttc) +
+                        parseFloat(this.props.valtimbree)
+                    ).toFixed(3)}{" "}
                   </td>
                 </tr>
               </table>

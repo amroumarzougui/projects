@@ -431,7 +431,7 @@ class ModifierClientModal extends Component {
                                 color: "#007bff",
                               }}
                             >
-                              Assujiti{" "}
+                              Assujetti{" "}
                             </p>
                           ) : this.state.categoriefiscale === "1" ? (
                             <p
@@ -441,7 +441,7 @@ class ModifierClientModal extends Component {
                                 color: "#007bff",
                               }}
                             >
-                              Non Assujiti{" "}
+                              Non Assujetti{" "}
                             </p>
                           ) : this.state.categoriefiscale === "2" ? (
                             <p

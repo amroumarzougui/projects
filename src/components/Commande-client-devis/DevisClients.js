@@ -19,6 +19,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
+import { SelectValTimbre } from "../../redux/actions/GetValTimbre";
 
 const DATE_OPTIONS = {
   year: "numeric",
@@ -58,6 +59,7 @@ class DevisClient extends Component {
 
   componentDidMount() {
     this.props.SelectUser();
+    this.props.SelectValTimbre();
   }
 
   handleChange = (name) => (event) => {
@@ -129,6 +131,9 @@ class DevisClient extends Component {
       avanceimpot,
       annuler,
       sumqt,
+      catfisc,
+      taurem,
+      valtimbree,
     } = this.state;
 
     if (this.state.loggedIn === false) {
@@ -171,11 +176,9 @@ class DevisClient extends Component {
               </FormGroup>
             </Col>
           </Row>
-          <Row>
-            {/* Recherche */}
-            {/* <ConnectedSearchBar /> */}
-            {this.state.gilad ? (
-              <Col sm="4">
+          {this.state.gilad ? (
+            <Row>
+              <Col sm={10}>
                 <div className="search-bar">
                   <TextField
                     placeholder="Recherche..."
@@ -193,101 +196,60 @@ class DevisClient extends Component {
                   />
                 </div>
               </Col>
-            ) : (
-              <Row style={{ marginTop: "-25px", marginLeft: "10px" }}>
-                <Col sm={6}>
-                  <TextField
-                    id="standard-basic"
-                    label="Date Début"
-                    margin="normal"
-                    type="date"
-                    fullWidth
-                    name="firstdate"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    onChange={this.firstrechdatHandler}
-                    value={this.state.firstdate}
-                    defaultValue={this.state.defaultdate}
-                  />
-                </Col>
-
-                <Col sm={6}>
-                  <TextField
-                    id="standard-basic"
-                    label="Date Fin"
-                    margin="normal"
-                    type="date"
-                    fullWidth
-                    name="seconddate"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    defaultValue={this.state.defaultdate}
-                    onChange={this.secondrechdatHandler}
-                    value={this.state.seconddate}
-                  />
-                </Col>
-              </Row>
-            )}
-            {/* <div className="search-bar">
+              <Col sm={2} style={{ marginTop: "-15px" }}>
+                <AddDevis />
+              </Col>
+            </Row>
+          ) : (
+            <Row style={{ marginTop: "-15px" }}>
+              <Col sm={3}>
                 <TextField
-                  placeholder="Recherche..."
-                  id="input-with-icon-textfield"
-                  className="input-search"
-                  onChange={this.rechercheHandler}
-                  onClick={this.toggle}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon className="search-icon" />
-                      </InputAdornment>
-                    ),
+                  id="standard-basic"
+                  label="Date Début"
+                  margin="normal"
+                  type="date"
+                  fullWidth
+                  name="firstdate"
+                  InputLabelProps={{
+                    shrink: true,
                   }}
+                  onChange={this.firstrechdatHandler}
+                  value={this.state.firstdate}
+                  defaultValue={this.state.defaultdate}
                 />
-              </div>
-            </Col> */}
+              </Col>
 
-            {/* <Col sm={3}>
-              <TextField
-                id="standard-basic"
-                label="Date Début"
-                margin="normal"
-                type="date"
-                fullWidth
-                name="firstdate"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={this.firstrechdatHandler}
-                value={this.state.firstdate}
-                defaultValue={this.state.defaultdate}
-              />
-            </Col>
+              <Col sm={3}>
+                <TextField
+                  id="standard-basic"
+                  label="Date Fin"
+                  margin="normal"
+                  type="date"
+                  fullWidth
+                  name="seconddate"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  defaultValue={this.state.defaultdate}
+                  onChange={this.secondrechdatHandler}
+                  value={this.state.seconddate}
+                />
+              </Col>
 
-            <Col sm={3}>
-              <TextField
-                id="standard-basic"
-                label="Date Fin"
-                margin="normal"
-                type="date"
-                fullWidth
-                name="seconddate"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                defaultValue={this.state.defaultdate}
-                onChange={this.secondrechdatHandler}
-                value={this.state.seconddate}
-              />
-            </Col> */}
+              <Col sm={4}></Col>
 
-            <Col sm="2">
-              {/* Add second part devis // Ligs */}
-              <AddDevis />
-            </Col>
-          </Row>
+              <Col sm={2}>
+                {/* Add second part devis // Ligs */}
+                <AddDevis
+                  valtimbre={this.props.valtimbres.valtimbres.map((t) =>
+                    parseFloat(t.valtimbre)
+                  )}
+                />
+              </Col>
+            </Row>
+          )}
         </div>
+        <br />
 
         {/* <div className="bc-table"> */}
         {this.state.rechercheclicked ? (
@@ -341,6 +303,8 @@ class DevisClient extends Component {
                         avanceimpot: test.ForfaitCli,
                         annuler: test.annuler,
                         catfisc: test.catfisc,
+                        taurem: test.taurem,
+                        valtimbree: test.valtimbre,
                       });
                     }}
                   >
@@ -369,7 +333,12 @@ class DevisClient extends Component {
                     </td>
 
                     <td>
-                      <span>{Number(test.mntbon).toFixed(3)}</span>
+                      <span>
+                        {" "}
+                        {Number(
+                          parseFloat(test.mntbon) + parseFloat(test.valtimbre)
+                        ).toFixed(3)}
+                      </span>{" "}
                     </td>
                   </tr>
                 ))}
@@ -427,6 +396,8 @@ class DevisClient extends Component {
                         avanceimpot: test.ForfaitCli,
                         annuler: test.annuler,
                         catfisc: test.catfisc,
+                        taurem: test.taurem,
+                        valtimbree: test.valtimbre,
                       });
                     }}
                   >
@@ -455,7 +426,12 @@ class DevisClient extends Component {
                     </td>
 
                     <td>
-                      <span>{Number(test.mntbon).toFixed(3)}</span>
+                      <span>
+                        {" "}
+                        {Number(
+                          parseFloat(test.mntbon) + parseFloat(test.valtimbre)
+                        ).toFixed(3)}
+                      </span>{" "}
                     </td>
                   </tr>
                 ))}
@@ -513,6 +489,8 @@ class DevisClient extends Component {
                         avanceimpot: test.ForfaitCli,
                         annuler: test.annuler,
                         catfisc: test.catfisc,
+                        taurem: test.taurem,
+                        valtimbree: test.valtimbre,
                       });
                     }}
                   >
@@ -541,7 +519,12 @@ class DevisClient extends Component {
                     </td>
 
                     <td>
-                      <span>{Number(test.mntbon).toFixed(3)}</span>
+                      <span>
+                        {" "}
+                        {Number(
+                          parseFloat(test.mntbon) + parseFloat(test.valtimbre)
+                        ).toFixed(3)}
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -573,6 +556,12 @@ class DevisClient extends Component {
           annuler={annuler}
           tabtab={this.state.tabtab}
           sumqt={sumqt}
+          taurem={taurem}
+          catfisc={catfisc}
+          valtimbre={this.props.valtimbres.valtimbres.map((t) =>
+            parseFloat(t.valtimbre)
+          )}
+          valtimbree={valtimbree}
         />
       </div>
     );
@@ -582,12 +571,14 @@ class DevisClient extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectUser: () => dispatch(SelectUser()),
+    SelectValTimbre: () => dispatch(SelectValTimbre()),
   };
 }
 
 function mapStateToProps(state) {
   return {
     devis: state.devis,
+    valtimbres: state.valtimbres,
   };
 }
 

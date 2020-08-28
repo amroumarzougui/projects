@@ -1,27 +1,23 @@
 import React, { Component } from "react";
 import { Modal, Card, Row, Col } from "react-bootstrap";
 import "../styling/Styles.css";
-import "./bl.scss";
+import "./bs.scss";
 import Typography from "@material-ui/core/Typography";
 import { Label, Table } from "reactstrap";
 import { connect } from "react-redux";
-import { SelectBLLig } from "../../redux/actions/GetBLLig";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import PrintIcon from "@material-ui/icons/Print";
 import EditIcon from "@material-ui/icons/Edit";
-import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import CancelPresentationIcon from "@material-ui/icons/CancelPresentation";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import ModifierBLModal from "./ModifierBLModal";
-// import ProgressBar from "../commande-client-devis/ProgressBar";
 import { Divider, Fab, IconButton, Snackbar } from "@material-ui/core";
 import ReactToPrint from "react-to-print";
 import HomeIcon from "@material-ui/icons/Home";
 import PhoneIcon from "@material-ui/icons/Phone";
-import { SelectBL } from "../../redux/actions/GetBL";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
-import { SelectFacCod } from "../../redux/actions/GetCodFac";
+import { SelectBS } from "../../redux/actions/GetBS";
+import ModifierBS from "./ModifierBS";
 
 const roundTo = require("round-to");
 
@@ -30,7 +26,7 @@ const actions = [
   { icon: <EditIcon />, name: "Modifier" },
   { icon: <CancelPresentationIcon />, name: "Annuler" },
   { icon: <DeleteOutlineIcon />, name: "Supprimer" },
-  { icon: <FileCopyIcon />, name: "Facturer" },
+  // { icon: <FileCopyIcon />, name: "Facturer" },
 ];
 
 const DATE_OPTIONS = {
@@ -44,7 +40,7 @@ var curr = new Date();
 curr.setDate(curr.getDate());
 var date = curr.toISOString().substr(0, 10);
 
-class GetBLByIdModal extends Component {
+class GetBSByIdModal extends Component {
   constructor(props) {
     super(props);
     const username = localStorage.getItem("username");
@@ -54,7 +50,7 @@ class GetBLByIdModal extends Component {
       hidden: false,
       openModifierModal: false,
       ligid: "",
-      blid: "",
+      bsid: "",
       tab: [],
       newtab: [],
       todaydate: date,
@@ -77,19 +73,20 @@ class GetBLByIdModal extends Component {
       snackbaropen: false,
       snackbarmsg: "",
       username: username,
+
+      valeurtimb: 0,
     };
   }
 
-  componentDidMount() {
-    this.props.SelectBLLig(this.props.blid);
-    this.props.SelectFacCod();
-  }
+  componentDidMount() {}
 
   handleOpen = () => {
     this.setState({ open: true });
     fetch(`http://192.168.1.100:81/api/Clients?codeclient=${this.props.client}`)
       .then((response) => response.json())
       .then((data) => this.setState({ clientimp: data }));
+
+    this.setState({ valeurtimb: this.props.valtimbre });
   };
 
   handleClose = () => {
@@ -101,17 +98,14 @@ class GetBLByIdModal extends Component {
   };
 
   openModifier = () => {
-    this.setState({ openModifierModal: true, blid: this.props.blid });
-    this.props.blligs.blligs.map((t) => {
-      this.setState({ ligid: t.id });
-    });
+    this.setState({ openModifierModal: true, bsid: this.props.bsid });
   };
 
   annuler = () => {
     // window.alert("annuler");
     this.props.annuler === "0"
       ? fetch(
-          `http://192.168.1.100:81/api/BLBRs?idd=${this.props.blid}&typfaccs=BL`,
+          `http://192.168.1.100:81/api/BSRS?idd=${this.props.bsid}&typfaccs=BS`,
           {
             method: "PUT",
             header: {
@@ -123,11 +117,11 @@ class GetBLByIdModal extends Component {
           .then((res) => res.json())
           .then((result) => {
             this.props.onHide();
-            this.props.SelectBL();
+            this.props.SelectBS();
             console.log(result);
             this.setState({ snackbaropen: true, snackbarmsg: result });
           })
-      : window.alert("Bon de livraison déja annulée");
+      : window.alert("Bon de sortie déja annulée");
   };
 
   imprimer = () => {
@@ -143,7 +137,7 @@ class GetBLByIdModal extends Component {
   facturer = () => {
     this.props.facture === "0"
       ? fetch(
-          `http://192.168.1.100:81/api/BLBRs?iddd=${this.props.blid}&typfaccss=BL`,
+          `http://192.168.1.100:81/api/BLBRs?iddd=${this.props.bsid}&typfaccss=BL`,
           {
             method: "PUT",
             header: {
@@ -259,12 +253,10 @@ class GetBLByIdModal extends Component {
 
   supprimer = () => {
     if (
-      window.confirm(
-        "êtes-vous sûr de vouloir supprimer cette bon de livraison?"
-      )
+      window.confirm("êtes-vous sûr de vouloir supprimer ce bon de sortie?")
     ) {
       fetch(
-        `http://192.168.1.100:81/api/LigBLBRs/${this.props.blid}?typfacc=BL`,
+        `http://192.168.1.100:81/api/LigBSRS/${this.props.bsid}?typfacc=BS`,
         {
           method: "DELETE",
           header: {
@@ -278,7 +270,7 @@ class GetBLByIdModal extends Component {
           console.log(result);
         });
 
-      fetch(`http://192.168.1.100:81/api/BLBRs/${this.props.blid}?typfacc=BL`, {
+      fetch(`http://192.168.1.100:81/api/BSRS/${this.props.bsid}?typfacc=BS`, {
         method: "DELETE",
         header: {
           Accept: "application/json",
@@ -288,7 +280,7 @@ class GetBLByIdModal extends Component {
         .then((res) => res.json())
         .then((result) => {
           this.props.onHide();
-          this.props.SelectBL();
+          this.props.SelectBS();
           console.log(result);
           this.setState({ snackbaropen: true, snackbarmsg: result });
         });
@@ -334,7 +326,7 @@ class GetBLByIdModal extends Component {
             style={{ backgroundColor: "white", color: "#08052B" }}
           >
             <Modal.Title id="contained-modal-title-vcenter">
-              <b>Détails Bon de Livraison</b>
+              <b>Détails Bon de sortie</b>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -343,20 +335,20 @@ class GetBLByIdModal extends Component {
                 <Row>
                   <Col style={{ textAlign: "center" }} sm={2}>
                     <Typography variant="h6" component="h2">
-                      <Label style={{ color: "#020f64" }}>№ BL</Label>
+                      <Label style={{ color: "#020f64" }}>№ BS</Label>
                     </Typography>
                     <Typography style={{ color: "grey", fontSize: "14px" }}>
-                      {this.props.blid}
+                      {this.props.bsid}
                     </Typography>
                   </Col>
 
                   <Col style={{ textAlign: "center" }} sm={3}>
                     <Typography variant="h6" component="h2">
-                      <Label style={{ color: "#020f64" }}>Date BL</Label>
+                      <Label style={{ color: "#020f64" }}>Date BS</Label>
                     </Typography>
                     <Typography style={{ color: "grey", fontSize: "14px" }}>
-                      {/* {this.props.datebl} */}
-                      {new Date(this.props.datebl).toLocaleDateString(
+                      {/* {this.props.datebs} */}
+                      {new Date(this.props.datebs).toLocaleDateString(
                         "fr",
                         DATE_OPTIONS
                       )}
@@ -386,7 +378,7 @@ class GetBLByIdModal extends Component {
 
             <Card style={{ marginTop: "10px" }}>
               <Card.Body>
-                <div className="tabbl2">
+                <div className="tabbs2">
                   <table stripped>
                     <thead>
                       <tr style={{ textAlign: "center", fontSize: "12px" }}>
@@ -629,7 +621,6 @@ class GetBLByIdModal extends Component {
                       Net à Payer
                     </p>
                     <p style={{ color: "black", fontWeight: "bold" }}>
-                      {/* {Number(this.props.totalttc).toFixed(3)} */}
                       {Number(
                         parseFloat(this.props.totalttc) +
                           parseFloat(this.props.valtimbre)
@@ -675,7 +666,7 @@ class GetBLByIdModal extends Component {
                           this.nonsupprimer();
 
                         action.name == "Annuler" && this.annuler();
-                        action.name == "Facturer" && this.facturer();
+                        // action.name == "Facturer" && this.facturer();
                       }}
                     />
                   ))}
@@ -717,13 +708,13 @@ class GetBLByIdModal extends Component {
               </Col>
             </Row>
 
-            <ModifierBLModal
+            <ModifierBS
               show={this.state.openModifierModal}
               onHide={ModifierModalClose}
               ligidd={this.state.ligid}
               tabb={this.props.tabtab}
-              blid={this.props.blid}
-              datebl={this.props.datebl}
+              bsid={this.props.bsid}
+              datebs={this.props.datebs}
               onHide01={this.props.onHide}
               taurem={this.props.taurem}
               catfisc={this.props.catfisc}
@@ -761,14 +752,14 @@ class GetBLByIdModal extends Component {
                 marginTop: "10px",
               }}
             >
-              ---------- Bon de livraison № {this.props.blid}{" "}
+              ---------- Bon de sortie № {this.props.bsid}{" "}
               -------------------------------------
             </h3>
             <Row>
               <Col>
                 <h4 style={{ marginLeft: "170px" }}>
                   Date:{" "}
-                  {new Date(this.props.datebl).toLocaleDateString(
+                  {new Date(this.props.datebs).toLocaleDateString(
                     "fr",
                     DATE_OPTIONS
                   )}
@@ -1088,17 +1079,12 @@ class GetBLByIdModal extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    SelectBLLig: () => dispatch(SelectBLLig()),
-    SelectBL: () => dispatch(SelectBL()),
-    SelectFacCod: () => dispatch(SelectFacCod()),
+    SelectBS: () => dispatch(SelectBS()),
   };
 }
 
 function mapStateToProps(state) {
-  return {
-    blligs: state.blligs,
-    codfacs: state.codfacs,
-  };
+  return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GetBLByIdModal);
+export default connect(mapStateToProps, mapDispatchToProps)(GetBSByIdModal);

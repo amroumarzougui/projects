@@ -13,9 +13,12 @@ import {
 
 import { connect } from "react-redux";
 import { SelectAllNome } from "../../redux/actions/GetAllNome";
-import { TextField, Snackbar, IconButton } from "@material-ui/core";
+import { TextField, Snackbar, IconButton, Fab } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { SelectCatNome } from "../../redux/actions/GetCatNome";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Tooltip from "@material-ui/core/Tooltip";
+import EditIcon from "@material-ui/icons/Edit";
 import "./nome.scss";
 
 class Nomenclature extends Component {
@@ -27,6 +30,9 @@ class Nomenclature extends Component {
       show: false,
       snackbaropen: false,
       snackbarmsg: ",",
+      code: "",
+      lib: "",
+      changeButton: false,
     };
   }
 
@@ -41,6 +47,34 @@ class Nomenclature extends Component {
       .then((data) => this.setState({ tab: data, show: true }));
   };
 
+  supprimer = (index) => {
+    if (
+      window.confirm(
+        "êtes-vous sûr de vouloir supprimer cette bon de livraison?"
+      )
+    ) {
+      fetch(
+        `http://192.168.1.100:81/api/Nome?catcat=${this.state.cat}&codecode=${index}`,
+        {
+          method: "DELETE",
+          header: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          console.log(result);
+          this.setState({ snackbaropen: true, snackbarmsg: result });
+        });
+    }
+  };
+
+  libHandler = (event) => {
+    this.setState({ lib: event.target.value });
+  };
+
   submitHandler = (event) => {
     event.preventDefault();
 
@@ -48,6 +82,32 @@ class Nomenclature extends Component {
       `http://192.168.1.100:81/api/Nome?cat=${this.state.cat}&code=${event.target.code.value}&lib=${event.target.lib.value}&chdec=0`,
       {
         method: "POST",
+        header: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          this.setState({ snackbaropen: true, snackbarmsg: result });
+          window.location.reload();
+          console.log(result);
+        },
+        (error) => {
+          this.setState({ snackbaropen: true, snackbarmsg: "failed" });
+        }
+      );
+  };
+
+  modifierHandler = (event) => {
+    event.preventDefault();
+
+    fetch(
+      `http://192.168.1.100:81/api/Nome?cat=${this.state.cat}&code=${this.state.code}&lib=${this.state.lib}`,
+      {
+        method: "PUT",
         header: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -131,6 +191,9 @@ class Nomenclature extends Component {
                                 : this.setState({
                                     cat: "",
                                     show: false,
+                                    code: "",
+                                    lib: "",
+                                    changeButton: false,
                                   });
                             }}
                             renderInput={(params) => (
@@ -158,6 +221,7 @@ class Nomenclature extends Component {
                             fullWidth
                             name="code"
                             type="text"
+                            value={this.state.code}
                           />
                         </Form.Group>
                       </Col>
@@ -172,27 +236,42 @@ class Nomenclature extends Component {
                             fullWidth
                             name="lib"
                             type="text"
+                            value={this.state.lib}
+                            onChange={this.libHandler}
                           />
                         </Form.Group>
                       </Col>
                     </Row>
                     <Row form>
-                      <Col sm={4}></Col>
-                      <Col sm={4}>
+                      <Col sm={2}></Col>
+                      <Col sm={8}>
                         <Form.Group>
-                          <Button
-                            type="submit"
-                            style={{
-                              backgroundColor: "#17a2b8",
-                              width: "100%",
-                              borderColor: "#17a2b8",
-                            }}
-                          >
-                            Enregistrer
-                          </Button>
+                          {this.state.changeButton ? (
+                            <Button
+                              style={{
+                                backgroundColor: "#17a2b8",
+                                width: "100%",
+                                borderColor: "#17a2b8",
+                              }}
+                              onClick={this.modifierHandler}
+                            >
+                              Valider Modification
+                            </Button>
+                          ) : (
+                            <Button
+                              type="submit"
+                              style={{
+                                backgroundColor: "#17a2b8",
+                                width: "100%",
+                                borderColor: "#17a2b8",
+                              }}
+                            >
+                              Enregistrer
+                            </Button>
+                          )}
                         </Form.Group>
                       </Col>
-                      <Col sm={4}></Col>
+                      <Col sm={2}></Col>
                     </Row>
                   </Form>
                 </div>
@@ -222,6 +301,7 @@ class Nomenclature extends Component {
                             <tr>
                               <th>Code</th>
                               <th>Libellé</th>
+                              <th></th>
                             </tr>
                           </thead>
                           <tbody>
@@ -229,6 +309,32 @@ class Nomenclature extends Component {
                               <tr key={i}>
                                 <td> {t.code} </td>
                                 <td> {t.lib} </td>
+                                <td>
+                                  <Tooltip title="Editer">
+                                    <Fab size="small">
+                                      <EditIcon
+                                        style={{}}
+                                        onClick={() => {
+                                          this.setState({
+                                            code: t.code,
+                                            lib: t.lib,
+                                            changeButton: true,
+                                          });
+                                          //   this.deleteRowMod(i);
+                                        }}
+                                      />
+                                    </Fab>
+                                  </Tooltip>
+                                  &nbsp;&nbsp;&nbsp;
+                                  <Tooltip title="Supprimer">
+                                    <Fab size="small">
+                                      <DeleteIcon
+                                        style={{}}
+                                        onClick={() => this.supprimer(t.code)}
+                                      />
+                                    </Fab>
+                                  </Tooltip>
+                                </td>
                               </tr>
                             ))}
                           </tbody>

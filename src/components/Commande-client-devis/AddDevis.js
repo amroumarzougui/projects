@@ -6,7 +6,7 @@ class AddDevis extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      addModalShow1: false
+      addModalShow1: false,
     };
   }
 
@@ -27,6 +27,8 @@ class AddDevis extends Component {
         <AddDevisModal
           show={this.state.addModalShow1}
           onHide={addModalClose1}
+          valtimbre={this.props.valtimbre}
+          valtimbree={this.props.valtimbree}
         />
       </div>
     );

@@ -94,7 +94,12 @@ export const sidebarContent = [
       {
         id: 1,
         title: "Bon entree",
-        icon: <i class="fa fa-retweet" aria-hidden="true"></i>,
+        icon: <i class="fa fa-share" aria-hidden="true"></i>,
+      },
+      {
+        id: 1,
+        title: "Bon de sortie",
+        icon: <i class="fa fa-reply" aria-hidden="true"></i>,
       },
     ],
     icon: <i class="fas fa-money-check-alt"></i>,

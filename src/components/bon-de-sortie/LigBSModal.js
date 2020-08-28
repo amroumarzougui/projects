@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Modal, Card } from "react-bootstrap";
 import "../styling/Styles.css";
-import "./be.scss";
+import "./bs.scss";
 import { Input, Label, FormGroup, Col, Row, Table } from "reactstrap";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
@@ -11,11 +11,9 @@ import "../styling/Styling.scss";
 import Center from "react-center";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
-// import EditArticleModal from "./EditArticleModal";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
-import Checkbox from "@material-ui/core/Checkbox";
-import EditIcon from "@material-ui/icons/Edit";
+
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
@@ -23,7 +21,7 @@ import Typography from "@material-ui/core/Typography";
 
 const roundTo = require("round-to");
 
-class LigBEArticle extends Component {
+class LigBSArticle extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -52,12 +50,12 @@ class LigBEArticle extends Component {
       btnEnabled: false,
       gilad: true,
       rechs: [],
+      stkfin: 0,
 
       snackbarmsg: ",",
+      yesno: "",
       netnetapayer: 0,
       clicked: false,
-
-      stkfin: 0,
     };
   }
 
@@ -80,6 +78,9 @@ class LigBEArticle extends Component {
   };
 
   qteHandler = (event) => {
+    console.log(typeof parseInt(event.target.value));
+    console.log(typeof this.state.totalqte);
+
     this.setState({
       qte: event.target.value,
       puttcnet:
@@ -90,6 +91,10 @@ class LigBEArticle extends Component {
         this.state.puht *
         ((100 - this.state.remisea) / 100),
     });
+
+    this.state.stkfin >= parseInt(event.target.value)
+      ? this.setState({ yesno: "yes" })
+      : this.setState({ yesno: "no" });
   };
 
   remiseHandler = (event) => {
@@ -255,10 +260,10 @@ class LigBEArticle extends Component {
   render() {
     let editModalClose = () => this.setState({ editModalShow: false });
 
-    // console.log(
-    //   this.state.totalqte,
-    //   `remise article =${this.state.sumremisearticle}`
-    // );
+    console.log(
+      this.state.totalqte,
+      `remise article =${this.state.sumremisearticle}`
+    );
 
     return (
       <div className="container">
@@ -361,6 +366,8 @@ class LigBEArticle extends Component {
                         </Col>
                       </Row>
 
+                      {/* {this.state.yesno} */}
+
                       <Row form>
                         <Col sm={5}>
                           <FormGroup>
@@ -399,6 +406,7 @@ class LigBEArticle extends Component {
                                         tva: 0,
                                         faudec: "N",
                                         stkfin: 0,
+                                        qte: "",
                                       });
                                 }}
                                 renderInput={(params) => (
@@ -446,6 +454,8 @@ class LigBEArticle extends Component {
                                         tva: 0,
                                         faudec: "N",
                                         stkfin: 0,
+                                        qte: "",
+                                        puttcnet: 0,
                                       });
                                 }}
                                 renderInput={(params) => (
@@ -563,7 +573,7 @@ class LigBEArticle extends Component {
                             <TextField
                               id="standard-basic"
                               label="Remise %"
-                              defaultValue={this.state.remisea}
+                              value={this.state.remisea}
                               fullWidth
                               name="remisea"
                               // disabled
@@ -608,7 +618,11 @@ class LigBEArticle extends Component {
                         </Col>
                       </Row>
 
-                      {this.state.des === "" ? (
+                      {this.state.des === "" ||
+                      this.state.yesno === "no" ||
+                      this.state.qte === "" ||
+                      this.state.stkfin <= 0 ||
+                      parseInt(this.state.qte) <= 0 ? (
                         <Center>
                           <Button
                             disabled
@@ -638,7 +652,7 @@ class LigBEArticle extends Component {
 
                 <Card style={{ marginTop: "10px" }}>
                   <Card.Body>
-                    <div className="tabbl2">
+                    <div className="tabbs2">
                       <table style={{ marginTop: "10px" }}>
                         <thead
                           style={{ textAlign: "center", fontSize: "12px" }}
@@ -765,4 +779,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LigBEArticle);
+export default connect(mapStateToProps, mapDispatchToProps)(LigBSArticle);

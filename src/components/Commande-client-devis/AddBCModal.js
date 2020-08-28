@@ -53,6 +53,7 @@ class AddBCModal extends Component {
 
     this.state = {
       gilad: true,
+      passager: false,
       defaultdate: date,
       showTimbre: false,
       showForfitaire: 0,
@@ -72,6 +73,7 @@ class AddBCModal extends Component {
       totalhtnet: 0,
       remiseglobal: 0,
       netapayer: 0,
+      netnetapayer: 0,
       btnEnable: false,
       btnEnabled: false,
       cemail: "",
@@ -84,6 +86,9 @@ class AddBCModal extends Component {
       username: username,
 
       libellecatfisc: "",
+
+      valtimbre: 0,
+      clicked: false,
     };
   }
 
@@ -96,7 +101,7 @@ class AddBCModal extends Component {
   clientHandlerChange = (event) => {
     fetch(`http://192.168.1.100:81/api/CLIENTs?codclii=${event.target.value}`)
       .then((response) => response.json())
-      .then((data) => this.setState({ rechs: data }));
+      .then((data) => this.setState({ rechs: data, clicked: true }));
   };
 
   submitHandler = (
@@ -108,7 +113,8 @@ class AddBCModal extends Component {
     totalhtnet,
     remiseglobal,
     netapayer,
-    btnEnabled
+    btnEnabled,
+    netnetapayer
   ) => {
     this.setState({
       tab: tab,
@@ -120,6 +126,7 @@ class AddBCModal extends Component {
       remiseglobal: remiseglobal,
       netapayer: netapayer,
       btnEnabled: btnEnabled,
+      netnetapayer: netnetapayer,
     });
   };
 
@@ -130,6 +137,10 @@ class AddBCModal extends Component {
 
   snackbarClose = () => {
     this.setState({ snackbaropen: false });
+  };
+
+  raisocHandler = (event) => {
+    this.setState({ raisonsocial: event.target.value });
   };
 
   handleChange = (name) => (event) => {
@@ -170,7 +181,7 @@ class AddBCModal extends Component {
 
     //////////// post BCDV /////////////////////////////
     fetch(
-      `http://192.168.1.100:81/api/BCDVCLIs?numfac=${event.target.codbc.value}&typfac=BC&taurem=${event.target.remise.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}&vendeur=${this.state.username}`,
+      `http://192.168.1.100:81/api/BCDVCLIs?numfac=${event.target.codbc.value}&typfac=BC&taurem=${event.target.remise.value}&codcli=${event.target.codcli.value}&raisoc=${event.target.raissoc.value}&catfisc=${event.target.categoriefiscale.value}&datfac=${this.state.defaultdate}&timbre=${this.state.showTimbre}&ForfaitCli=${this.state.showForfitaire}&vendeur=${this.state.username}&valtimbre=${this.state.valtimbre}`,
       {
         method: "POST",
         header: {
@@ -202,7 +213,7 @@ class AddBCModal extends Component {
           this.props.GetNumFacBC();
 
           console.log(result);
-          window.location.reload();
+          //    window.location.reload();
         },
         (error) => {
           this.setState({ snackbaropen: true, snackbarmsg: "failed" });
@@ -277,7 +288,7 @@ class AddBCModal extends Component {
               <Card>
                 <Card.Body>
                   <Row style={{ marginBottom: "-20px", marginTop: "-20px" }}>
-                    <Col sm={3}>
+                    <Col sm={4}>
                       <FormGroup>
                         {this.props.numfacbcs.numfacbcs.map((t) => (
                           <TextField
@@ -294,7 +305,7 @@ class AddBCModal extends Component {
                         ))}
                       </FormGroup>
                     </Col>
-                    <Col sm={5}>
+                    <Col sm={3}>
                       <TextField
                         id="standard-basic"
                         label="Date"
@@ -343,7 +354,12 @@ class AddBCModal extends Component {
                             includeInputInList
                             className="ajouter-client-input"
                             // options={this.props.clients.clients}
-                            options={this.state.rechs}
+                            // options={this.state.rechs}
+                            options={
+                              this.state.clicked
+                                ? this.state.rechs
+                                : this.props.clients.clients
+                            }
                             getOptionLabel={(option) => option.codcli}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
@@ -358,6 +374,9 @@ class AddBCModal extends Component {
                                     showButtonModalPassager:
                                       getOptionLabel.passager,
                                     cemail: getOptionLabel.email,
+                                    valtimbre: getOptionLabel.timbre
+                                      ? this.props.valtimbre
+                                      : 0,
                                   })
                                 : this.setState({
                                     raisonsocial: "",
@@ -368,6 +387,7 @@ class AddBCModal extends Component {
                                     showTimbre: false,
                                     showForfitaire: 0,
                                     showButtonModalPassager: false,
+                                    valtimbre: 0,
                                   });
                             }}
                             renderInput={(params) => (
@@ -375,7 +395,6 @@ class AddBCModal extends Component {
                                 {...params}
                                 label="Code client"
                                 margin="normal"
-                                //variant="outlined"
                                 fullWidth
                                 onChange={this.clientHandlerChange}
                                 name="codcli"
@@ -392,7 +411,12 @@ class AddBCModal extends Component {
                             includeInputInList
                             className="ajouter-client-input"
                             // options={this.props.clients.clients}
-                            options={this.state.rechs}
+                            // options={this.state.rechs}
+                            options={
+                              this.state.clicked
+                                ? this.state.rechs
+                                : this.props.clients.clients
+                            }
                             getOptionLabel={(option) => option.raisoc}
                             onChange={(event, getOptionLabel) => {
                               getOptionLabel
@@ -407,6 +431,9 @@ class AddBCModal extends Component {
                                     showButtonModalPassager:
                                       getOptionLabel.passager,
                                     cemail: getOptionLabel.email,
+                                    valtimbre: getOptionLabel.timbre
+                                      ? this.props.valtimbre
+                                      : 0,
                                   })
                                 : this.setState({
                                     raisonsocial: "",
@@ -417,6 +444,7 @@ class AddBCModal extends Component {
                                     showTimbre: false,
                                     showForfitaire: 0,
                                     showButtonModalPassager: false,
+                                    valtimbre: 0,
                                   });
                             }}
                             renderInput={(params) => (
@@ -445,7 +473,10 @@ class AddBCModal extends Component {
                             value={this.state.raisonsocial}
                             fullWidth
                             name="raissoc"
-                            disabled
+                            disabled={
+                              this.state.codeclient === "100" ? false : true
+                            }
+                            onChange={this.raisocHandler}
                           />
                         </FormGroup>
                       </Col>
@@ -491,7 +522,7 @@ class AddBCModal extends Component {
                             color: "#007bff",
                           }}
                         >
-                          Assujiti{" "}
+                          Assujetti{" "}
                         </p>
                       ) : this.state.categoriefiscale === "1" ? (
                         <p
@@ -501,7 +532,7 @@ class AddBCModal extends Component {
                             color: "#007bff",
                           }}
                         >
-                          Non Assujiti{" "}
+                          Non Assujetti{" "}
                         </p>
                       ) : this.state.categoriefiscale === "2" ? (
                         <p
@@ -577,31 +608,6 @@ class AddBCModal extends Component {
                         onChange={this.remiseglobalChange}
                         value={this.state.remiseg}
                       />
-                    </Col>
-
-                    <Col sm={2}>
-                      <FormGroup style={{ marginTop: "40px" }}>
-                        {this.state.showTimbre ? (
-                          //     <Alert style={{ width: "100%", textAlign: "center", fontSize: "12px" }} variant={"success"}>
-                          //         <b style={{ marginTop: "-10px" }}></b>Timbre✔
-                          // </Alert>
-                          <p style={{ color: "grey" }}>Timbre: ✔</p>
-                        ) : null}
-                      </FormGroup>
-                    </Col>
-
-                    <Col sm={2}>
-                      <FormGroup style={{ marginTop: "40px" }}>
-                        {this.state.showForfitaire === 1 ? (
-                          //             <Alert style={{
-                          //                 width: "100%", textAlign: "center",
-                          //                 fontSize: "12px"
-                          //             }} variant={"success"}>
-                          //                 <b style={{ marginTop: "-10px" }}></b>Forfitaire
-                          //  </Alert>
-                          <p style={{ color: "grey" }}>Forfitaire: ✔</p>
-                        ) : null}
-                      </FormGroup>
                     </Col>
                   </Row>
                 </Card.Body>
@@ -801,6 +807,7 @@ class AddBCModal extends Component {
                         Total TVA
                       </p>
                       <p style={{ color: "black" }}>
+                        {/* {Number(this.state.netapayer).toFixed(3)} */}
                         {Number(this.state.totaltva).toFixed(3)}
                       </p>
                     </Col>
@@ -818,10 +825,30 @@ class AddBCModal extends Component {
                       <p
                         style={{ color: "darkslateblue", marginBottom: "-5px" }}
                       >
+                        valeur de timbre
+                      </p>
+                      <p style={{ color: "black" }}>
+                        {Number(this.state.valtimbre).toFixed(3)}
+                      </p>
+                    </Col>
+
+                    {/* <Col
+                      sm={3}
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        textAlign: "center",
+                      }}
+                    >
+                      <p
+                        style={{ color: "darkslateblue", marginBottom: "-5px" }}
+                      >
                         Total Quantité
                       </p>
                       <p style={{ color: "black" }}>{this.state.totalqte}</p>
-                    </Col>
+                    </Col> */}
                   </Row>
 
                   <Row>
@@ -901,10 +928,10 @@ class AddBCModal extends Component {
                       <p
                         style={{ color: "darkslateblue", marginBottom: "-5px" }}
                       >
-                        Total TVA
+                        Total TTC
                       </p>
                       <p style={{ color: "black" }}>
-                        {Number(this.state.totaltva).toFixed(3)}
+                        {Number(this.state.netapayer).toFixed(3)}
                       </p>
                     </Col>
 
@@ -928,7 +955,7 @@ class AddBCModal extends Component {
                         Net à Payer
                       </p>
                       <p style={{ color: "black", fontWeight: "bold" }}>
-                        {Number(this.state.netapayer).toFixed(3)}
+                        {Number(this.state.netnetapayer).toFixed(3)}
                       </p>
                     </Col>
                   </Row>
@@ -975,6 +1002,7 @@ class AddBCModal extends Component {
             parseInt(nu.valeur)
           )}
           datfac={this.state.defaultdate}
+          valtimbre={this.state.valtimbre}
         />
       </div>
     );
