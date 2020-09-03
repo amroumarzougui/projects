@@ -220,8 +220,11 @@ class ModifierArticleModal extends Component {
                 <Row form>
                   <Col md={3}>
                     <Form.Group controlId="codart">
-                      <Label className="labell">Code article</Label>
+                      <Label className="labell" style={{ color: "#A9A9A9" }}>
+                        Code article
+                      </Label>
                       <Input
+                        className="card add-input"
                         type="text"
                         name="codart"
                         defaultValue={this.props.codearticle}
@@ -232,8 +235,11 @@ class ModifierArticleModal extends Component {
 
                   <Col md={3}>
                     <Form.Group controlId="codbar">
-                      <Label className="labell">Code à barre</Label>
+                      <Label className="labell" style={{ color: "#A9A9A9" }}>
+                        Code à barre
+                      </Label>
                       <Input
+                        className="card add-input"
                         type="text"
                         name="codbar"
                         defaultValue={this.props.codeabarrearticle}
@@ -243,8 +249,11 @@ class ModifierArticleModal extends Component {
 
                   <Col md={6}>
                     <Form.Group controlId="desart">
-                      <Label className="labell">Désignation</Label>
+                      <Label className="labell" style={{ color: "#A9A9A9" }}>
+                        Désignation
+                      </Label>
                       <Input
+                        className="card add-input"
                         type="text"
                         name="desart"
                         defaultValue={this.props.designationarticle}
@@ -255,8 +264,11 @@ class ModifierArticleModal extends Component {
                 <Row form>
                   <Col md={3}>
                     <Form.Group controlId="unite">
-                      <Label className="labell">Unité</Label>
+                      <Label className="labell" style={{ color: "#A9A9A9" }}>
+                        Unité
+                      </Label>
                       <Input
+                        className="card add-input"
                         type="select"
                         name="unite"
                         defaultValue={this.props.unitearticles}
@@ -272,8 +284,11 @@ class ModifierArticleModal extends Component {
 
                   <Col md={3}>
                     <Form.Group controlId="famart">
-                      <Label className="labell">Famille article</Label>
+                      <Label className="labell" style={{ color: "#A9A9A9" }}>
+                        Famille article
+                      </Label>
                       <Input
+                        className="card add-input"
                         type="select"
                         name="famart"
                         defaultValue={this.props.famillearticle}
@@ -289,8 +304,11 @@ class ModifierArticleModal extends Component {
 
                   <Col md={3}>
                     <Form.Group controlId="sousfam">
-                      <Label className="labell">Sous Famille</Label>
+                      <Label className="labell" style={{ color: "#A9A9A9" }}>
+                        Sous Famille
+                      </Label>
                       <Input
+                        className="card add-input"
                         type="select"
                         name="sousfam"
                         defaultValue={this.props.sousfamillearticle}
@@ -308,8 +326,11 @@ class ModifierArticleModal extends Component {
                   </Col>
                   <Col md={3}>
                     <Form.Group controlId="reffrs">
-                      <Label className="labell">Réf Fournisseur</Label>
+                      <Label className="labell" style={{ color: "#A9A9A9" }}>
+                        Réf Fournisseur
+                      </Label>
                       <Input
+                        className="card add-input"
                         type="text"
                         name="reffrs"
                         defaultValue={this.props.reffrsarticle}
@@ -372,6 +393,7 @@ class ModifierArticleModal extends Component {
                         }}
                         renderInput={(params) => (
                           <TextField
+                            className="card add-input"
                             {...params}
                             label="TVA"
                             margin="dense"
@@ -389,6 +411,7 @@ class ModifierArticleModal extends Component {
                   <Col sm={2}>
                     <Form.Group controlId="tautva">
                       <TextField
+                        className="card add-input"
                         label="%"
                         id="outlined-margin-dense"
                         margin="dense"
@@ -405,6 +428,7 @@ class ModifierArticleModal extends Component {
                   <Col sm={3}>
                     <Form.Group controlId="typfodec">
                       <TextField
+                        className="card add-input"
                         id="outlined-select-currency"
                         select
                         label="Type Fodec"
@@ -425,6 +449,7 @@ class ModifierArticleModal extends Component {
                   <Col sm={2}>
                     <Form.Group controlId="TDC">
                       <TextField
+                        className="card add-input"
                         label="Taux D.C"
                         id="outlined-margin-dense"
                         margin="dense"
@@ -438,6 +463,7 @@ class ModifierArticleModal extends Component {
                   <Col sm={3}>
                     <Form.Group controlId="typdc">
                       <TextField
+                        className="card add-input"
                         id="outlined-select-currency"
                         select
                         label="Type DC"
@@ -475,6 +501,7 @@ class ModifierArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="PURBHT">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Revient Brut HT"
                                 variant="outlined"
@@ -490,6 +517,7 @@ class ModifierArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="remisefrs">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="Remise Frs (%)"
                                 variant="outlined"
@@ -505,6 +533,7 @@ class ModifierArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="PURNHT">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Revient Net HT"
                                 variant="outlined"
@@ -518,6 +547,7 @@ class ModifierArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="PURNTTC">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Revient Net TTC"
                                 variant="outlined"
@@ -530,11 +560,11 @@ class ModifierArticleModal extends Component {
                           </Col>
                         </Row>
                         {/* ////////////////////////////////////////////////////////////////////// */}
-                        <br />
                         <Row>
                           <Col sm={3}>
                             <Form.Group controlId="margedet">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="Marge/ P.R Net (%)"
                                 variant="outlined"
@@ -549,6 +579,7 @@ class ModifierArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="PUDHT">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Vente HT"
                                 variant="outlined"
@@ -563,6 +594,7 @@ class ModifierArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="PUDTTC">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Vente TTC"
                                 variant="outlined"

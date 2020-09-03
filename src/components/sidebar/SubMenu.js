@@ -55,7 +55,8 @@ class SubMenu extends Component {
                   // onClick={toggleNavbar}
                 >
                   {this.state.fct === "200" &&
-                  item.title === "Bon entree" ? null : (
+                  (item.title === "Bon entree" ||
+                    item.title === "Bon de sortie") ? null : (
                     <NavItem style={{ marginLeft: "20px" }} className="pl-4">
                       {item.icon}&nbsp;&nbsp;{item.title}
                     </NavItem>

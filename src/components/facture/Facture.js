@@ -15,6 +15,7 @@ import {
   Switch,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
+import { SelectValTimbre } from "../../redux/actions/GetValTimbre";
 
 const DATE_OPTIONS = {
   year: "numeric",
@@ -56,6 +57,7 @@ class Facture extends Component {
 
   componentDidMount() {
     this.props.SelectFacture();
+    this.props.SelectValTimbre();
   }
 
   handleChange = (name) => (event) => {
@@ -519,6 +521,9 @@ class Facture extends Component {
             rem={rem}
             tabtab={this.state.tabtab}
             sumqt={sumqt}
+            valtimbre={this.props.valtimbres.valtimbres.map((t) =>
+              parseFloat(t.valtimbre)
+            )}
           />
         </div>
       </div>
@@ -529,6 +534,7 @@ class Facture extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     SelectFacture: () => dispatch(SelectFacture()),
+    SelectValTimbre: () => dispatch(SelectValTimbre()),
   };
 }
 
@@ -536,6 +542,7 @@ function mapStateToProps(state) {
   return {
     factures: state.factures,
     SearchingResult: state.SearchingReducer,
+    valtimbres: state.valtimbres,
   };
 }
 

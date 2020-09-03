@@ -100,6 +100,12 @@ class GetBLByIdModal extends Component {
     // this.setState({ openMailModal: true });
   };
 
+  noupdate = () => {
+    window.alert(
+      "Impossible de modifier Bon de livraison ... Bon de livraison est déja facturé"
+    );
+  };
+
   openModifier = () => {
     this.setState({ openModifierModal: true, blid: this.props.blid });
     this.props.blligs.blligs.map((t) => {
@@ -214,9 +220,9 @@ class GetBLByIdModal extends Component {
                 this.props.remiseglobale
               }&smhtn=${this.props.totalhtnet}&smtva=${
                 this.props.totaltva
-              }&mntbon=${this.props.totalttc}&valtimbre=${Number(
-                0.5
-              )}&Vendeur=${this.state.username}`,
+              }&mntbon=${this.props.totalttc}&valtimbre=${
+                this.props.valtimbre
+              }&Vendeur=${this.state.username}`,
               {
                 method: "POST",
                 header: {
@@ -666,7 +672,13 @@ class GetBLByIdModal extends Component {
                       onClick={() => {
                         this.handleClose();
                         action.name == "Imprimer" && this.imprimer();
-                        action.name == "Modifier" && this.openModifier();
+                        action.name == "Modifier" &&
+                          this.props.facture !== "0" &&
+                          this.noupdate();
+                        action.name == "Modifier" &&
+                          this.props.facture === "0" &&
+                          this.openModifier();
+
                         action.name == "Supprimer" &&
                           this.props.annuler === "1" &&
                           this.supprimer();

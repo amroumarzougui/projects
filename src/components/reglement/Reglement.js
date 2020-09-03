@@ -141,7 +141,7 @@ class Reglement extends Component {
         <br />
         <div>
           <Row style={{ marginTop: "-30px" }}>
-            <Col sm={12}>
+            <Col sm={6}>
               <FormGroup style={{ marginTop: "25px" }}>
                 <Typography component="div">
                   <Grid
@@ -162,18 +162,18 @@ class Reglement extends Component {
                       />
                     </Grid>
                     <Grid item style={{ color: "#3f51b5" }}>
-                      Recherche par № Règlement / Client
+                      Recherche par № BRèglement / Client
                     </Grid>
                   </Grid>
                 </Typography>
               </FormGroup>
             </Col>
           </Row>
-          <Row>
-            {/* Recherche */}
-            {/* <ConnectedSearchBar /> */}
-            {this.state.gilad ? (
-              <Col sm="4">
+          {/* Recherche */}
+          {/* <ConnectedSearchBar /> */}
+          {this.state.gilad ? (
+            <Row>
+              <Col sm={10}>
                 <div className="search-bar">
                   <TextField
                     placeholder="Recherche..."
@@ -191,60 +191,73 @@ class Reglement extends Component {
                   />
                 </div>
               </Col>
-            ) : (
-              <Row style={{ marginTop: "-25px", marginLeft: "10px" }}>
-                <Col sm={6}>
-                  <TextField
-                    id="standard-basic"
-                    label="Date Début"
-                    margin="normal"
-                    type="date"
-                    fullWidth
-                    name="firstdate"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    onChange={this.firstrechdatHandler}
-                    value={this.state.firstdate}
-                    defaultValue={this.state.defaultdate}
-                  />
-                </Col>
+              <Col sm={2} style={{ marginTop: "-15px" }}>
+                <div id="" style={{ textAlign: "center" }}>
+                  <button
+                    className="icon-btn add-btn"
+                    onClick={() => this.setState({ addModalShow: true })}
+                  >
+                    <div className="add-icon"></div>
+                    <div className="btn-txt">Ajouter Règlement</div>
+                  </button>
+                </div>
+              </Col>
+            </Row>
+          ) : (
+            <Row style={{ marginTop: "-15px" }}>
+              <Col sm={3}>
+                <TextField
+                  id="standard-basic"
+                  label="Date Début"
+                  margin="normal"
+                  type="date"
+                  fullWidth
+                  name="firstdate"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={this.firstrechdatHandler}
+                  value={this.state.firstdate}
+                  defaultValue={this.state.defaultdate}
+                />
+              </Col>
 
-                <Col sm={6}>
-                  <TextField
-                    id="standard-basic"
-                    label="Date Fin"
-                    margin="normal"
-                    type="date"
-                    fullWidth
-                    name="seconddate"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    defaultValue={this.state.defaultdate}
-                    onChange={this.secondrechdatHandler}
-                    value={this.state.seconddate}
-                  />
-                </Col>
-              </Row>
-            )}
+              <Col sm={3}>
+                <TextField
+                  id="standard-basic"
+                  label="Date Fin"
+                  margin="normal"
+                  type="date"
+                  fullWidth
+                  name="seconddate"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  defaultValue={this.state.defaultdate}
+                  onChange={this.secondrechdatHandler}
+                  value={this.state.seconddate}
+                />
+              </Col>
 
-            <Col sm="2">
-              {/* Add second part devis // Ligs */}
-              {/* <AddDevis /> */}
-              <div id="" style={{ textAlign: "center" }}>
-                <button
-                  className="icon-btn add-btn"
-                  onClick={() => this.setState({ addModalShow: true })}
-                >
-                  <div className="add-icon"></div>
-                  <div className="btn-txt">Ajouter Règlement</div>
-                </button>
-              </div>
-            </Col>
-          </Row>
+              <Col sm={4}></Col>
+
+              <Col sm={2}>
+                {/* Add second part devis // Ligs */}
+                {/* <AddDevis /> */}
+                <div id="" style={{ textAlign: "center" }}>
+                  <button
+                    className="icon-btn add-btn"
+                    onClick={() => this.setState({ addModalShow: true })}
+                  >
+                    <div className="add-icon"></div>
+                    <div className="btn-txt">Ajouter BL</div>
+                  </button>
+                </div>
+              </Col>
+            </Row>
+          )}
         </div>
-        <br />{" "}
+        <br />
         {this.state.rechercheclicked ? (
           <div className="tabre">
             <table>

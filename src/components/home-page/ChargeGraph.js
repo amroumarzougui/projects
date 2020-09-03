@@ -77,7 +77,7 @@ class ChargeGraph extends Component {
     return (
       <div>
         <div>
-          <Line
+          <Bar
             data={this.state.Data}
             options={{ maintainAspectRatio: false }}
             width={"300px"}

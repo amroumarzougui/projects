@@ -299,11 +299,13 @@ class GetFactureByIdModal extends Component {
                     }}
                   >
                     <p style={{ color: "darkslateblue", marginBottom: "-5px" }}>
-                      Total Quantité
+                      {/* Total Quantité */}
+                      Valeur de timbre
                     </p>
                     <p style={{ color: "black" }}>
                       {/* {this.props.totalqte} */}
-                      {this.props.sumqt}
+                      {/* {this.props.sumqt} */}
+                      {Number(this.props.valtimbre).toFixed(3)}
                     </p>
                   </Col>
                 </Row>
@@ -400,7 +402,11 @@ class GetFactureByIdModal extends Component {
                       Net à Payer
                     </p>
                     <p style={{ color: "black", fontWeight: "bold" }}>
-                      {Number(this.props.totalttc).toFixed(3)}
+                      {/* {Number(this.props.totalttc).toFixed(3)} */}
+                      {Number(
+                        parseFloat(this.props.totalttc) +
+                          parseFloat(this.props.valtimbre)
+                      ).toFixed(3)}
                     </p>
                   </Col>
                 </Row>
@@ -754,7 +760,8 @@ class GetFactureByIdModal extends Component {
                     {" "}
                     &nbsp;&nbsp;&nbsp;Timbre fiscal:
                   </td>
-                  <td>{this.props.droitdetimbre}</td>
+                  {/* <td>{this.props.droitdetimbre}</td> */}
+                  <td>{Number(this.props.valtimbre).toFixed(3)}</td>
                 </tr>
                 <tr style={{ height: "50px" }}>
                   <td style={{ fontWeight: "bold" }}>
@@ -763,7 +770,11 @@ class GetFactureByIdModal extends Component {
                   </td>
                   <td style={{ fontWeight: "bold" }}>
                     {" "}
-                    {Number(this.props.totalttc).toFixed(3)}{" "}
+                    {/* {Number(this.props.totalttc).toFixed(3)}{" "} */}
+                    {Number(
+                      parseFloat(this.props.totalttc) +
+                        parseFloat(this.props.valtimbre)
+                    ).toFixed(3)}
                   </td>
                 </tr>
               </table>

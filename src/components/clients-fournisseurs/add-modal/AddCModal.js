@@ -182,6 +182,7 @@ class AddCModal extends Component {
                             <TextField
                               className="card add-input"
                               id="standard-basic"
+                              type="number"
                               label="CIN"
                               margin="dense"
                               variant="outlined"
@@ -244,6 +245,7 @@ class AddCModal extends Component {
                             <TextField
                               className="card add-input"
                               id="standard-basic"
+                              type="number"
                               //   type="number"
                               //   InputLabelProps={{
                               //     shrink: true,
@@ -266,7 +268,7 @@ class AddCModal extends Component {
                             <TextField
                               className="card add-input"
                               id="standard-basic"
-                              //   type="number"
+                              type="number"
                               //   InputLabelProps={{
                               //     shrink: true,
                               //   }}
@@ -284,7 +286,7 @@ class AddCModal extends Component {
                               className="card add-input"
                               id="standard-basic"
                               label="Téléphone 2"
-                              //   type="number"
+                              type="number"
                               //   InputLabelProps={{
                               //     shrink: true,
                               //   }}
@@ -406,6 +408,7 @@ class AddCModal extends Component {
                         <Col>
                           <FormGroup controlId="catfisc">
                             <TextField
+                              className="card add-input"
                               id="outlined-select-currency"
                               select
                               label="Categorie Fisc"

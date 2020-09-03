@@ -297,22 +297,6 @@ class AddBLModal extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {/* <Row>
-              <Col sm={5}>
-                <Card>
-                  <Card.Body>
-
-                  </Card.Body>
-                </Card>
-              </Col>
-
-              <Col sm={7}>
-                <Card>
-                  <Card.Body></Card.Body>
-                </Card>
-              </Col>
-            </Row> */}
-
             <form onSubmit={this.enregistrer}>
               <Card>
                 <Card.Body>

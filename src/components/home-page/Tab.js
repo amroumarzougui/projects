@@ -1,16 +1,10 @@
 import React, { Component } from "react";
-import { Tabs, Tab, Table, Button } from "react-bootstrap";
 import "./HomePage.scss";
 import { connect } from "react-redux";
 import { SelectTopclient } from "../../redux/actions/Top5";
 import { SelectTopFrs } from "../../redux/actions/Top5Frs";
-import FTChart from "./FTChart";
-import AchatChart from "./AchatChart";
-import VenteAchat from "./VenteChart";
-import BCChaert from "./BCChart";
 import { FormGroup, Row, Col, Label } from "reactstrap";
 import { TextField } from "@material-ui/core";
-
 import Axios from "axios";
 import { Bar, Line, Pie } from "react-chartjs-2";
 
@@ -141,12 +135,6 @@ class FullWidthTabs extends Component {
     });
   };
 
-  // anneeHandler = (event) => {
-  //   fetch(`http://192.168.1.100:81/api/CHIFFREs?annee=${event.target.value}`)
-  //     .then((response) => response.json())
-  //     .then((data) => this.setState({ data: data }));
-  // };
-
   render() {
     return (
       <div>
@@ -180,72 +168,10 @@ class FullWidthTabs extends Component {
                     height={"200px"}
                   />
                 </div>
-
-                {/* <Autocomplete
-                            id="include-input-in-list"
-                            includeInputInList
-                            className="ajouter-client-input"
-                            // options={this.props.clients.clients}
-                            options={this.state.rechs}
-                            getOptionLabel={(option) => option.codcli}
-                            onChange={(event, getOptionLabel) => {
-                              getOptionLabel
-                                ? this.setState({
-                                    raisonsocial: getOptionLabel.raisoc,
-                                  })
-                                : this.setState({
-                                    raisonsocial: "",
-                                  });
-                            }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Code client"
-                                margin="normal"
-                                fullWidth
-                                onChange={this.clientHandlerChange}
-                                name="codcli"
-                              />
-                            )}
-                          /> */}
               </FormGroup>
             </Col>
           </Row>
         </form>
-
-        {/* <div>
-          <Button
-            onClick={() => this.setState({ change: true })}
-            variant="outline-primary"
-          >
-            BC
-          </Button>{" "}
-          &nbsp;
-          <Button
-            onClick={() => this.setState({ change: false })}
-            variant="outline-success"
-          >
-            Devis
-          </Button>
-        </div>
-        <div>
-          {this.state.change ? (
-            <div>
-              <p className="p1" style={{ margin: "10px" }}>
-                Total Montant des BC par jour
-              </p>
-              <BCChaert />
-            </div>
-          ) : (
-            <div>
-              <p className="p1" style={{ margin: "10px" }}>
-                Total Montant des Devis par jour
-              </p>
-
-              <VenteAchat />
-            </div>
-          )}
-        </div> */}
       </div>
     );
   }

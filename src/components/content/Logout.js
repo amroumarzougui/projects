@@ -29,7 +29,7 @@ class Logout extends Component {
         <div>
           <Center>
             <h1 style={{ marginTop: "200px", color: "white" }}>
-              Vous avez déconnecté de SYROS!!!
+              Vous avez déconnecté de AYOOLA!!!
             </h1>
           </Center>
           <Center>

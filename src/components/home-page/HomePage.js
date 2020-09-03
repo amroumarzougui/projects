@@ -1,29 +1,11 @@
 import React, { Component } from "react";
 import "./HomePage.scss";
-import CategoryIcon from "@material-ui/icons/Category";
-import PeopleIcon from "@material-ui/icons/People";
-import DescriptionIcon from "@material-ui/icons/Description";
-import PostAddIcon from "@material-ui/icons/PostAdd";
 import { Row, Card, Col, Table } from "react-bootstrap";
-import { Button } from "reactstrap";
-import CircleChart from "./CircleChart";
 import { Divider, Paper, Grid, makeStyles } from "@material-ui/core";
-import VenteChart from "./VenteChart";
-import WeekVente from "./WeekVente";
-import WeekAchat from "./WeekAchat";
-import AchatChart from "./AchatChart";
-import Charttwo from "./Charttwo";
 import { Redirect } from "react-router-dom";
-import Chartone from "./Chartone";
-import Charting from "./Graphe";
-import Lineone from "./Lineone";
-import ColumnChart from "./ColumnChart";
 import { connect } from "react-redux";
 import { SelectTopclient } from "../../redux/actions/Top5";
 import { SelectClient } from "../../redux/actions/GetClients";
-
-import { TabContent, TabPane, Nav, NavItem, NavLink } from "reactstrap";
-import classnames from "classnames";
 import FullWidthTabs from "./Tab";
 import TabTop from "./TabTop";
 import TabBLFT from "./TabBLFT";
@@ -31,6 +13,7 @@ import ChargeGraph from "./ChargeGraph";
 import { SelectSumCharge } from "../../redux/actions/SumCharge";
 import TabTwo from "./TabTwo";
 import image from "../contact-page/contactsyros.png";
+import image1 from "../../Login/contactsyros.png";
 
 class HomePage extends Component {
   constructor(props) {
@@ -74,7 +57,7 @@ class HomePage extends Component {
           // <h3> Bienvenu dans SYROS {this.state.username} </h3>
           <div className="contact-page" style={{ width: "100%" }}>
             <img
-              src={image}
+              src={image1}
               alt="Contact"
               style={{ width: "100%", height: "100%" }}
             />
@@ -118,9 +101,6 @@ class HomePage extends Component {
               <Col sm={4} style={{ marginBottom: "15px" }}>
                 <Card className="card111">
                   <Card.Body>
-                    {/* <p className="p1">Nombre de clients par région</p>
-
-                  <CircleChart /> */}
                     <TabTwo />
                   </Card.Body>
                 </Card>
@@ -128,7 +108,6 @@ class HomePage extends Component {
               <Col sm={4} style={{ marginBottom: "15px" }}>
                 <Card className="card111">
                   <Card.Body>
-                    {/* <AchatChart /> */}
                     <TabBLFT />
                   </Card.Body>
                 </Card>

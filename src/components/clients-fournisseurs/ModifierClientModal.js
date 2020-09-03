@@ -111,15 +111,12 @@ class ModifierClientModal extends Component {
           aria-labelledby="contained-modal-title-vcenter"
           centered
         >
-          <Modal.Header
-            closeButton
-            style={{ backgroundColor: "#eee", color: "#020F64" }}
-          >
+          <Modal.Header closeButton style={{ color: "#020F64" }}>
             <Modal.Title id="contained-modal-title-vcenter">
               <b>Modifier Client</b>
             </Modal.Title>
           </Modal.Header>
-          <Modal.Body style={{ backgroundColor: "#eee" }}>
+          <Modal.Body>
             <form onSubmit={this.submitHandler}>
               <Row>
                 <Col sm={6}>
@@ -402,6 +399,7 @@ class ModifierClientModal extends Component {
                         <Col>
                           <FormGroup controlId="catfisc">
                             <TextField
+                              className="card add-input"
                               id="outlined-select-currency"
                               select
                               label="Categorie Fisc"
@@ -563,7 +561,7 @@ class ModifierClientModal extends Component {
               </Row>
             </form>
           </Modal.Body>
-          <Modal.Footer></Modal.Footer>
+          {/* <Modal.Footer></Modal.Footer> */}
         </Modal>
       </div>
     );

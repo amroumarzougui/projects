@@ -75,6 +75,10 @@ class Nomenclature extends Component {
     this.setState({ lib: event.target.value });
   };
 
+  codeHandler = (event) => {
+    this.setState({ code: event.target.value });
+  };
+
   submitHandler = (event) => {
     event.preventDefault();
 
@@ -222,6 +226,7 @@ class Nomenclature extends Component {
                             name="code"
                             type="text"
                             value={this.state.code}
+                            onChange={this.codeHandler}
                           />
                         </Form.Group>
                       </Col>

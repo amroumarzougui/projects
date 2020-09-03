@@ -254,7 +254,7 @@ class GetClientByID extends Component {
 
                 {this.props.siteweb === "" ? null : (
                   <p>
-                    <LanguageIcon /> {this.props.siteweb}
+                    <LanguageIcon /> {this.props.siteweb}{" "}
                   </p>
                 )}
               </Card.Body>
@@ -296,7 +296,9 @@ class GetClientByID extends Component {
                     {this.props.cin === "" ? (
                       <p style={{ color: "gray" }}>--</p>
                     ) : (
-                      <p style={{ color: "gray" }}>{this.props.cin}</p>
+                      <p style={{ color: "gray", fontSize: "12px" }}>
+                        {this.props.cin}
+                      </p>
                     )}
                   </Col>
                   <Col sm={3}>
@@ -325,7 +327,9 @@ class GetClientByID extends Component {
                     {this.props.ville === "" ? (
                       <p style={{ color: "gray" }}>--</p>
                     ) : (
-                      <p style={{ color: "gray" }}>{this.props.ville}</p>
+                      <p style={{ color: "gray", fontSize: "12px" }}>
+                        {this.props.ville}
+                      </p>
                     )}
                   </Col>
                   <Col sm={4}>
@@ -337,7 +341,9 @@ class GetClientByID extends Component {
                     {this.props.codepostal === "" ? (
                       <p style={{ color: "gray" }}>--</p>
                     ) : (
-                      <p style={{ color: "gray" }}>{this.props.codepostal}</p>
+                      <p style={{ color: "gray", fontSize: "12px" }}>
+                        {this.props.codepostal}
+                      </p>
                     )}
                   </Col>
                 </Row>

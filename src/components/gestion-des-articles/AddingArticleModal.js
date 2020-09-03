@@ -7,7 +7,6 @@ import {
   CardHeader,
   Snackbar,
   IconButton,
-  Fab,
 } from "@material-ui/core";
 import { Input, Label, FormGroup, Col, Row } from "reactstrap";
 import Center from "react-center";
@@ -22,14 +21,7 @@ import { connect } from "react-redux";
 import { SelectSousFamille } from "../../redux/actions/GetSousFamille";
 import { GetCodart } from "../../redux/actions/GetCodart";
 import { SelectArticle } from "../../redux/actions/GetArticles";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
-import Tooltip from "@material-ui/core/Tooltip";
-import AddFamilleModal from "./AddFamilleModal";
-import AddSousFamilleModal from "./AddSousFamilleModal";
-import AddBoxIcon from "@material-ui/icons/AddBox";
-import InputMask from "react-input-mask";
-import Mask from "react-masking";
-import NumberFormat from "react-number-format";
+
 import { SelectNomenclature } from "../../redux/actions/GetNomenclature";
 
 const roundTo = require("round-to");
@@ -64,8 +56,7 @@ class AddingArticleModal extends Component {
       ],
       unite: "",
       famille: "",
-      // codeabarre: "",
-      // designation: "",
+
       snackbaropen: false,
       snackbarmsg: ",",
     };
@@ -150,12 +141,6 @@ class AddingArticleModal extends Component {
       purttc: roundTo(this.state.purnhtnet * (1 + event.target.value / 100), 3),
     });
   };
-
-  // codtvaHandler = (event) => {
-  //   this.setState({
-  //     tvaa: this.props.nomenclatures.nomenclatures.map((t) => t.lib),
-  //   });
-  // };
 
   brutHandler = (event) => {
     const purnh = roundTo(
@@ -255,6 +240,7 @@ class AddingArticleModal extends Component {
                             <Form.Group controlId="codart">
                               {this.props.codarts.codarts.map((cod) => (
                                 <TextField
+                                  className="card add-input"
                                   id="standard-basic"
                                   label="Code article"
                                   margin="dense"
@@ -271,6 +257,7 @@ class AddingArticleModal extends Component {
                           <Col md={3}>
                             <Form.Group controlId="codbar">
                               <TextField
+                                className="card add-input"
                                 id="standard-basic"
                                 label="Code à barre"
                                 margin="dense"
@@ -284,6 +271,7 @@ class AddingArticleModal extends Component {
                           <Col md={6}>
                             <Form.Group controlId="desart">
                               <TextField
+                                className="card add-input"
                                 id="standard-basic"
                                 label="Désignation"
                                 margin="dense"
@@ -315,6 +303,7 @@ class AddingArticleModal extends Component {
                                 }}
                                 renderInput={(params) => (
                                   <TextField
+                                    className="card add-input"
                                     {...params}
                                     label="Unité"
                                     margin="dense"
@@ -347,6 +336,7 @@ class AddingArticleModal extends Component {
                                 }}
                                 renderInput={(params) => (
                                   <TextField
+                                    className="card add-input"
                                     {...params}
                                     label="Famille"
                                     margin="dense"
@@ -382,6 +372,7 @@ class AddingArticleModal extends Component {
                                 }}
                                 renderInput={(params) => (
                                   <TextField
+                                    className="card add-input"
                                     {...params}
                                     label="Sous Famille"
                                     margin="dense"
@@ -397,6 +388,7 @@ class AddingArticleModal extends Component {
                           <Col md={3}>
                             <Form.Group controlId="reffrs">
                               <TextField
+                                className="card add-input"
                                 type="text"
                                 label="Réf Fournisseur"
                                 margin="dense"
@@ -442,6 +434,7 @@ class AddingArticleModal extends Component {
                                 }}
                                 renderInput={(params) => (
                                   <TextField
+                                    className="card add-input"
                                     {...params}
                                     label="TVA"
                                     margin="dense"
@@ -482,6 +475,7 @@ class AddingArticleModal extends Component {
                           <Col sm={2}>
                             <Form.Group controlId="tautva">
                               <TextField
+                                className="card add-input"
                                 label="%"
                                 id="outlined-margin-dense"
                                 margin="dense"
@@ -497,6 +491,7 @@ class AddingArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="typfodec">
                               <TextField
+                                className="card add-input"
                                 id="outlined-select-currency"
                                 select
                                 label="Type Fodec"
@@ -519,6 +514,7 @@ class AddingArticleModal extends Component {
                           <Col sm={2}>
                             <Form.Group controlId="TDC">
                               <TextField
+                                className="card add-input"
                                 label="Taux D.C"
                                 id="outlined-margin-dense"
                                 margin="dense"
@@ -531,6 +527,7 @@ class AddingArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="typdc">
                               <TextField
+                                className="card add-input"
                                 id="outlined-select-currency"
                                 select
                                 label="Type DC"
@@ -572,6 +569,7 @@ class AddingArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="PURBHT">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Revient Brut HT"
                                 variant="outlined"
@@ -586,6 +584,7 @@ class AddingArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="remisefrs">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="Remise Frs (%)"
                                 variant="outlined"
@@ -601,6 +600,7 @@ class AddingArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="PURNHT">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Revient Net HT"
                                 variant="outlined"
@@ -614,6 +614,7 @@ class AddingArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="PURNTTC">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Revient Net TTC"
                                 variant="outlined"
@@ -630,6 +631,7 @@ class AddingArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="margedet">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="Marge/ P.R Net (%)"
                                 variant="outlined"
@@ -640,26 +642,12 @@ class AddingArticleModal extends Component {
                                 value={this.state.marged}
                                 onChange={this.margedHandler}
                               />
-                              {/* <InputMask
-                                mask="/.000"
-                                onChange={this.margedHandler}
-                                value={this.state.marged}
-                                name="margedet"
-                              /> */}
-                              {/* <Mask mask="#.###">
-                                <input
-                                  type="text"
-                                  onChange={this.margedHandler}
-                                  value={this.state.marged}
-                                />
-                              </Mask> */}
-                              {/* <NumberFormat mask="n3" /> */}
-                              {/* <input mask="n3"></input> */}
                             </Form.Group>
                           </Col>
                           <Col sm={3}>
                             <Form.Group controlId="PUDHT">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Vente HT"
                                 variant="outlined"
@@ -673,6 +661,7 @@ class AddingArticleModal extends Component {
                           <Col sm={3}>
                             <Form.Group controlId="PUDTTC">
                               <TextField
+                                className="card add-input"
                                 id="outlined-basic"
                                 label="P.U Vente TTC"
                                 variant="outlined"

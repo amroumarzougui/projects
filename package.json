@@ -1,7 +1,7 @@
 {
-  "name": "reactstrap-sidebare",
+  "name": "ayoola",
   "version": "0.1.0",
-  "description": "A Simple SideBar Navigation written in React",
+  "description": "A simple Business management plateform written in React",
   "author": "Marzougui Amrou",
   "private": true,
   "proxy": "http://localhost:3001",

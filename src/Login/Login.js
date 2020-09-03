@@ -5,36 +5,12 @@ import LockOpenIcon from "@material-ui/icons/LockOpen";
 import { Fab, TextField } from "@material-ui/core";
 import Center from "react-center";
 import { Snackbar } from "@material-ui/core";
-
-import image6 from "./ts.jpg";
-import image7 from "./ts3.jpg";
-import image8 from "./ts2.jpg";
-
 import image1 from "./k.jpg";
 import image2 from "./k1.jpeg";
-import image3 from "./k3.jpg";
-import image4 from "./p3.png";
-import image5 from "../components/contact-page/contactsyros.png";
+import image5 from "./contactsyros.png";
 import { connect } from "react-redux";
 import { GetDBFolder } from "../redux/actions/GetDBFolders";
-import { Label, Input } from "reactstrap";
-import { setUserSession } from "./Common";
-
 import "./login.css";
-
-const imgMyimageexample = require("./b2.jpg");
-const divStyle = {
-  backgroundImage: `url(${image7})`,
-  height: "100%",
-  backgroundSize: "cover",
-};
-
-const divStylee = {
-  width: "100%",
-  height: "100vh",
-  backgroundImage: `url(${imgMyimageexample})`,
-  backgroundSize: "cover",
-};
 
 class Login extends Component {
   constructor(props) {
@@ -76,14 +52,6 @@ class Login extends Component {
   }
 
   submitForm = (event) => {
-    // e.preventDefault();
-    // const { username, password } = this.state;
-
-    // if (username === "a" && password === "b") {
-    //   localStorage.setItem("token", "hqdgsdgkqkgqsdhqsdg");
-    //   this.setState({ loggedIn: true });
-    // }
-    // this.setState({ snackbaropen: true });
     event.preventDefault(event);
 
     fetch(
@@ -158,7 +126,7 @@ class Login extends Component {
                       />
                       <Carousel.Caption>
                         <p style={{ color: "white", fontSize: "100px" }}>
-                          SYROS
+                          AYOOLA
                         </p>
                         <p style={{ color: "white", fontSize: "50px" }}>
                           Gestion commercial
@@ -226,9 +194,6 @@ class Login extends Component {
                   <Col sm={2}></Col>
 
                   <Col sm={8}>
-                    {/* <Card style={{ background: "rgba(4,0,64 ,0.2)" }}> */}
-                    {/* <Card style={divStyle}>
-                  <Card.Body> */}
                     <Center>
                       <div
                         style={{
@@ -274,25 +239,13 @@ class Login extends Component {
                         type="password"
                         variant="outlined"
                         name="password"
-                        // value={this.state.password}
                         onChange={this.onChange}
                         required
                         fullWidth
                       />
                       <br />
                       <br />
-                      {/* <Label className="labell">Dossier</Label>
-              <Input
-                type="select"
-                name="folder"
-                // defaultValue={this.props.unitearticles}
-              >
-                {this.props.dbs.dbs.map((t, i) => (
-                  <option key={i} value={t.coddos}>
-                    {t.coddos}
-                  </option>
-                ))}
-              </Input> */}
+
                       <br />
 
                       <Button
@@ -301,11 +254,7 @@ class Login extends Component {
                       >
                         Login
                       </Button>
-
-                      {/* {this.state.fct} */}
                     </form>
-                    {/* </Card.Body>
-                </Card> */}
                   </Col>
 
                   <Col sm={2}></Col>
