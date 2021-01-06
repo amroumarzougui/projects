@@ -22,7 +22,7 @@
     "ag-grid-enterprise": "^23.2.0",
     "ag-grid-react": "^23.2.0",
     "apexcharts": "^3.17.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.4.1",
     "chart.js": "^2.9.3",
     "classnames": "^2.2.6",
